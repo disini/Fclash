@@ -76,18 +76,15 @@ class _ClashLogState extends State<ClashLog> {
           ),
         ),
         Expanded(
-          child: Container(
-            decoration: const BoxDecoration(color: Colors.white70),
-            child: Obx(() => ListView.builder(
-                  itemBuilder: (cxt, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: buildLogItem(logs[index]),
-                    );
-                  },
-                  itemCount: logs.length,
-                )),
-          ),
+          child: Obx(() => ListView.builder(
+                itemBuilder: (cxt, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: buildLogItem(logs[index]),
+                  );
+                },
+                itemCount: logs.length,
+              )),
         ),
       ],
     );

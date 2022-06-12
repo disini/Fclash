@@ -59,9 +59,9 @@ class _SettingState extends State<Setting> {
                                   .changeConfigField('socks-port', port);
                             }
                           });
-              },
-            ),
-            SettingsTile.navigation(
+                    },
+                  ),
+                  SettingsTile.navigation(
                     title: Text(
                       "HTTP proxy port".tr,
                       style: textStyle,
@@ -82,9 +82,9 @@ class _SettingState extends State<Setting> {
                                   .changeConfigField('port', port);
                             }
                           });
-              },
-            ),
-            SettingsTile.navigation(
+                    },
+                  ),
+                  SettingsTile.navigation(
                     title: Text(
                       "Redir proxy port".tr,
                       style: textStyle,
@@ -105,9 +105,9 @@ class _SettingState extends State<Setting> {
                                   .changeConfigField('redir-port', port);
                             }
                           });
-              },
-            ),
-            SettingsTile.navigation(
+                    },
+                  ),
+                  SettingsTile.navigation(
                     title: Text(
                       "Mixed proxy port".tr,
                       style: textStyle,
@@ -128,10 +128,10 @@ class _SettingState extends State<Setting> {
                                   .changeConfigField('mixed-port', port);
                             }
                           });
-              },
-            ),
-            SettingsTile.switchTile(
-                title: Text(
+                    },
+                  ),
+                  SettingsTile.switchTile(
+                      title: Text(
                         "allow_lan".tr,
                         style: textStyle,
                       ),
@@ -173,15 +173,29 @@ class _SettingState extends State<Setting> {
                                 SpUtil.setData('lan', 'en_US');
                               } else {
                                 Get.updateLocale(const Locale('zh', 'CN'));
-                            SpUtil.setData('lan', 'zh_CN');
-                          }
-                        }
+                                SpUtil.setData('lan', 'zh_CN');
+                              }
+                            }
+                          },
+                        ));
                       },
-                    ));
-                  },
-                ),
-                SettingsTile.switchTile(
-                    title: Text(
+                    ),
+                    SettingsTile.switchTile(
+                        initialValue:
+                            SpUtil.getData("dark_theme", defValue: false),
+                        onToggle: (e) async {
+                          if (e) {
+                            await SpUtil.setData("dark_theme", true);
+                          } else {
+                            await SpUtil.setData("dark_theme", false);
+                          }
+                          Get.changeTheme(
+                              e ? ThemeData.dark() : ThemeData.light());
+                          setState(() {});
+                        },
+                        title: Text('Dark Theme'.tr)),
+                    SettingsTile.switchTile(
+                        title: Text(
                           "Set as system proxy".tr,
                           style: textStyle,
                         ),
@@ -196,11 +210,11 @@ class _SettingState extends State<Setting> {
                             await SpUtil.setData("system_proxy", false);
                           }
                           setState(() {
-                        Tips.info("success");
-                      });
-                    }),
-                SettingsTile.switchTile(
-                    title: Text(
+                            Tips.info("success");
+                          });
+                        }),
+                    SettingsTile.switchTile(
+                        title: Text(
                           "Start with system".tr,
                           style: textStyle,
                         ),
@@ -213,8 +227,8 @@ class _SettingState extends State<Setting> {
                             Get.find<AutostartService>().disableAutostart();
                           }
                         }),
-                SettingsTile.switchTile(
-                    title: Text(
+                    SettingsTile.switchTile(
+                        title: Text(
                           "Hide window when start fclash".tr,
                           style: textStyle,
                         ),
@@ -225,8 +239,8 @@ class _SettingState extends State<Setting> {
                             Get.find<ClashService>().setHideWindowWhenStart(e);
                           });
                         }),
-              ])
-      ]),
+                  ])
+            ]),
     );
   }
 

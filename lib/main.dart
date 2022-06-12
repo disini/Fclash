@@ -3,8 +3,7 @@ import 'package:fclash/service/autostart_service.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:fclash/service/notification_service.dart';
 import 'package:fclash/translation/clash_translation.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kommon/kommon.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -26,18 +25,18 @@ void initAppTray({List<MenuItem>? details, bool isUpdate = false}) async {
   List<MenuItem> items = [
     MenuItem(
       key: 'show',
-      title: 'Show Fclash'.tr,
+      label: 'Show Fclash'.tr,
     ),
-    MenuItem.separator,
+    MenuItem.separator(),
     MenuItem(
       key: 'exit',
-      title: 'Exit Fclash'.tr,
+      label: 'Exit Fclash'.tr,
     ),
   ];
   if (details != null) {
     items.insertAll(0, details);
   }
-  await trayManager.setContextMenu(items);
+  await trayManager.setContextMenu(Menu(items: items));
 }
 
 Future<void> initAppService() async {

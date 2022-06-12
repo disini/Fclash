@@ -20,7 +20,6 @@ class _ProxyState extends State<Proxy> {
   Widget build(BuildContext context) {
     final cs = Get.find<ClashService>();
     return Container(
-      decoration: BoxDecoration(color: Colors.white),
       child: Stack(
         children: [
           Opacity(
@@ -96,7 +95,7 @@ class _ProxyState extends State<Proxy> {
             titleTextStyle: BrnTextStyle(fontSize: 20),
             subTitleTextStyle: BrnTextStyle(fontSize: 18),
           ),
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.blue,
           children: [
             buildSelectItem(selector),
             // for debug

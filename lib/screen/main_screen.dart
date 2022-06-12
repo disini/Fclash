@@ -7,7 +7,7 @@ import 'package:fclash/screen/page/profile.dart';
 import 'package:fclash/screen/page/proxy.dart';
 import 'package:fclash/screen/page/setting.dart';
 import 'package:fclash/service/clash_service.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide MenuItem;
 import 'package:kommon/kommon.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
@@ -56,6 +56,7 @@ class _MainScreenState extends State<MainScreen>
     windowManager.addListener(this);
     trayManager.addListener(this);
     super.initState();
+    changeTheme();
   }
 
   @override
@@ -94,13 +95,16 @@ class _MainScreenState extends State<MainScreen>
         this.index.value = index;
       },
       child: Obx(
-        () => Container(
-          decoration: BoxDecoration(
-              color: index == this.index.value ? Colors.white : Colors.white12),
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            title,
-            style: const TextStyle(fontSize: 20),
+        () => Opacity(
+          opacity: index == this.index.value ? 1.0 : 0.5,
+          child: Container(
+            // decoration: BoxDecoration(
+            //     color: index == this.index.value ? Colors.white : Colors.white12),
+            padding: const EdgeInsets.all(16),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 20),
+            ),
           ),
         ),
       ),
@@ -120,5 +124,12 @@ class _MainScreenState extends State<MainScreen>
         ],
       ),
     );
+  }
+
+  void changeTheme() {
+    Future.delayed(Duration.zero, () {
+      final isDark = SpUtil.getData<bool>('dark_theme', defValue: false);
+      Get.changeTheme(isDark ? ThemeData.dark() : ThemeData.light());
+    });
   }
 }

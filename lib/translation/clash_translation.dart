@@ -129,7 +129,8 @@ class ClashTranslations extends Translations {
           "Upload speed": "上传: @speed",
           "System proxy now.": "现在Fclash是系统代理",
           "Already running.": "Fclash 已经在运行中",
-          "Fclash is running or ports is in use": "无需重复运行"
+          "Fclash is running or ports is in use": "无需重复运行",
+          "Dark Theme": "黑暗模式"
         }
       };
 }

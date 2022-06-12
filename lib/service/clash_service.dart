@@ -335,49 +335,49 @@ class ClashService extends GetxService with TrayListener {
   void updateTray() {
     final stringList = List<MenuItem>.empty(growable: true);
     // yaml
-    stringList.add(
-        MenuItem(title: "profile: ${currentYaml.value}", isEnabled: false));
+    stringList
+        .add(MenuItem(label: "profile: ${currentYaml.value}", disabled: true));
     // FIX: DDE menu issue
     // stringList.add(MenuItem(
     //     title: "Download speed"
     //         .trParams({"speed": " ${downRate.value.toStringAsFixed(1)}KB/s"}),
-    //     isEnabled: false));
+    //     disabled: true));
     // stringList.add(MenuItem(
     //     title: "Upload speed"
     //         .trParams({"speed": "${uploadRate.value.toStringAsFixed(1)}KB/s"}),
-    //     isEnabled: false));
+    //     disabled: true));
     // status
     if (proxies['proxies'] != null) {
       Map<String, dynamic> m = proxies['proxies'];
       m.removeWhere((key, value) => value['type'] != "Selector");
       for (final k in m.keys) {
-        stringList.add(MenuItem(
-            title: "${m[k]['name']}: ${m[k]['now']}", isEnabled: false));
+        stringList.add(
+            MenuItem(label: "${m[k]['name']}: ${m[k]['now']}", disabled: true));
       }
     }
     // port
     if (configEntity.value != null) {
+      stringList.add(
+          MenuItem(label: 'http: ${configEntity.value?.port}', disabled: true));
       stringList.add(MenuItem(
-          title: 'http: ${configEntity.value?.port}', isEnabled: false));
-      stringList.add(MenuItem(
-          title: 'socks: ${configEntity.value?.socksPort}', isEnabled: false));
+          label: 'socks: ${configEntity.value?.socksPort}', disabled: true));
     }
     // system proxy
-    stringList.add(MenuItem.separator);
+    stringList.add(MenuItem.separator());
     if (!isSystemProxy()) {
       stringList
-          .add(MenuItem(title: "Not system proxy yet.".tr, isEnabled: false));
+          .add(MenuItem(label: "Not system proxy yet.".tr, disabled: true));
       stringList.add(MenuItem(
-          title: "Set as system proxy".tr,
+          label: "Set as system proxy".tr,
           toolTip: "click to set fclash as system proxy".tr,
           key: ACTION_SET_SYSTEM_PROXY));
     } else {
-      stringList.add(MenuItem(title: "System proxy now.".tr, isEnabled: false));
+      stringList.add(MenuItem(label: "System proxy now.".tr, disabled: true));
       stringList.add(MenuItem(
-          title: "Unset system proxy".tr,
+          label: "Unset system proxy".tr,
           toolTip: "click to reset system proxy",
           key: ACTION_UNSET_SYSTEM_PROXY));
-      stringList.add(MenuItem.separator);
+      stringList.add(MenuItem.separator());
     }
     initAppTray(details: stringList, isUpdate: true);
   }
