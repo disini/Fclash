@@ -23,6 +23,7 @@
 - Stable: Monitor Realtime runtime status.
 - UI: Beautiful UI built by Flutter.
 - UI: Chinese/English localizations supported.
+- UI: Light/Dark mode supported.
 - Functions: Easy to set/unset as system proxy.
 - Functions: Full customized setting, proxy mode, ports, LAN connection, ipv6, etc.
 - Functions: Switch yaml configs in realtime.
