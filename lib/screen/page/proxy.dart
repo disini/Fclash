@@ -1,3 +1,4 @@
+import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -37,21 +38,21 @@ class _ProxyState extends State<Proxy> {
                   content: 'Current using'
                       .trParams({"name": cs.currentYaml.value}))),
               Obx(() => BrnNoticeBar(
-                    noticeStyle: cs.isSystemProxyObs.value
-                        ? NoticeStyles.succeedWithArrow
-                        : NoticeStyles.warningWithArrow,
-                    content: cs.isSystemProxyObs.value
-                        ? "Fclash is running as system proxy now. Enjoy.".tr
-                        : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
-                            .tr,
-                    rightWidget: cs.isSystemProxyObs.value
-                        ? Offstage()
-                        : TextButton(
-                            onPressed: () {
-                              cs.setSystemProxy();
-                            },
-                            child: Text("set Fclash as system proxy".tr)),
-                  )),
+                noticeStyle: cs.isSystemProxyObs.value
+                    ? NoticeStyles.succeedWithArrow
+                    : NoticeStyles.warningWithArrow,
+                content: cs.isSystemProxyObs.value
+                    ? "Fclash is running as system proxy now. Enjoy.".tr
+                    : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
+                    .tr,
+                rightWidget: cs.isSystemProxyObs.value
+                    ? Offstage()
+                    : TextButton(
+                    onPressed: () {
+                      cs.setSystemProxy();
+                    },
+                    child: Text("set Fclash as system proxy".tr)),
+              )),
               Expanded(child: Obx(() => buildTiles()))
             ],
           ),
@@ -88,20 +89,29 @@ class _ProxyState extends State<Proxy> {
     final proxyName = selector['name'];
     return Stack(
       children: [
-        BrnExpandableGroup(
-          title: proxyName ?? "",
-          subtitle: selector['now'],
-          themeData: BrnFormItemConfig(
-            titleTextStyle: BrnTextStyle(fontSize: 20),
-            subTitleTextStyle: BrnTextStyle(fontSize: 18),
+        Obx(
+          () => BrnExpandableGroup(
+            title: proxyName ?? "",
+            subtitle: selector['now'],
+            themeData: BrnFormItemConfig(
+              headTitleTextStyle: BrnTextStyle(
+                  color: Get.find<ThemeController>().isDarkMode.value
+                      ? Colors.white70
+                      : Colors.black87),
+              titleTextStyle: BrnTextStyle(fontSize: 20),
+              subTitleTextStyle: BrnTextStyle(fontSize: 18),
+            ),
+            backgroundColor: Colors.blue,
+            headBackgroundColor: Get.find<ThemeController>().isDarkMode.value
+                ? Colors.black12
+                : Colors.white,
+            children: [
+              buildSelectItem(selector),
+              // for debug
+              // kDebugMode ? BrnExpandableText(text: selector.toString(),maxLines: 1,textStyle: TextStyle(fontSize: 20,
+              // color: Colors.black),) : Offstage(),
+            ],
           ),
-          backgroundColor: Colors.blue,
-          children: [
-            buildSelectItem(selector),
-            // for debug
-            // kDebugMode ? BrnExpandableText(text: selector.toString(),maxLines: 1,textStyle: TextStyle(fontSize: 20,
-            // color: Colors.black),) : Offstage(),
-          ],
         ),
         Align(
           alignment: Alignment.topRight,

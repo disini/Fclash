@@ -3,6 +3,7 @@ import 'package:fclash/service/autostart_service.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:fclash/service/notification_service.dart';
 import 'package:fclash/translation/clash_translation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kommon/kommon.dart';
@@ -48,7 +49,7 @@ Future<void> initAppService() async {
   await Get.putAsync(() => AutostartService().init());
 
   // hide window when start
-  if (Get.find<ClashService>().IshideWindowWhenStart()) {
+  if (Get.find<ClashService>().IshideWindowWhenStart() && kReleaseMode) {
     await windowManager.hide();
   }
 }

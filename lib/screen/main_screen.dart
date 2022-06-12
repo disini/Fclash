@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fclash/screen/component/speed.dart';
+import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/screen/page/about.dart';
 import 'package:fclash/screen/page/clash_log.dart';
 import 'package:fclash/screen/page/profile.dart';
@@ -56,6 +57,7 @@ class _MainScreenState extends State<MainScreen>
     windowManager.addListener(this);
     trayManager.addListener(this);
     super.initState();
+    Get.put(ThemeController());
     changeTheme();
   }
 
@@ -63,6 +65,7 @@ class _MainScreenState extends State<MainScreen>
   void dispose() {
     windowManager.removeListener(this);
     trayManager.removeListener(this);
+    Get.delete<ThemeController>();
     super.dispose();
   }
 
@@ -129,7 +132,8 @@ class _MainScreenState extends State<MainScreen>
   void changeTheme() {
     Future.delayed(Duration.zero, () {
       final isDark = SpUtil.getData<bool>('dark_theme', defValue: false);
-      Get.changeTheme(isDark ? ThemeData.dark() : ThemeData.light());
+      Get.find<ThemeController>()
+          .changeTheme(isDark ? ThemeType.dark : ThemeType.light);
     });
   }
 }
