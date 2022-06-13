@@ -6,7 +6,16 @@
 <p align="center" style="font-size: 20px">A Clash Proxy Fronted based on Clash</p>
 <p align="center" style="font-size: 16px">Linux Supported</p>
 
+[![flutter awesome](https://img.shields.io/badge/Flutter-Awesome-orange)](https://flutterawesome.com/clash-fronted-client-by-flutter-linux-supported/)
 [![fclash](https://snapcraft.io/fclash/badge.svg)](https://snapcraft.io/fclash)
+[![release](https://img.shields.io/github/v/release/kingtous/fclash)](https://github.com/Kingtous/Fclash/releases)
+[![aur](https://img.shields.io/aur/version/fclash)](https://aur.archlinux.org/packages/fclash)
+![downloads](https://img.shields.io/github/downloads/kingtous/fclash/total)
+![](https://img.shields.io/github/workflow/status/kingtous/fclash/Build%20Debian%20Package)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1d9c16d3c94f45fc9b4ee95d9c2e6f8c)](https://www.codacy.com/gh/Kingtous/Fclash/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Kingtous/Fclash&amp;utm_campaign=Badge_Grade)
+![commit](https://img.shields.io/github/commit-activity/y/kingtous/fclash)
+[![stars](https://img.shields.io/github/stars/kingtous/fclash?style=social)]()
+
 
 ## Install
 
