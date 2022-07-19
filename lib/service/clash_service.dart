@@ -120,13 +120,15 @@ class ClashService extends GetxService with TrayListener {
             clashExtBaseUrlCmd
           ],
           includeParentEnvironment: true,
-          workingDirectory: _clashDirectory.path);
-      _clashProcess?.stdout.listen((event) {
-        Get.printInfo(info: String.fromCharCodes(event));
-      });
-      _clashProcess?.stderr.listen((event) {
-        Get.printInfo(info: String.fromCharCodes(event));
-      });
+          workingDirectory: _clashDirectory.path,
+          mode: ProcessStartMode.detached);
+
+      // _clashProcess?.stdout.listen((event) {
+      //   Get.printInfo(info: String.fromCharCodes(event));
+      // });
+      // _clashProcess?.stderr.listen((event) {
+      //   Get.printInfo(info: String.fromCharCodes(event));
+      // });
     }
     Timer.periodic(const Duration(milliseconds: 500), (timer) async {
       final isOk = await isRunning();

@@ -100,9 +100,11 @@ class _ProxyState extends State<Proxy> {
                       : Colors.black87),
               titleTextStyle: BrnTextStyle(fontSize: 20),
               subTitleTextStyle: BrnTextStyle(fontSize: 18),
+              // backgroundColor: Get.find<ThemeController>().isDarkMode.value
+              //     ? Colors.black12
+              //     : Colors.white
             ),
-            backgroundColor: Colors.blue,
-            headBackgroundColor: Get.find<ThemeController>().isDarkMode.value
+            backgroundColor: Get.find<ThemeController>().isDarkMode.value
                 ? Colors.black12
                 : Colors.white,
             children: [

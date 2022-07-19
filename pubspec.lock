@@ -67,12 +67,10 @@ packages:
   bruno:
     dependency: transitive
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "088dfdd0f75051dddfc4c011a2d62dbccb368367"
-      url: "git@github.com:Kingtous/bruno.git"
-    source: git
-    version: "2.2.0"
+      name: bruno
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
   cached_network_image:
     dependency: transitive
     description:
@@ -233,7 +231,7 @@ packages:
       name: fl_chart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.45.1"
+    version: "0.55.0"
   flustars:
     dependency: transitive
     description:
@@ -273,7 +271,14 @@ packages:
       name: flutter_easyrefresh
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.1"
+    version: "2.2.2"
+  flutter_echarts:
+    dependency: transitive
+    description:
+      name: flutter_echarts
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -287,7 +292,7 @@ packages:
       name: flutter_local_notifications
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "9.6.0"
+    version: "9.7.0"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -313,7 +318,7 @@ packages:
       name: flutter_plugin_android_lifecycle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.6"
+    version: "2.0.7"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -358,7 +363,7 @@ packages:
       name: getwidget
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.1"
+    version: "3.0.1"
   html:
     dependency: transitive
     description:
@@ -400,7 +405,7 @@ packages:
       name: image_picker_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.5"
+    version: "0.8.5+1"
   image_picker_for_web:
     dependency: transitive
     description:
@@ -414,7 +419,7 @@ packages:
       name: image_picker_ios
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.5+5"
+    version: "0.8.5+6"
   image_picker_platform_interface:
     dependency: transitive
     description:
@@ -446,10 +451,10 @@ packages:
   kommon:
     dependency: "direct main"
     description:
-      path: "../kommon-flutter"
-      relative: true
-    source: path
-    version: "0.2.1-dev.1"
+      name: kommon
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   launch_at_startup:
     dependency: "direct main"
     description:
@@ -499,13 +504,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.7.0"
-  nested:
-    dependency: transitive
-    description:
-      name: nested
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   octo_image:
     dependency: transitive
     description:
@@ -596,14 +594,14 @@ packages:
       name: path_provider_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.14"
+    version: "2.0.16"
   path_provider_ios:
     dependency: transitive
     description:
       name: path_provider_ios
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.9"
+    version: "2.0.10"
   path_provider_linux:
     dependency: transitive
     description:
@@ -645,14 +643,14 @@ packages:
       name: permission_handler
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "9.2.0"
+    version: "10.0.0"
   permission_handler_android:
     dependency: transitive
     description:
       name: permission_handler_android
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "9.0.2+1"
+    version: "10.0.0"
   permission_handler_apple:
     dependency: transitive
     description:
@@ -687,7 +685,7 @@ packages:
       name: photo_view
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.0"
+    version: "0.14.0"
   platform:
     dependency: transitive
     description:
@@ -709,13 +707,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.2.4"
-  provider:
-    dependency: transitive
-    description:
-      name: provider
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "6.0.3"
   pull_to_refresh:
     dependency: transitive
     description:
@@ -736,7 +727,7 @@ packages:
       name: rxdart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.27.4"
+    version: "0.27.5"
   screen_retriever:
     dependency: transitive
     description:
@@ -839,7 +830,7 @@ packages:
       name: sqflite
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.2+1"
+    version: "2.0.3"
   sqflite_common:
     dependency: transitive
     description:
@@ -916,7 +907,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.1.3"
+    version: "6.1.5"
   url_launcher_android:
     dependency: transitive
     description:
@@ -951,14 +942,14 @@ packages:
       name: url_launcher_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.5"
+    version: "2.1.0"
   url_launcher_web:
     dependency: transitive
     description:
       name: url_launcher_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.11"
+    version: "2.0.12"
   url_launcher_windows:
     dependency: transitive
     description:
@@ -993,7 +984,7 @@ packages:
       name: wakelock
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.1+2"
+    version: "0.6.2"
   wakelock_macos:
     dependency: transitive
     description:
@@ -1022,6 +1013,34 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0"
+  webview_flutter:
+    dependency: transitive
+    description:
+      name: webview_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.8.0"
+  webview_flutter_android:
+    dependency: transitive
+    description:
+      name: webview_flutter_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.8.14"
+  webview_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: webview_flutter_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.9.1"
+  webview_flutter_wkwebview:
+    dependency: transitive
+    description:
+      name: webview_flutter_wkwebview
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.9.1"
   win32:
     dependency: transitive
     description:
