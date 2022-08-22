@@ -177,10 +177,7 @@ class WindowPanel extends StatelessWidget {
         Ink(
             child: InkWell(
                 onTap: () {
-                  windowManager.close().then((value) {
-                    Get.find<ClashService>().closeClashDaemon();
-                    exit(0);
-                  });
+                  windowManager.close();
                 },
                 child: const Icon(Icons.close).paddingAll(8.0))),
       ],

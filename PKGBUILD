@@ -1,7 +1,7 @@
 # Maintainer: Kingtous <me@kingtous.cn>
 pkgname=fclash
 pkgver=1.2.5
-pkgrel=1
+pkgrel=2
 epoch=
 pkgdesc="A Clash Proxy Fronted based on Clash"
 arch=('x86_64')
