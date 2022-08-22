@@ -72,10 +72,12 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Column(
-      children: [buildOptions(), Expanded(child: buildFrame())],
-    ));
+    return DragToResizeArea(
+      child: Scaffold(
+          body: Column(
+        children: [buildOptions(), Expanded(child: buildFrame())],
+      )),
+    );
   }
 
   Widget buildOptions() {
