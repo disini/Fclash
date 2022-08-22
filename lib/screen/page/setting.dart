@@ -230,16 +230,16 @@ class _SettingState extends State<Setting> {
                   }),
               SettingsTile.switchTile(
                   title: Text(
-                    "Hide window when start fclash".tr,
-                    style: textStyle,
-                  ),
-                  initialValue:
-                  Get.find<ClashService>().IshideWindowWhenStart(),
-                  onToggle: (e) async {
-                    setState(() {
-                      Get.find<ClashService>().setHideWindowWhenStart(e);
-                    });
-                  }),
+                          "Hide window when start fclash".tr,
+                          style: textStyle,
+                        ),
+                        initialValue:
+                            Get.find<ClashService>().isHideWindowWhenStart(),
+                        onToggle: (e) async {
+                          setState(() {
+                            Get.find<ClashService>().setHideWindowWhenStart(e);
+                          });
+                        }),
             ])
       ]),
     );

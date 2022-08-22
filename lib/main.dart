@@ -12,10 +12,19 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initWindow();
   await initAppService();
   runApp(const MyApp());
 
   initAppTray();
+}
+
+Future<void> initWindow() async {
+  WindowOptions opts = const WindowOptions(
+      minimumSize: Size(600, 400), titleBarStyle: TitleBarStyle.hidden);
+  windowManager.waitUntilReadyToShow(opts, () {
+    // ignore
+  });
 }
 
 void initAppTray({List<MenuItem>? details, bool isUpdate = false}) async {
@@ -49,7 +58,7 @@ Future<void> initAppService() async {
   await Get.putAsync(() => AutostartService().init());
 
   // hide window when start
-  if (Get.find<ClashService>().IshideWindowWhenStart() && kReleaseMode) {
+  if (Get.find<ClashService>().isHideWindowWhenStart() && kReleaseMode) {
     await windowManager.hide();
   }
 }

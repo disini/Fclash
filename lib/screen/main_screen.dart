@@ -48,6 +48,7 @@ class _MainScreenState extends State<MainScreen>
         });
         break;
       case 'show':
+        windowManager.focus();
         windowManager.show();
     }
   }
@@ -78,17 +79,29 @@ class _MainScreenState extends State<MainScreen>
   }
 
   Widget buildOptions() {
-    return Row(
-      children: [
-        _buildOptions(0, 'Proxy'.tr),
-        _buildOptions(1, 'Profile'.tr),
-        _buildOptions(2, 'Setting'.tr),
-        _buildOptions(3, 'Log'.tr),
-        _buildOptions(4, 'About'.tr),
-        const Expanded(
-            child:
-                Align(alignment: Alignment.centerRight, child: SpeedWidget()))
-      ],
+    return GestureDetector(
+      onPanStart: (_) {
+        windowManager.startDragging();
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [
+          const AppIcon(),
+          _buildOptions(0, 'Proxy'.tr),
+          _buildOptions(1, 'Profile'.tr),
+          _buildOptions(2, 'Setting'.tr),
+          _buildOptions(3, 'Log'.tr),
+          _buildOptions(4, 'About'.tr),
+          Expanded(
+            child: Container(
+                decoration: const BoxDecoration(color: Colors.transparent),
+                child: const SpeedWidget()),
+          ),
+          const WindowPanel()
+        ],
+      ),
     );
   }
 
@@ -135,5 +148,57 @@ class _MainScreenState extends State<MainScreen>
       Get.find<ThemeController>()
           .changeTheme(isDark ? ThemeType.dark : ThemeType.light);
     });
+  }
+}
+
+class WindowPanel extends StatelessWidget {
+  const WindowPanel({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Ink(
+            child: InkWell(
+                onTap: () {
+                  windowManager.minimize();
+                },
+                child: const Icon(Icons.minimize).paddingAll(8.0))),
+        Ink(
+            child: InkWell(
+                onTap: () async {
+                  if (await windowManager.isMaximized()) {
+                    windowManager.unmaximize();
+                  } else {
+                    windowManager.maximize();
+                  }
+                },
+                child: const Icon(Icons.rectangle_outlined).paddingAll(8.0))),
+        Ink(
+            child: InkWell(
+                onTap: () {
+                  windowManager.close().then((value) {
+                    Get.find<ClashService>().closeClashDaemon();
+                    exit(0);
+                  });
+                },
+                child: const Icon(Icons.close).paddingAll(8.0))),
+      ],
+    );
+  }
+}
+
+class AppIcon extends StatelessWidget {
+  const AppIcon({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(12.0),
+      child: const CircleAvatar(
+        foregroundImage: AssetImage("assets/images/app_tray.jpeg"),
+        radius: 20,
+      ),
+    );
   }
 }

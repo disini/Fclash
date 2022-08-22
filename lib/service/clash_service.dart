@@ -122,6 +122,7 @@ class ClashService extends GetxService with TrayListener {
           includeParentEnvironment: true,
           workingDirectory: _clashDirectory.path,
           mode: ProcessStartMode.detached);
+      handleSignal();
 
       // _clashProcess?.stdout.listen((event) {
       //   Get.printInfo(info: String.fromCharCodes(event));
@@ -232,6 +233,7 @@ class ClashService extends GetxService with TrayListener {
   void closeClashDaemon() {
     Get.printInfo(info: 'fclash: closing daemon');
     _clashProcess?.kill();
+    _clashProcess = null;
     // double check
     stopClashSubP();
     if (isSystemProxy()) {
@@ -529,11 +531,19 @@ class ClashService extends GetxService with TrayListener {
     }
   }
 
-  bool IshideWindowWhenStart() {
+  bool isHideWindowWhenStart() {
     return SpUtil.getData('boot_window_hide', defValue: false);
   }
 
   Future<bool> setHideWindowWhenStart(bool hide) {
     return SpUtil.setData('boot_window_hide', hide);
+  }
+
+  void handleSignal() {
+    StreamSubscription? subTerm;
+    subTerm = ProcessSignal.sigterm.watch().listen((event) {
+      subTerm?.cancel();
+      _clashProcess?.kill();
+    });
   }
 }
