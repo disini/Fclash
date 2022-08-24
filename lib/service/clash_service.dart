@@ -31,6 +31,7 @@ class ClashService extends GetxService with TrayListener {
   // action
   static const ACTION_SET_SYSTEM_PROXY = "assr";
   static const ACTION_UNSET_SYSTEM_PROXY = "ausr";
+  static const MAX_ENTRIES = 5;
 
   // default port
   static var initializedHttpPort = 0;
@@ -354,9 +355,15 @@ class ClashService extends GetxService with TrayListener {
     if (proxies['proxies'] != null) {
       Map<String, dynamic> m = proxies['proxies'];
       m.removeWhere((key, value) => value['type'] != "Selector");
+      var cnt = 0;
       for (final k in m.keys) {
+        if (cnt >= ClashService.MAX_ENTRIES) {
+          stringList.add(MenuItem(label: "...", disabled: true));
+          break;
+        }
         stringList.add(
             MenuItem(label: "${m[k]['name']}: ${m[k]['now']}", disabled: true));
+        cnt += 1;
       }
     }
     // port
