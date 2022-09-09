@@ -45,7 +45,10 @@ class ClashTranslations extends Translations {
           "Download speed": "Download: @speed",
           "Upload speed": "Upload: @speed",
           "Already running.": "Fclash is already running.",
-          "Fclash is running or ports is in use": "Exiting."
+          "Fclash is running or ports is in use": "Exiting.",
+          "not a valid config file":
+              "not a valid config file, please input a valid clash yaml link.",
+          "Error": "Error"
         },
         'zh_CN': {
           "http_port": "HTTP端口",
@@ -130,7 +133,10 @@ class ClashTranslations extends Translations {
           "System proxy now.": "现在Fclash是系统代理",
           "Already running.": "Fclash 已经在运行中",
           "Fclash is running or ports is in use": "无需重复运行",
-          "Dark Theme": "黑暗模式"
+          "Dark Theme": "黑暗模式",
+          "not a valid config file":
+              "不是一个有效的配置文件，请检查是否是clash的订阅链接。有可能你导入了v2ray或者其他订阅链接",
+          "Error": "错误"
         }
       };
 }
