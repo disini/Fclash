@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fclash/screen/main_screen.dart';
 import 'package:fclash/service/autostart_service.dart';
 import 'package:fclash/service/clash_service.dart';
@@ -7,15 +9,19 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:kommon/kommon.dart';
+import 'package:proxy_manager/proxy_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
+final proxyManager = ProxyManager();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initWindow();
+  await windowManager.ensureInitialized();
   await initAppService();
   runApp(const MyApp());
 
+  initWindow();
   initAppTray();
 }
 
@@ -31,7 +37,8 @@ void initAppTray({List<MenuItem>? details, bool isUpdate = false}) async {
   // if (!isUpdate) {
   //   // TODO
   // }
-  await trayManager.setIcon('assets/images/app_tray.jpeg');
+  await trayManager.setIcon(
+     Platform.isWindows ? 'assets/images/app_tray.ico' : 'assets/images/app_tray.png');
   List<MenuItem> items = [
     MenuItem(
       key: 'show',

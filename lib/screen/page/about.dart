@@ -15,7 +15,7 @@ class AboutPage extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 50.0),
             child: const CircleAvatar(
-              foregroundImage: AssetImage("assets/images/app_tray.jpeg"),
+              foregroundImage: AssetImage("assets/images/app_tray.png"),
               radius: 100,
             ),
           ),

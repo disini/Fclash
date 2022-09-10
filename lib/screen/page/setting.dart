@@ -204,10 +204,10 @@ class _SettingState extends State<Setting> {
                   SpUtil.getData("system_proxy", defValue: false),
                   onToggle: (e) async {
                     if (e) {
-                      Get.find<ClashService>().setSystemProxy();
+                      await Get.find<ClashService>().setSystemProxy();
                       await SpUtil.setData("system_proxy", true);
                     } else {
-                      Get.find<ClashService>().clearSystemProxy();
+                      await Get.find<ClashService>().clearSystemProxy();
                       await SpUtil.setData("system_proxy", false);
                     }
                     setState(() {

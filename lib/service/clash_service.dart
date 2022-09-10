@@ -11,10 +11,11 @@ import 'package:fclash/main.dart';
 import 'package:fclash/service/notification_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:kommon/kommon.dart';
+import 'package:kommon/kommon.dart' hide ProxyTypes;
 import 'package:path/path.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:proxy_manager/proxy_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:ffi/ffi.dart';
 import 'package:path/path.dart' as path;
@@ -59,10 +60,16 @@ class ClashService extends GetxService with TrayListener {
 
   ClashService() {
     // load lib
-    final base = Platform.environment["FCLASH_LIB_PATH"] ??
+    var fullPath = "";
+    if (Platform.isWindows) {
+      fullPath = "libclash.dll";
+    } else if (Platform.isMacOS) {
+      fullPath = "libclash.dylib";
+    } else {
+      final base = Platform.environment["FCLASH_LIB_PATH"] ??
         "/opt/apps/cn.kingtous.fclash/files/lib";
-    final fullPath = path.join(base, "libclash.so");
-
+      fullPath = path.join(base, "libclash.so");
+    }
     final lib = ffi.DynamicLibrary.open(fullPath);
     clashFFI = NativeLibrary(lib);
   }
@@ -78,8 +85,8 @@ class ClashService extends GetxService with TrayListener {
     // init clash
     // kill all other clash clients
     _clashDirectory = await getApplicationSupportDirectory();
-    _clashDirectory =
-        Directory.fromUri(Uri.parse(p.join(_clashDirectory.path, "clash")));
+    final clashConfigPath = p.join(_clashDirectory.path, "clash");
+    _clashDirectory = Directory(clashConfigPath);
     print("fclash work directory: ${_clashDirectory.path}");
     final clashBin = p.join(_clashDirectory.path, 'clash');
     final clashConf = p.join(_clashDirectory.path, currentYaml.value);
@@ -192,12 +199,12 @@ class ClashService extends GetxService with TrayListener {
     super.onClose();
   }
 
-  void closeClashDaemon() {
+  Future<void> closeClashDaemon() async {
     Get.printInfo(info: 'fclash: closing daemon');
     // double check
     // stopClashSubP();
     if (isSystemProxy()) {
-      clearSystemProxy();
+      await clearSystemProxy();
     }
   }
 
@@ -286,17 +293,17 @@ class ClashService extends GetxService with TrayListener {
     return SpUtil.setData('system_proxy', proxy);
   }
 
-  void setSystemProxy() {
+  Future<void> setSystemProxy() async {
     if (configEntity.value != null) {
       final entity = configEntity.value!;
       if (entity.port != 0) {
-        ProxyHelper.setAsSystemProxy(
+        await proxyManager.setAsSystemProxy(
             ProxyTypes.http, '127.0.0.1', entity.port!);
-        ProxyHelper.setAsSystemProxy(
+        await proxyManager.setAsSystemProxy(
             ProxyTypes.https, '127.0.0.1', entity.port!);
       }
-      if (entity.socksPort != 0) {
-        ProxyHelper.setAsSystemProxy(
+      if (entity.socksPort != 0 && !Platform.isWindows) {
+        await proxyManager.setAsSystemProxy(
             ProxyTypes.socks, '127.0.0.1', entity.socksPort!);
       }
       Tips.info("Configure Success!");
@@ -304,8 +311,8 @@ class ClashService extends GetxService with TrayListener {
     }
   }
 
-  void clearSystemProxy() {
-    ProxyHelper.cleanSystemProxy();
+  Future<void> clearSystemProxy() async {
+    await proxyManager.cleanSystemProxy();
     setIsSystemProxy(false);
   }
 
@@ -373,8 +380,9 @@ class ClashService extends GetxService with TrayListener {
         reload();
         break;
       case ACTION_UNSET_SYSTEM_PROXY:
-        clearSystemProxy();
-        reload();
+        clearSystemProxy().then((_) {
+          reload();
+        });
         break;
     }
   }

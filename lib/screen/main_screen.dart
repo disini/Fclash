@@ -34,16 +34,23 @@ class _MainScreenState extends State<MainScreen>
   }
 
   @override
-  void onTrayIconMouseUp() {
+  void onTrayIconMouseDown() {
+    // windowManager.focus();
     windowManager.show();
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    super.onTrayIconRightMouseDown();
+    trayManager.popUpContextMenu();
   }
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
     switch (menuItem.key) {
       case 'exit':
-        windowManager.close().then((value) {
-          Get.find<ClashService>().closeClashDaemon();
+        windowManager.close().then((value) async {
+          await Get.find<ClashService>().closeClashDaemon();
           exit(0);
         });
         break;
@@ -196,7 +203,7 @@ class AppIcon extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.all(12.0),
       child: const CircleAvatar(
-        foregroundImage: AssetImage("assets/images/app_tray.jpeg"),
+        foregroundImage: AssetImage("assets/images/app_tray.png"),
         radius: 20,
       ),
     );

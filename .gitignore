@@ -51,6 +51,9 @@ app.*.map.json
 
 # so
 */*.so
+*/*.dll
+*/*.dylib
 */*.zst
 */*.deb
+*/*.exe
 clash/libclash.h

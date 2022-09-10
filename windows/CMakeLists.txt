@@ -50,6 +50,9 @@ add_subdirectory("runner")
 # them to the application.
 include(flutter/generated_plugins.cmake)
 
+# # clash lib
+# add_library( libclash SHARED IMPORTED )
+# set_target_properties(libclash PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../clash/libclash.dll)
 
 # === Installation ===
 # Support files are copied into place next to the executable, so that it can
@@ -73,6 +76,10 @@ install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}
 
 install(FILES "${FLUTTER_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
   COMPONENT Runtime)
+
+# libclash.dll
+install(FILES "../clash/libclash.dll" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+COMPONENT Runtime)
 
 if(PLUGIN_BUNDLED_LIBRARIES)
   install(FILES "${PLUGIN_BUNDLED_LIBRARIES}"

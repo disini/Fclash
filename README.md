@@ -1,10 +1,10 @@
 # FClash
 
-<p align="center"><img src="assets/images/app_tray.jpeg" style="border-radius: 50%;"/></p>
+<p align="center"><img src="assets/images/app_tray.png" style="border-radius: 50%;"/></p>
 
 
 <p align="center" style="font-size: 20px">A Clash Proxy Fronted based on Clash</p>
-<p align="center" style="font-size: 16px">Linux Supported</p>
+<p align="center" style="font-size: 16px">Windows / Linux Supported, macOS comming soon!</p>
 
 [![flutter awesome](https://img.shields.io/badge/Flutter-Awesome-orange)](https://flutterawesome.com/clash-fronted-client-by-flutter-linux-supported/)
 [![fclash](https://snapcraft.io/fclash/badge.svg)](https://snapcraft.io/fclash)

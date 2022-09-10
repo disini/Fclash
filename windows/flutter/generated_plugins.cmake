@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   permission_handler_windows
+  proxy_manager
   screen_retriever
   tray_manager
   url_launcher_windows
