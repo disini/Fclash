@@ -67,7 +67,7 @@ class ClashService extends GetxService with TrayListener {
       fullPath = "libclash.dylib";
     } else {
       final base = Platform.environment["FCLASH_LIB_PATH"] ??
-        "/opt/apps/cn.kingtous.fclash/files/lib";
+          "/opt/apps/cn.kingtous.fclash/files/lib";
       fullPath = path.join(base, "libclash.so");
     }
     final lib = ffi.DynamicLibrary.open(fullPath);
@@ -100,6 +100,12 @@ class ClashService extends GetxService with TrayListener {
     final mmdbF = File(countryMMdb);
     if (!mmdbF.existsSync()) {
       await mmdbF.writeAsBytes(mmdb.buffer.asInt8List());
+    }
+    final config = await rootBundle.load('assets/tp/clash/config.yaml');
+    // write to clash dir
+    final configF = File(clashConf);
+    if (!configF.existsSync()) {
+      await configF.writeAsBytes(config.buffer.asInt8List());
     }
     // ffi
     clashFFI.set_home_dir(_clashDirectory.path.toNativeUtf8().cast());
