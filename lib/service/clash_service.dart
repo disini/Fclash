@@ -2,25 +2,32 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ffi' as ffi;
 
 import 'package:dio/dio.dart';
 import 'package:fclash/bean/clash_config_entity.dart';
+import 'package:fclash/generated_bindings.dart';
 import 'package:fclash/main.dart';
 import 'package:fclash/service/notification_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:kommon/kommon.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:ffi/ffi.dart';
+import 'package:path/path.dart' as path;
+
+late NativeLibrary clashFFI;
 
 class ClashService extends GetxService with TrayListener {
-  static const clashBaseUrl = "http://127.0.0.1:22345";
-  static const clashExtBaseUrlCmd = "127.0.0.1:22345";
+  // 需要一起改端口
+  static const clashBaseUrl = "http://127.0.0.1:$clashExtPort";
+  static const clashExtPort = 22345;
 
   // 运行时
   late Directory _clashDirectory;
-  Process? _clashProcess;
 
   // 流量
   final uploadRate = 0.0.obs;
@@ -47,16 +54,17 @@ class ClashService extends GetxService with TrayListener {
   RxBool isSystemProxyObs = RxBool(false);
 
   Future<bool> isRunning() async {
-    try {
-      final resp = await Request.get(clashBaseUrl,
-          options: Options(sendTimeout: 1000, receiveTimeout: 1000));
-      if ('clash' == resp['hello']) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
+    return true;
+  }
+
+  ClashService() {
+    // load lib
+    final base = Platform.environment["FCLASH_LIB_PATH"] ??
+        "/opt/apps/cn.kingtous.fclash/files/lib";
+    final fullPath = path.join(base, "libclash.so");
+
+    final lib = ffi.DynamicLibrary.open(fullPath);
+    clashFFI = NativeLibrary(lib);
   }
 
   Future<ClashService> init() async {
@@ -66,10 +74,9 @@ class ClashService extends GetxService with TrayListener {
     initializedSockPort = SpUtil.getData('socks-port', defValue: 12347);
     initializedMixedPort = SpUtil.getData('mixed-port', defValue: 12348);
     currentYaml.value = _;
+    Request.setBaseUrl(clashBaseUrl);
     // init clash
     // kill all other clash clients
-    stopClashSubP();
-    Request.setBaseUrl(clashBaseUrl);
     _clashDirectory = await getApplicationSupportDirectory();
     _clashDirectory =
         Directory.fromUri(Uri.parse(p.join(_clashDirectory.path, "clash")));
@@ -77,69 +84,26 @@ class ClashService extends GetxService with TrayListener {
     final clashBin = p.join(_clashDirectory.path, 'clash');
     final clashConf = p.join(_clashDirectory.path, currentYaml.value);
     final countryMMdb = p.join(_clashDirectory.path, 'Country.mmdb');
-    if (await isRunning()) {
-      print("FClash is already running, exiting.");
-      await Get.find<NotificationService>().showNotification(
-          'Already running.'.tr, 'Fclash is running or ports is in use'.tr);
-      exit(0);
-    } else {
-      print("running Fclash in standalone mode.");
-      if (!await _clashDirectory.exists()) {
-        await _clashDirectory.create(recursive: true);
-      }
-      // copy executable to directory
-      final exe = await rootBundle.load('assets/tp/clash/clash');
-      final yaml = await rootBundle.load('assets/tp/clash/config.yaml');
-      final mmdb = await rootBundle.load('assets/tp/clash/Country.mmdb');
-      // write to clash dir
-      final exeF = File(clashBin);
-      if (!exeF.existsSync()) {
-        await exeF.writeAsBytes(exe.buffer.asInt8List());
-      }
-      final yamlF = File(clashConf);
-      if (!yamlF.existsSync()) {
-        await yamlF.writeAsBytes(yaml.buffer.asInt8List());
-      }
-      final mmdbF = File(countryMMdb);
-      if (!mmdbF.existsSync()) {
-        await mmdbF.writeAsBytes(mmdb.buffer.asInt8List());
-      }
-      // add permission
-      final ret = Process.runSync('chmod', ['+x', clashBin], runInShell: true);
-      if (ret.exitCode != 0) {
-        Get.printError(
-            info: 'fclash: no permission to add execute flag to $clashBin');
-      }
-      _clashProcess = await Process.start(
-          clashBin,
-          [
-            '-d',
-            _clashDirectory.path,
-            '-f',
-            clashConf,
-            '-ext-ctl',
-            clashExtBaseUrlCmd
-          ],
-          includeParentEnvironment: true,
-          workingDirectory: _clashDirectory.path,
-          mode: ProcessStartMode.detached);
-      handleSignal();
-
-      // _clashProcess?.stdout.listen((event) {
-      //   Get.printInfo(info: String.fromCharCodes(event));
-      // });
-      // _clashProcess?.stderr.listen((event) {
-      //   Get.printInfo(info: String.fromCharCodes(event));
-      // });
+    if (!await _clashDirectory.exists()) {
+      await _clashDirectory.create(recursive: true);
     }
-    Timer.periodic(const Duration(milliseconds: 500), (timer) async {
-      final isOk = await isRunning();
-      Get.printError(
-          info: 'fclash daemon: ${isOk ? "running" : "not running!!"}');
-      if (isOk) {
-        timer.cancel();
-        initDaemon();
-      }
+    // copy executable to directory
+    final mmdb = await rootBundle.load('assets/tp/clash/Country.mmdb');
+    // write to clash dir
+    final mmdbF = File(countryMMdb);
+    if (!mmdbF.existsSync()) {
+      await mmdbF.writeAsBytes(mmdb.buffer.asInt8List());
+    }
+    // ffi
+    clashFFI.set_home_dir(_clashDirectory.path.toNativeUtf8().cast());
+    clashFFI.clash_init(_clashDirectory.path.toNativeUtf8().cast());
+    clashFFI.set_config(clashConf.toNativeUtf8().cast());
+    clashFFI.set_ext_controller(clashExtPort);
+    if (clashFFI.parse_options() == 0) {
+      Get.printInfo(info: "parse ok");
+    }
+    Future.delayed(const Duration(seconds: 1), () {
+      initDaemon();
     });
     // tray show issue
     trayManager.addListener(this);
@@ -173,23 +137,20 @@ class ClashService extends GetxService with TrayListener {
   void initDaemon() async {
     printInfo(info: 'init clash service');
     // get traffic
-    getTraffic().then((value) {
-      if (value != null) {
-        Get.printInfo(info: 'connected to traffic');
-        value.listen((event) {
-          final msg = String.fromCharCodes(event);
-          try {
-            final trafficJson = jsonDecode(msg);
-            Get.printInfo(info: '[traffic]: $msg');
-            uploadRate.value = trafficJson['up'].toDouble() / 1024; // KB
-            downRate.value = trafficJson['down'].toDouble() / 1024; // KB
-            // fix: 只有KDE不会导致Tray自动消失
-            // final desktop = Platform.environment['XDG_CURRENT_DESKTOP'];
-            // updateTray();
-          } catch (e) {
-            Get.printError(info: '$e');
-          }
-        });
+    Timer.periodic(const Duration(seconds: 1), (t) {
+      final traffic = clashFFI.get_traffic().cast<Utf8>().toDartString();
+      if (kDebugMode) {
+        debugPrint("$traffic");
+      }
+      try {
+        final trafficJson = jsonDecode(traffic);
+        uploadRate.value = trafficJson['Up'].toDouble() / 1024; // KB
+        downRate.value = trafficJson['Down'].toDouble() / 1024; // KB
+        // fix: 只有KDE不会导致Tray自动消失
+        // final desktop = Platform.environment['XDG_CURRENT_DESKTOP'];
+        // updateTray();
+      } catch (e) {
+        Get.printError(info: '$e');
       }
     });
     _getLog().then((stream) {
@@ -233,10 +194,8 @@ class ClashService extends GetxService with TrayListener {
 
   void closeClashDaemon() {
     Get.printInfo(info: 'fclash: closing daemon');
-    _clashProcess?.kill();
-    _clashProcess = null;
     // double check
-    stopClashSubP();
+    // stopClashSubP();
     if (isSystemProxy()) {
       clearSystemProxy();
     }
@@ -262,12 +221,25 @@ class ClashService extends GetxService with TrayListener {
   }
 
   Future<bool> _changeConfig(FileSystemEntity config) async {
-    final resp = await Request.dioClient.put('/configs',
-        queryParameters: {"force": false}, data: {"path": config.path});
-    Get.printInfo(info: 'config changed ret: ${resp.statusCode}');
-    currentYaml.value = basename(config.path);
-    SpUtil.setData('yaml', currentYaml.value);
-    return resp.statusCode == 204;
+    // judge valid
+    if (clashFFI.is_config_valid(config.path.toNativeUtf8().cast()) == 0) {
+      final resp = await Request.dioClient.put('/configs',
+          queryParameters: {"force": false}, data: {"path": config.path});
+      Get.printInfo(info: 'config changed ret: ${resp.statusCode}');
+      currentYaml.value = basename(config.path);
+      SpUtil.setData('yaml', currentYaml.value);
+      return resp.statusCode == 204;
+    } else {
+      Future.delayed(Duration.zero, () {
+        Get.defaultDialog(
+            middleText: 'not a valid config file'.tr,
+            onConfirm: () {
+              Get.back();
+            });
+      });
+      config.delete();
+      return false;
+    }
   }
 
   Future<bool> changeYaml(FileSystemEntity config) async {
@@ -420,14 +392,17 @@ class ClashService extends GetxService with TrayListener {
               .downloadUri(uri, newProfilePath, onReceiveProgress: (i, t) {
         Get.printInfo(info: "$i/$t");
       });
-      // set subscription
-      await SpUtil.setData('profile_$name', url);
       return resp.statusCode == 200;
+    } catch (e) {
+      BrnToast.show("Error: ${e}", Get.context!);
     } finally {
       final f = File(newProfilePath);
-      if (f.existsSync()) {
-        await changeYaml(f);
+      if (f.existsSync() && await changeYaml(f)) {
+        // set subscription
+        await SpUtil.setData('profile_$name', url);
+        return true;
       }
+      return false;
     }
   }
 
@@ -478,26 +453,26 @@ class ClashService extends GetxService with TrayListener {
   /// ps -A | grep '[^f]clash' | awk '{print $1}' | xargs
   ///
   /// notice: is a double check in client mode
-  void stopClashSubP() {
-    final res = Process.runSync("ps", [
-      "-A",
-      "|",
-      "grep",
-      "'[^f]clash'",
-      "|",
-      "awk",
-      "'print \$1'",
-      "|",
-      "xrgs",
-    ]);
-    final clashPids = res.stdout.toString().split(" ");
-    for (final pid in clashPids) {
-      final pidInt = int.tryParse(pid);
-      if (pidInt != null) {
-        Process.killPid(int.parse(pid));
-      }
-    }
-  }
+  // void stopClashSubP() {
+  //   final res = Process.runSync("ps", [
+  //     "-A",
+  //     "|",
+  //     "grep",
+  //     "'[^f]clash'",
+  //     "|",
+  //     "awk",
+  //     "'print \$1'",
+  //     "|",
+  //     "xrgs",
+  //   ]);
+  //   final clashPids = res.stdout.toString().split(" ");
+  //   for (final pid in clashPids) {
+  //     final pidInt = int.tryParse(pid);
+  //     if (pidInt != null) {
+  //       Process.killPid(int.parse(pid));
+  //     }
+  //   }
+  // }
 
   Future<bool> updateSubscription(String name) async {
     final configName = '$name.yaml';
@@ -550,7 +525,7 @@ class ClashService extends GetxService with TrayListener {
     StreamSubscription? subTerm;
     subTerm = ProcessSignal.sigterm.watch().listen((event) {
       subTerm?.cancel();
-      _clashProcess?.kill();
+      // _clashProcess?.kill();
     });
   }
 }

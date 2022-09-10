@@ -1,11 +1,14 @@
 #!/bin/bash
 
+# run go
+./build-clash-lib.py
+
 # build linux
 echo "build flutter package in $PWD"
 flutter build linux --release
 
 # create files
-mkdir -p ./debian/build-src/opt/apps/cn.kingtous.fclash/files
+mkdir -p ./debian/build-src/opt/apps/cn.kingtous.fclash/files/lib
 
 # rm
 pushd ./debian/build-src/opt/apps/cn.kingtous.fclash/files || exit
@@ -14,6 +17,7 @@ popd || exit
 
 # cp
 cp -r ./build/linux/x64/release/bundle/* ./debian/build-src/opt/apps/cn.kingtous.fclash/files
+cp ./clash/libclash.so ./debian/build-src/opt/apps/cn.kingtous.fclash/files/lib/libclash.so
 
 echo "build deb package"
 pushd ./debian || exit
