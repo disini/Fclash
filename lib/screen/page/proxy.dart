@@ -38,21 +38,21 @@ class _ProxyState extends State<Proxy> {
                   content: 'Current using'
                       .trParams({"name": cs.currentYaml.value}))),
               Obx(() => BrnNoticeBar(
-                noticeStyle: cs.isSystemProxyObs.value
-                    ? NoticeStyles.succeedWithArrow
-                    : NoticeStyles.warningWithArrow,
-                content: cs.isSystemProxyObs.value
-                    ? "Fclash is running as system proxy now. Enjoy.".tr
-                    : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
-                    .tr,
-                rightWidget: cs.isSystemProxyObs.value
-                    ? Offstage()
-                    : TextButton(
-                    onPressed: () {
-                      cs.setSystemProxy();
-                    },
-                    child: Text("set Fclash as system proxy".tr)),
-              )),
+                    noticeStyle: cs.isSystemProxyObs.value
+                        ? NoticeStyles.succeedWithArrow
+                        : NoticeStyles.warningWithArrow,
+                    content: cs.isSystemProxyObs.value
+                        ? "Fclash is running as system proxy now. Enjoy.".tr
+                        : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
+                            .tr,
+                    rightWidget: cs.isSystemProxyObs.value
+                        ? Offstage()
+                        : TextButton(
+                            onPressed: () {
+                              cs.setSystemProxy();
+                            },
+                            child: Text("set Fclash as system proxy".tr)),
+                  )),
               Expanded(child: Obx(() => buildTiles()))
             ],
           ),
@@ -108,7 +108,11 @@ class _ProxyState extends State<Proxy> {
                 ? Colors.black12
                 : Colors.white,
             children: [
-              buildSelectItem(selector),
+              Row(
+                children: [
+                  Expanded(child: buildSelectItem(selector)),
+                ],
+              ).paddingSymmetric(horizontal: 4.0),
               // for debug
               // kDebugMode ? BrnExpandableText(text: selector.toString(),maxLines: 1,textStyle: TextStyle(fontSize: 20,
               // color: Colors.black),) : Offstage(),
@@ -156,15 +160,16 @@ class _ProxyState extends State<Proxy> {
       alignment: WrapAlignment.start,
       crossAxisAlignment: WrapCrossAlignment.start,
       children: allItems.map((itemName) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2.0),
+        return Card(
+          // padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: BrnRadioButton(
               radioIndex: index++,
               behavior: HitTestBehavior.opaque,
               child: Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
                     child: Text(
                       itemName,
                       style: const TextStyle(fontSize: 20),

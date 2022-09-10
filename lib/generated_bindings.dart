@@ -114,6 +114,16 @@ class NativeLibrary {
   late final _parse_optionsPtr =
       _lookup<ffi.NativeFunction<GoUint8 Function()>>('parse_options');
   late final _parse_options = _parse_optionsPtr.asFunction<int Function()>();
+
+  ffi.Pointer<ffi.Char> get_traffic() {
+    return _get_traffic();
+  }
+
+  late final _get_trafficPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+          'get_traffic');
+  late final _get_traffic =
+      _get_trafficPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
 }
 
 class max_align_t extends ffi.Opaque {}

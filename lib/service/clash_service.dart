@@ -9,6 +9,7 @@ import 'package:fclash/bean/clash_config_entity.dart';
 import 'package:fclash/generated_bindings.dart';
 import 'package:fclash/main.dart';
 import 'package:fclash/service/notification_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:kommon/kommon.dart';
 import 'package:path/path.dart';
@@ -16,6 +17,7 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:ffi/ffi.dart';
+import 'package:path/path.dart' as path;
 
 late NativeLibrary clashFFI;
 
@@ -52,22 +54,16 @@ class ClashService extends GetxService with TrayListener {
   RxBool isSystemProxyObs = RxBool(false);
 
   Future<bool> isRunning() async {
-    try {
-      final resp = await Request.get(clashBaseUrl,
-          options: Options(sendTimeout: 1000, receiveTimeout: 1000));
-      if ('clash' == resp['hello']) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
+    return true;
   }
 
   ClashService() {
     // load lib
-    final lib = ffi.DynamicLibrary.open(
-        "/opt/apps/cn.kingtous.fclash/files/lib/libclash.so");
+    final base = Platform.environment["FCLASH_LIB_PATH"] ??
+        "/opt/apps/cn.kingtous.fclash/files/lib";
+    final fullPath = path.join(base, "libclash.so");
+
+    final lib = ffi.DynamicLibrary.open(fullPath);
     clashFFI = NativeLibrary(lib);
   }
 
@@ -141,23 +137,20 @@ class ClashService extends GetxService with TrayListener {
   void initDaemon() async {
     printInfo(info: 'init clash service');
     // get traffic
-    getTraffic().then((value) {
-      if (value != null) {
-        Get.printInfo(info: 'connected to traffic');
-        value.listen((event) {
-          final msg = String.fromCharCodes(event);
-          try {
-            final trafficJson = jsonDecode(msg);
-            Get.printInfo(info: '[traffic]: $msg');
-            uploadRate.value = trafficJson['up'].toDouble() / 1024; // KB
-            downRate.value = trafficJson['down'].toDouble() / 1024; // KB
-            // fix: 只有KDE不会导致Tray自动消失
-            // final desktop = Platform.environment['XDG_CURRENT_DESKTOP'];
-            // updateTray();
-          } catch (e) {
-            Get.printError(info: '$e');
-          }
-        });
+    Timer.periodic(const Duration(seconds: 1), (t) {
+      final traffic = clashFFI.get_traffic().cast<Utf8>().toDartString();
+      if (kDebugMode) {
+        debugPrint("$traffic");
+      }
+      try {
+        final trafficJson = jsonDecode(traffic);
+        uploadRate.value = trafficJson['Up'].toDouble() / 1024; // KB
+        downRate.value = trafficJson['Down'].toDouble() / 1024; // KB
+        // fix: 只有KDE不会导致Tray自动消失
+        // final desktop = Platform.environment['XDG_CURRENT_DESKTOP'];
+        // updateTray();
+      } catch (e) {
+        Get.printError(info: '$e');
       }
     });
     _getLog().then((stream) {

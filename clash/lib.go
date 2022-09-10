@@ -2,6 +2,7 @@ package main
 
 import "C"
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/hub"
 	"github.com/Dreamacro/clash/hub/executor"
+	"github.com/Dreamacro/clash/tunnel/statistic"
 )
 
 var (
@@ -88,6 +90,21 @@ func parse_options() bool {
 		return true
 	}
 	return false
+}
+
+//export get_traffic
+func get_traffic() *C.char {
+	up, down := statistic.DefaultManager.Now()
+	traffic := map[string]int64{
+		"Up":   up,
+		"Down": down,
+	}
+	data, err := json.Marshal(traffic)
+	if err != nil {
+		fmt.Println("Error: %s", err)
+		return C.CString("")
+	}
+	return C.CString(string(data))
 }
 
 func main() {

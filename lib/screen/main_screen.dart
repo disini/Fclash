@@ -73,6 +73,7 @@ class _MainScreenState extends State<MainScreen>
   @override
   Widget build(BuildContext context) {
     return DragToResizeArea(
+      resizeEdgeSize: 12,
       child: Scaffold(
           body: Column(
         children: [buildOptions(), Expanded(child: buildFrame())],
