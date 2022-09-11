@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 import 'dart:ffi' as ffi;
 
@@ -35,6 +36,7 @@ class ClashService extends GetxService with TrayListener {
   final downRate = 0.0.obs;
   final yamlConfigs = RxList<FileSystemEntity>.empty(growable: true);
   final currentYaml = 'config.yaml'.obs;
+  final proxyStatus = RxMap<String, int>();
 
   // action
   static const ACTION_SET_SYSTEM_PROXY = "assr";
@@ -305,10 +307,12 @@ class ClashService extends GetxService with TrayListener {
       if (entity.port != 0) {
         await proxyManager.setAsSystemProxy(
             ProxyTypes.http, '127.0.0.1', entity.port!);
+        print("set http");
         await proxyManager.setAsSystemProxy(
             ProxyTypes.https, '127.0.0.1', entity.port!);
       }
       if (entity.socksPort != 0 && !Platform.isWindows) {
+        print("set socks");
         await proxyManager.setAsSystemProxy(
             ProxyTypes.socks, '127.0.0.1', entity.socksPort!);
       }
@@ -382,8 +386,9 @@ class ClashService extends GetxService with TrayListener {
   void onTrayMenuItemClick(MenuItem menuItem) {
     switch (menuItem.key) {
       case ACTION_SET_SYSTEM_PROXY:
-        setSystemProxy();
-        reload();
+        setSystemProxy().then((value) {
+          reload();
+        });
         break;
       case ACTION_UNSET_SYSTEM_PROXY:
         clearSystemProxy().then((_) {
@@ -445,15 +450,21 @@ class ClashService extends GetxService with TrayListener {
     }
   }
 
-  Future<dynamic> delay(String proxyName,
+  Future<int> delay(String proxyName,
       {int timeout = 5000, String url = "https://www.google.com"}) async {
-    final resp = await Request.dioClient.get('/proxies/$proxyName/delay',
-        queryParameters: {"timeout": timeout, "url": url});
-    final data = jsonDecode(resp.data);
-    if (data['message'] != null) {
-      return data['message'];
+    try {
+      final resp = await Request.dioClient.get('/proxies/$proxyName/delay',
+          queryParameters: {"timeout": timeout, "url": url});
+      final data = jsonDecode(resp.data);
+      print(data.toString());
+      if (data['message'] != null) {
+        print(data['message'].toString());
+        return -1;
+      }
+      return data['delay'] ?? -1;
+    } catch (e) {
+      return -1;
     }
-    return data['delay'] ?? -1;
   }
 
   /// yaml: test
@@ -541,5 +552,12 @@ class ClashService extends GetxService with TrayListener {
       subTerm?.cancel();
       // _clashProcess?.kill();
     });
+  }
+
+  Future<void> testAllProxies(List<dynamic> allItem) async {
+    await Future.wait(allItem.map((proxyName) async {
+      final delayInMs = await delay(proxyName);
+      proxyStatus[proxyName] = delayInMs;
+    }));
   }
 }

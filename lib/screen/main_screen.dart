@@ -80,7 +80,6 @@ class _MainScreenState extends State<MainScreen>
   @override
   Widget build(BuildContext context) {
     return DragToResizeArea(
-      resizeEdgeSize: 12,
       child: Scaffold(
           body: Column(
         children: [buildOptions(), Expanded(child: buildFrame())],
@@ -93,24 +92,28 @@ class _MainScreenState extends State<MainScreen>
       onPanStart: (_) {
         windowManager.startDragging();
       },
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.baseline,
-        textBaseline: TextBaseline.alphabetic,
-        children: [
-          const AppIcon(),
-          _buildOptions(0, 'Proxy'.tr),
-          _buildOptions(1, 'Profile'.tr),
-          _buildOptions(2, 'Setting'.tr),
-          _buildOptions(3, 'Log'.tr),
-          _buildOptions(4, 'About'.tr),
-          Expanded(
-            child: Container(
-                decoration: const BoxDecoration(color: Colors.transparent),
-                child: const SpeedWidget()),
-          ),
-          const WindowPanel()
-        ],
+      child: SizedBox(
+        height: 75,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            const AppIcon().marginOnly(top: Platform.isMacOS ? 12.0 : 0.0),
+            _buildOptions(0, 'Proxy'.tr),
+            _buildOptions(1, 'Profile'.tr),
+            _buildOptions(2, 'Setting'.tr),
+            _buildOptions(3, 'Log'.tr),
+            _buildOptions(4, 'About'.tr),
+            Expanded(
+              child: Container(
+                  alignment: Alignment.center,
+                  decoration: const BoxDecoration(color: Colors.transparent),
+                  child: const SpeedWidget()),
+            ),
+            const WindowPanel()
+          ],
+        ),
       ),
     );
   }

@@ -19,15 +19,14 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
   await initAppService();
+  await initWindow();
   runApp(const MyApp());
-
-  initWindow();
   initAppTray();
 }
 
 Future<void> initWindow() async {
   WindowOptions opts = const WindowOptions(
-      minimumSize: Size(600, 400), titleBarStyle: TitleBarStyle.hidden);
+      minimumSize: Size(1024, 768), titleBarStyle: TitleBarStyle.hidden);
   windowManager.waitUntilReadyToShow(opts, () {
     // ignore
   });
@@ -37,8 +36,9 @@ void initAppTray({List<MenuItem>? details, bool isUpdate = false}) async {
   // if (!isUpdate) {
   //   // TODO
   // }
-  await trayManager.setIcon(
-     Platform.isWindows ? 'assets/images/app_tray.ico' : 'assets/images/app_tray.png');
+  await trayManager.setIcon(Platform.isWindows
+      ? 'assets/images/app_tray.ico'
+      : 'assets/images/app_tray.png');
   List<MenuItem> items = [
     MenuItem(
       key: 'show',

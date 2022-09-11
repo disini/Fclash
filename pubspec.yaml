@@ -46,11 +46,7 @@ dependencies:
   package_info_plus: ^1.4.2
   flutter_local_notifications: ^9.4.0
   ffigen: ^6.0.0
-  proxy_manager:
-    git:
-      url: https://github.com/Kingtous/proxy_manager
-      ref: 361827a5254b0c1ec8382ccd690c6950f04beddb
-  icons_launcher: ^2.0.4
+  proxy_manager: ^0.0.1-1
 
 dev_dependencies:
   flutter_test:

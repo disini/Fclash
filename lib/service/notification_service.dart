@@ -8,7 +8,8 @@ class NotificationService extends GetxService {
 
   Future<NotificationService> init() async {
     await notification.initialize(const InitializationSettings(
-        linux: LinuxInitializationSettings(defaultActionName: 'act')));
+        linux: LinuxInitializationSettings(defaultActionName: 'act'),
+        macOS: MacOSInitializationSettings()));
     return this;
   }
 

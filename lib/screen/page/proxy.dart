@@ -12,6 +12,8 @@ class Proxy extends StatefulWidget {
 }
 
 class _ProxyState extends State<Proxy> {
+  ClashService get service => Get.find<ClashService>();
+
   @override
   void initState() {
     super.initState();
@@ -123,20 +125,14 @@ class _ProxyState extends State<Proxy> {
           alignment: Alignment.topRight,
           child: TextButton(
               onPressed: () async {
-                BrnLoadingDialog.show(context, barrierDismissible: false);
-                try {
-                  await Get.find<ClashService>().delay(proxyName).then((value) {
-                    if (value is int) {
-                      BrnToast.show(
-                          "$proxyName-${selector['now']}: $value ms", context);
-                    } else {
-                      BrnToast.show("Error: $proxyName: $value", context);
-                      // Tips.info("$proxyName: $value");
-                    }
-                  });
-                } finally {
-                  BrnLoadingDialog.dismiss(context);
-                }
+                List<dynamic> allItem = selector['all'];
+                Future.delayed(Duration.zero, () {
+                  BrnToast.show('Start test, please wait.'.tr, context);
+                });
+                await Get.find<ClashService>().testAllProxies(allItem);
+                Future.delayed(Duration.zero, () {
+                  BrnToast.show('Test complete.'.tr, context);
+                });
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -156,47 +152,89 @@ class _ProxyState extends State<Proxy> {
     final now = selector['now'];
     List<dynamic> allItems = selector['all'];
     var index = 0;
-    return Wrap(
-      alignment: WrapAlignment.start,
-      crossAxisAlignment: WrapCrossAlignment.start,
-      children: allItems.map((itemName) {
-        return Card(
-          // padding: const EdgeInsets.symmetric(vertical: 2.0),
-          child: BrnRadioButton(
-              radioIndex: index++,
-              behavior: HitTestBehavior.opaque,
+    return Obx(
+      () => Wrap(
+        alignment: WrapAlignment.start,
+        crossAxisAlignment: WrapCrossAlignment.start,
+        children: allItems.map((itemName) {
+          final delayInMs = service.proxyStatus[itemName.toString()] ?? 0;
+          return SizedBox(
+            width: 300,
+            child: Card(
+              // padding: const EdgeInsets.symmetric(vertical: 2.0),
               child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: Text(
-                      itemName,
-                      style: const TextStyle(fontSize: 20),
-                    ),
+                  Container(
+                      width: 12,
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: delayInMs < 0
+                              ? Colors.red
+                              : delayInMs == 0
+                                  ? Colors.grey
+                                  : delayInMs <= 100
+                                      ? Colors.green
+                                      : delayInMs <= 500
+                                          ? Colors.lightBlue
+                                          : delayInMs <= 1000
+                                              ? Colors.blue
+                                              : Colors.red,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5),
+                              bottomLeft: Radius.circular(5)))),
+                  Expanded(
+                    child: BrnRadioButton(
+                        radioIndex: index++,
+                        behavior: HitTestBehavior.opaque,
+                        mainAxisSize: MainAxisSize.max,
+                        child: Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Tooltip(
+                                  message: itemName.toString(),
+                                  child: Text(
+                                    itemName,
+                                    style: const TextStyle(fontSize: 16),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+                              // ping
+                              Text(
+                                "${delayInMs == 0 ? '' : '${delayInMs}ms'}",
+                                style:
+                                    TextStyle(fontSize: 12, color: Colors.grey),
+                              ).marginOnly(right: 4.0)
+                            ],
+                          ),
+                        ),
+                        onValueChangedAtIndex: (newIndex, value) {
+                          Get.find<ClashService>()
+                              .changeProxy(selectName, allItems[newIndex])
+                              .then((res) {
+                            if (res) {
+                              BrnToast.show(
+                                  'switch to name success.'.trParams(
+                                      {"name": "${allItems[newIndex]}"}),
+                                  context);
+                            } else {
+                              BrnToast.show(
+                                  'switch to name failed.'.trParams(
+                                      {"name": "${allItems[newIndex]}"}),
+                                  context);
+                            }
+                          });
+                        },
+                        isSelected: itemName == now),
                   ),
                 ],
               ),
-              onValueChangedAtIndex: (newIndex, value) {
-                Get.find<ClashService>()
-                    .changeProxy(selectName, allItems[newIndex])
-                    .then((res) {
-                  if (res) {
-                    BrnToast.show(
-                        'switch to name success.'
-                            .trParams({"name": "${allItems[newIndex]}"}),
-                        context);
-                  } else {
-                    BrnToast.show(
-                        'switch to name failed.'
-                            .trParams({"name": "${allItems[newIndex]}"}),
-                        context);
-                  }
-                });
-              },
-              isSelected: itemName == now),
-        );
-      }).toList(growable: false),
+            ),
+          );
+        }).toList(growable: false),
+      ),
     );
   }
 }
