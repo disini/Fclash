@@ -407,7 +407,7 @@ class ClashService extends GetxService with TrayListener {
         return false;
       }
       final resp =
-          await Dio(BaseOptions(sendTimeout: 15000, receiveTimeout: 15000))
+          await Dio(BaseOptions(headers: {User-Agent: 'Fclash'}, sendTimeout: 15000, receiveTimeout: 15000))
               .downloadUri(uri, newProfilePath, onReceiveProgress: (i, t) {
         Get.printInfo(info: "$i/$t");
       });
@@ -513,7 +513,7 @@ class ClashService extends GetxService with TrayListener {
       final tmpF = File('$newProfilePath.tmp');
 
       final resp =
-          await Dio(BaseOptions(sendTimeout: 15000, receiveTimeout: 15000))
+          await Dio(BaseOptions(headers: {User-Agent: 'Fclash'}, sendTimeout: 15000, receiveTimeout: 15000))
               .downloadUri(uri, tmpF.path, onReceiveProgress: (i, t) {
         Get.printInfo(info: "$i/$t");
       }).catchError((e) {
