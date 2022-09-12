@@ -41,4 +41,3 @@ jobs:
         with:
           artifacts: "debian/cn.kingtous.fclash.deb"
           token: ${{ secrets.GITHUB_TOKEN }}
-

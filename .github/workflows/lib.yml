@@ -1,0 +1,40 @@
+name: Build Clash FFI
+
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - README.md
+      - snap/**
+      - .github/**
+      - docs/**
+      - PKGBUILD
+      - .SRCINFO
+      - LICENSE
+
+jobs:
+  build-clash-lib:
+    strategy:
+      matrix:
+        os: ["macos-10.15", "ubuntu-18.04", "windows-latest"]
+        include:
+          - os: "macos-10.15"
+            lib_name: "libclash.dylib"
+          - os: "ubuntu-18.04"
+            lib_name: "libclash.so"
+          - os: "windows-latest"
+            lib_name: "libclash.dll"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+      - name: build clash lib
+        run: pushd clash && go build -buildmode=c-shared -o ./${{ matrix.lib_name }} && popd
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.lib_name }}
+          path: ./clash/${{ matrix.lib_name }}
+
