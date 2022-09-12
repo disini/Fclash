@@ -79,9 +79,7 @@ class _ProfileState extends State<Profile> {
                               ? Offstage()
                               : TextButton(
                                   onPressed: () async {
-                                    BrnLoadingDialog.show(context,
-                                        barrierDismissible: false,
-                                        content: 'Updating'.tr);
+                                    BrnToast.show('Updating'.tr, context);
                                     try {
                                       final res = await Get.find<ClashService>()
                                           .updateSubscription(key);
@@ -95,8 +93,8 @@ class _ProfileState extends State<Profile> {
                                             'Update failed, please retry!'.tr,
                                             context);
                                       }
-                                    } finally {
-                                      BrnLoadingDialog.dismiss(context);
+                                    } catch (e) {
+                                      BrnToast.show(e.toString(), context);
                                     }
                                   },
                                   child: Tooltip(
@@ -163,7 +161,7 @@ class _ProfileState extends State<Profile> {
                     snackPosition: SnackPosition.BOTTOM);
               }
             });
-              // }
+            // }
             break;
           case 1:
             if (isInUse) {

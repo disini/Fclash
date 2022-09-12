@@ -178,7 +178,7 @@ class _ProxyState extends State<Proxy> {
                                           ? Colors.lightBlue
                                           : delayInMs <= 1000
                                               ? Colors.blue
-                                              : Colors.red,
+                                              : Colors.orange,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(5),
                               bottomLeft: Radius.circular(5)))),

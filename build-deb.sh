@@ -17,7 +17,6 @@ popd || exit
 
 # cp
 cp -r ./build/linux/x64/release/bundle/* ./debian/build-src/opt/apps/cn.kingtous.fclash/files
-cp ./clash/libclash.so ./debian/build-src/opt/apps/cn.kingtous.fclash/files/lib/libclash.so
 
 echo "build deb package"
 pushd ./debian || exit

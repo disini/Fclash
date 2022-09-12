@@ -20,6 +20,7 @@ import 'package:proxy_manager/proxy_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:ffi/ffi.dart';
 import 'package:path/path.dart' as path;
+import 'package:window_manager/window_manager.dart';
 
 late NativeLibrary clashFFI;
 
@@ -30,6 +31,7 @@ class ClashService extends GetxService with TrayListener {
 
   // 运行时
   late Directory _clashDirectory;
+  RandomAccessFile? _clashLock;
 
   // 流量
   final uploadRate = 0.0.obs;
@@ -56,10 +58,6 @@ class ClashService extends GetxService with TrayListener {
   RxMap<String, dynamic> proxies = RxMap();
   RxBool isSystemProxyObs = RxBool(false);
 
-  Future<bool> isRunning() async {
-    return true;
-  }
-
   ClashService() {
     // load lib
     var fullPath = "";
@@ -68,15 +66,14 @@ class ClashService extends GetxService with TrayListener {
     } else if (Platform.isMacOS) {
       fullPath = "libclash.dylib";
     } else {
-      final base = Platform.environment["FCLASH_LIB_PATH"] ??
-          "/opt/apps/cn.kingtous.fclash/files/lib";
-      fullPath = path.join(base, "libclash.so");
+      fullPath = "libclash.so";
     }
     final lib = ffi.DynamicLibrary.open(fullPath);
     clashFFI = NativeLibrary(lib);
   }
 
   Future<ClashService> init() async {
+    _clashDirectory = await getApplicationSupportDirectory();
     // init config yaml
     final _ = SpUtil.getData('yaml', defValue: currentYaml.value);
     initializedHttpPort = SpUtil.getData('http-port', defValue: 12346);
@@ -86,7 +83,6 @@ class ClashService extends GetxService with TrayListener {
     Request.setBaseUrl(clashBaseUrl);
     // init clash
     // kill all other clash clients
-    _clashDirectory = await getApplicationSupportDirectory();
     final clashConfigPath = p.join(_clashDirectory.path, "clash");
     _clashDirectory = Directory(clashConfigPath);
     print("fclash work directory: ${_clashDirectory.path}");
@@ -109,6 +105,8 @@ class ClashService extends GetxService with TrayListener {
     if (!configF.existsSync()) {
       await configF.writeAsBytes(config.buffer.asInt8List());
     }
+    // create or detect lock file
+    await _acquireLock(_clashDirectory);
     // ffi
     clashFFI.set_home_dir(_clashDirectory.path.toNativeUtf8().cast());
     clashFFI.clash_init(_clashDirectory.path.toNativeUtf8().cast());
@@ -122,17 +120,24 @@ class ClashService extends GetxService with TrayListener {
     });
     // tray show issue
     trayManager.addListener(this);
+    // wait getx initialize
+    Future.delayed(const Duration(seconds: 3), () {
+      Get.find<NotificationService>()
+          .showNotification("Fclash", "Is running".tr);
+    });
     return this;
   }
 
   void getConfigs() {
     yamlConfigs.clear();
-    _clashDirectory.list().listen((entity) {
-      if (entity.path.toLowerCase().endsWith('.yaml')) {
+    final entities = _clashDirectory.listSync();
+    for (final entity in entities) {
+      if (entity.path.toLowerCase().endsWith('.yaml') &&
+          !yamlConfigs.contains(entity)) {
         yamlConfigs.add(entity);
         Get.printInfo(info: 'detected: ${entity.path}');
       }
-    });
+    }
   }
 
   Future<void> getCurrentClashConfig() async {
@@ -179,17 +184,6 @@ class ClashService extends GetxService with TrayListener {
         Get.printInfo(info: '[LOG]: ${utf8.decode(event)}');
       });
     });
-    // daemon
-    Timer.periodic(const Duration(seconds: 1), (timer) {
-      isRunning().then((value) {
-        if (!value) {
-          timer.cancel();
-          // try to start clash backend again
-          init();
-        }
-      });
-      isSystemProxyObs.value = isSystemProxy();
-    });
     // system proxy
     // listen port
     await reload();
@@ -214,6 +208,7 @@ class ClashService extends GetxService with TrayListener {
     if (isSystemProxy()) {
       await clearSystemProxy();
     }
+    await _clashLock?.unlock();
   }
 
   Future<void> getProxies() async {
@@ -227,7 +222,6 @@ class ClashService extends GetxService with TrayListener {
     return resp.data?.stream;
   }
 
-  /// TODO blocking
   Future<Stream<Uint8List>?> _getLog({String type = "info"}) async {
     Response<ResponseBody> resp = await Request.dioClient.get('/logs',
         options: Options(responseType: ResponseType.stream),
@@ -298,6 +292,7 @@ class ClashService extends GetxService with TrayListener {
   }
 
   Future<bool> setIsSystemProxy(bool proxy) {
+    isSystemProxyObs.value = proxy;
     return SpUtil.setData('system_proxy', proxy);
   }
 
@@ -316,7 +311,6 @@ class ClashService extends GetxService with TrayListener {
         await proxyManager.setAsSystemProxy(
             ProxyTypes.socks, '127.0.0.1', entity.socksPort!);
       }
-      Tips.info("Configure Success!");
       setIsSystemProxy(true);
     }
   }
@@ -331,16 +325,6 @@ class ClashService extends GetxService with TrayListener {
     // yaml
     stringList
         .add(MenuItem(label: "profile: ${currentYaml.value}", disabled: true));
-    // FIX: DDE menu issue
-    // stringList.add(MenuItem(
-    //     title: "Download speed"
-    //         .trParams({"speed": " ${downRate.value.toStringAsFixed(1)}KB/s"}),
-    //     disabled: true));
-    // stringList.add(MenuItem(
-    //     title: "Upload speed"
-    //         .trParams({"speed": "${uploadRate.value.toStringAsFixed(1)}KB/s"}),
-    //     disabled: true));
-    // status
     if (proxies['proxies'] != null) {
       Map<String, dynamic> m = proxies['proxies'];
       m.removeWhere((key, value) => value['type'] != "Selector");
@@ -406,9 +390,11 @@ class ClashService extends GetxService with TrayListener {
       if (uri == null) {
         return false;
       }
-      final resp =
-          await Dio(BaseOptions(headers: {User-Agent: 'Fclash'}, sendTimeout: 15000, receiveTimeout: 15000))
-              .downloadUri(uri, newProfilePath, onReceiveProgress: (i, t) {
+      final resp = await Dio(BaseOptions(
+              headers: {'User-Agent': 'Fclash'},
+              sendTimeout: 15000,
+              receiveTimeout: 15000))
+          .downloadUri(uri, newProfilePath, onReceiveProgress: (i, t) {
         Get.printInfo(info: "$i/$t");
       });
       return resp.statusCode == 200;
@@ -512,9 +498,11 @@ class ClashService extends GetxService with TrayListener {
       final f = File(newProfilePath);
       final tmpF = File('$newProfilePath.tmp');
 
-      final resp =
-          await Dio(BaseOptions(headers: {User-Agent: 'Fclash'}, sendTimeout: 15000, receiveTimeout: 15000))
-              .downloadUri(uri, tmpF.path, onReceiveProgress: (i, t) {
+      final resp = await Dio(BaseOptions(
+              headers: {'User-Agent': 'Fclash'},
+              sendTimeout: 15000,
+              receiveTimeout: 15000))
+          .downloadUri(uri, tmpF.path, onReceiveProgress: (i, t) {
         Get.printInfo(info: "$i/$t");
       }).catchError((e) {
         if (tmpF.existsSync()) {
@@ -559,5 +547,21 @@ class ClashService extends GetxService with TrayListener {
       final delayInMs = await delay(proxyName);
       proxyStatus[proxyName] = delayInMs;
     }));
+  }
+
+  Future<void> _acquireLock(Directory clashDirectory) async {
+    final path = p.join(clashDirectory.path, "fclash.lock");
+    final lockFile = File(path);
+    if (!lockFile.existsSync()) {
+      lockFile.createSync(recursive: true);
+    }
+    try {
+      _clashLock = await lockFile.open(mode: FileMode.write);
+      await _clashLock?.lock();
+    } catch (e) {
+      await Get.find<NotificationService>()
+          .showNotification("Fclash", "Already running, Now exit.".tr);
+      exit(0);
+    }
   }
 }

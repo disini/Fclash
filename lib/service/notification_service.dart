@@ -20,6 +20,7 @@ class NotificationService extends GetxService {
         body,
         const NotificationDetails(
             linux: LinuxNotificationDetails(
-                urgency: LinuxNotificationUrgency.critical)));
+                urgency: LinuxNotificationUrgency.normal),
+            macOS: MacOSNotificationDetails()));
   }
 }

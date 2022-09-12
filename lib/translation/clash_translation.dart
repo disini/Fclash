@@ -48,7 +48,8 @@ class ClashTranslations extends Translations {
           "Fclash is running or ports is in use": "Exiting.",
           "not a valid config file":
               "not a valid config file, please input a valid clash yaml link.",
-          "Error": "Error"
+          "Error": "Error",
+          "Is running": "Fclash is now running."
         },
         'zh_CN': {
           "http_port": "HTTP端口",
@@ -136,7 +137,8 @@ class ClashTranslations extends Translations {
           "Dark Theme": "黑暗模式",
           "not a valid config file":
               "不是一个有效的配置文件，请检查是否是clash的订阅链接。有可能你导入了v2ray或者其他订阅链接",
-          "Error": "错误"
+          "Error": "错误",
+          "Is running": "Fclash正在运行"
         }
       };
 }

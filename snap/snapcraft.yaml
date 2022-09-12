@@ -1,6 +1,6 @@
 name: fclash
 base: core18
-version: '1.2.6-2'
+version: '1.3.1'
 summary: A Linux Clash Proxy Fronted based on Clash # 79 char long summary
 description: |
   A Linux Clash Proxy Fronted based on Clash. Supports subscriptions, proxies switcher, logger,
@@ -22,8 +22,11 @@ architectures:
 parts:
   fclash:
     plugin: flutter
+    build-snaps: [go/1.19/stable]
     source: .
     flutter-target: lib/main.dart
+    override-pull: |
+      ./build-clash-lib.py
     build-packages:
       - libappindicator3-dev
     stage-packages:
