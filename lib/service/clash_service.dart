@@ -206,7 +206,8 @@ class ClashService extends GetxService with TrayListener {
     // double check
     // stopClashSubP();
     if (isSystemProxy()) {
-      await clearSystemProxy();
+      // just clear system proxy
+      await clearSystemProxy(permanent: false);
     }
     await _clashLock?.unlock();
   }
@@ -311,13 +312,15 @@ class ClashService extends GetxService with TrayListener {
         await proxyManager.setAsSystemProxy(
             ProxyTypes.socks, '127.0.0.1', entity.socksPort!);
       }
-      setIsSystemProxy(true);
+      await setIsSystemProxy(true);
     }
   }
 
-  Future<void> clearSystemProxy() async {
+  Future<void> clearSystemProxy({bool permanent = true}) async {
     await proxyManager.cleanSystemProxy();
-    setIsSystemProxy(false);
+    if (permanent) {
+      await setIsSystemProxy(false);
+    }
   }
 
   void updateTray() {
