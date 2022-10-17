@@ -46,7 +46,7 @@ dependencies:
   package_info_plus: ^1.4.2
   flutter_local_notifications: ^9.4.0
   ffigen: ^6.0.0
-  proxy_manager: ^0.0.1-1
+  proxy_manager: ^0.0.3
 
 dev_dependencies:
   flutter_test:

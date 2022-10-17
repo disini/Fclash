@@ -36,6 +36,8 @@ class _ProfileState extends State<Profile> {
 
   Widget buildProfileList() {
     final configs = Get.find<ClashService>().yamlConfigs;
+    final configsList =
+        Get.find<ClashService>().yamlConfigs.toList(growable: false);
     if (configs.isEmpty) {
       return BrnAbnormalStateWidget(
         title: 'No profile, please add profiles by ADD button below.'.tr,
@@ -44,12 +46,12 @@ class _ProfileState extends State<Profile> {
       return ListView.builder(
         itemCount: configs.length,
         itemBuilder: (context, index) {
-          final filename = basename(configs[index].path);
-          final key = basenameWithoutExtension(configs[index].path);
+          final filename = basename(configsList[index].path);
+          final key = basenameWithoutExtension(configsList[index].path);
           final link = Get.find<ClashService>().getSubscriptionLinkByYaml(key);
           return Obx(
             () => InkWell(
-              onTap: () => handleProfileClicked(configs[index],
+              onTap: () => handleProfileClicked(configsList[index],
                   Get.find<ClashService>().currentYaml.value == filename),
               child: Container(
                   decoration: BoxDecoration(
@@ -71,7 +73,7 @@ class _ProfileState extends State<Profile> {
                         children: [
                           Text(
                             basename(
-                              configs[index].path,
+                              configsList[index].path,
                             ),
                             style: TextStyle(fontSize: 24),
                           ),

@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-import 'dart:isolate';
-import 'dart:typed_data';
 import 'dart:ffi' as ffi;
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:fclash/bean/clash_config_entity.dart';
 import 'package:fclash/generated_bindings.dart';
 import 'package:fclash/main.dart';
 import 'package:fclash/service/notification_service.dart';
+import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:kommon/kommon.dart' hide ProxyTypes;
@@ -18,9 +18,6 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:proxy_manager/proxy_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
-import 'package:ffi/ffi.dart';
-import 'package:path/path.dart' as path;
-import 'package:window_manager/window_manager.dart';
 
 late NativeLibrary clashFFI;
 
@@ -36,7 +33,7 @@ class ClashService extends GetxService with TrayListener {
   // 流量
   final uploadRate = 0.0.obs;
   final downRate = 0.0.obs;
-  final yamlConfigs = RxList<FileSystemEntity>.empty(growable: true);
+  final yamlConfigs = RxSet<FileSystemEntity>();
   final currentYaml = 'config.yaml'.obs;
   final proxyStatus = RxMap<String, int>();
 
@@ -86,7 +83,6 @@ class ClashService extends GetxService with TrayListener {
     final clashConfigPath = p.join(_clashDirectory.path, "clash");
     _clashDirectory = Directory(clashConfigPath);
     print("fclash work directory: ${_clashDirectory.path}");
-    final clashBin = p.join(_clashDirectory.path, 'clash');
     final clashConf = p.join(_clashDirectory.path, currentYaml.value);
     final countryMMdb = p.join(_clashDirectory.path, 'Country.mmdb');
     if (!await _clashDirectory.exists()) {
@@ -115,7 +111,7 @@ class ClashService extends GetxService with TrayListener {
     if (clashFFI.parse_options() == 0) {
       Get.printInfo(info: "parse ok");
     }
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(Duration.zero, () {
       initDaemon();
     });
     // tray show issue
@@ -154,8 +150,26 @@ class ClashService extends GetxService with TrayListener {
     updateTray();
   }
 
+  Future<bool> isRunning() async {
+    try {
+      final resp = await Request.get(clashBaseUrl,
+          options: Options(sendTimeout: 1000, receiveTimeout: 1000));
+      if ('clash' == resp['hello']) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
   void initDaemon() async {
     printInfo(info: 'init clash service');
+    // wait for online
+    while (!await isRunning()) {
+      printInfo(info: 'waiting online status');
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
     // get traffic
     Timer.periodic(const Duration(seconds: 1), (t) {
       final traffic = clashFFI.get_traffic().cast<Utf8>().toDartString();
@@ -191,8 +205,6 @@ class ClashService extends GetxService with TrayListener {
     if (isSystemProxy()) {
       setSystemProxy();
     }
-    // listener
-    trayManager.addListener(this);
   }
 
   @override
