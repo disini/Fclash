@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:clipboard/clipboard.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
@@ -79,29 +80,48 @@ class _ProfileState extends State<Profile> {
                           ),
                           link.isEmpty
                               ? Offstage()
-                              : TextButton(
-                                  onPressed: () async {
-                                    BrnToast.show('Updating'.tr, context);
-                                    try {
-                                      final res = await Get.find<ClashService>()
-                                          .updateSubscription(key);
-                                      if (res) {
-                                        BrnToast.show(
-                                            'Update and apply settings success!'
-                                                .tr,
-                                            context);
-                                      } else {
-                                        BrnToast.show(
-                                            'Update failed, please retry!'.tr,
-                                            context);
-                                      }
-                                    } catch (e) {
-                                      BrnToast.show(e.toString(), context);
-                                    }
-                                  },
-                                  child: Tooltip(
-                                      message: link,
-                                      child: Text("update subscription".tr)))
+                              : Row(
+                                  children: [
+                                    TextButton(
+                                        onPressed: () async {
+                                          BrnToast.show('Updating'.tr, context);
+                                          try {
+                                            final res =
+                                                await Get.find<ClashService>()
+                                                    .updateSubscription(key);
+                                            if (res) {
+                                              BrnToast.show(
+                                                  'Update and apply settings success!'
+                                                      .tr,
+                                                  context);
+                                            } else {
+                                              BrnToast.show(
+                                                  'Update failed, please retry!'
+                                                      .tr,
+                                                  context);
+                                            }
+                                          } catch (e) {
+                                            BrnToast.show(
+                                                e.toString(), context);
+                                          }
+                                        },
+                                        child: Tooltip(
+                                            message: link,
+                                            child: Text(
+                                                "update subscription".tr))),
+                                    TextButton(
+                                        onPressed: () async {
+                                          FlutterClipboard.copy(link)
+                                              .then((value) {
+                                            BrnToast.show(
+                                                'Success'.tr, context);
+                                          });
+                                        },
+                                        child: Tooltip(
+                                            message: link,
+                                            child: Text("Copy link".tr))),
+                                  ],
+                                )
                         ],
                       )),
                       const Icon(Icons.keyboard_arrow_right)

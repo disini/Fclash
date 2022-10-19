@@ -49,7 +49,9 @@ class ClashTranslations extends Translations {
           "not a valid config file":
               "not a valid config file, please input a valid clash yaml link.",
           "Error": "Error",
-          "Is running": "Fclash is now running."
+          "Is running": "Fclash is now running.",
+          "Copy link": "Copy Subscribe Link",
+          "Success": "Success"
         },
         'zh_CN': {
           "http_port": "HTTP端口",
@@ -138,7 +140,8 @@ class ClashTranslations extends Translations {
           "not a valid config file":
               "不是一个有效的配置文件，请检查是否是clash的订阅链接。有可能你导入了v2ray或者其他订阅链接",
           "Error": "错误",
-          "Is running": "Fclash正在运行"
+          "Is running": "Fclash正在运行",
+          "Copy link": "复制订阅链接",
         }
       };
 }

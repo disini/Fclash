@@ -151,90 +151,92 @@ class _ProxyState extends State<Proxy> {
     final selectName = selector['name'];
     final now = selector['now'];
     List<dynamic> allItems = selector['all'];
-    var index = 0;
     return Obx(
-      () => Wrap(
-        alignment: WrapAlignment.start,
-        crossAxisAlignment: WrapCrossAlignment.start,
-        children: allItems.map((itemName) {
-          final delayInMs = service.proxyStatus[itemName.toString()] ?? 0;
-          return SizedBox(
-            width: 300,
-            child: Card(
-              // padding: const EdgeInsets.symmetric(vertical: 2.0),
-              child: Row(
-                children: [
-                  Container(
-                      width: 12,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: delayInMs < 0
-                              ? Colors.red
-                              : delayInMs == 0
-                                  ? Colors.grey
-                                  : delayInMs <= 100
-                                      ? Colors.green
-                                      : delayInMs <= 500
-                                          ? Colors.lightBlue
-                                          : delayInMs <= 1000
-                                              ? Colors.blue
-                                              : Colors.orange,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5),
-                              bottomLeft: Radius.circular(5)))),
-                  Expanded(
-                    child: BrnRadioButton(
-                        radioIndex: index++,
-                        behavior: HitTestBehavior.opaque,
-                        mainAxisSize: MainAxisSize.max,
-                        child: Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Tooltip(
-                                  message: itemName.toString(),
-                                  child: Text(
-                                    itemName,
-                                    style: const TextStyle(fontSize: 16),
-                                    overflow: TextOverflow.ellipsis,
+      () {
+        var index = 0;
+        return Wrap(
+          alignment: WrapAlignment.start,
+          crossAxisAlignment: WrapCrossAlignment.start,
+          children: allItems.map((itemName) {
+            final delayInMs = service.proxyStatus[itemName.toString()] ?? 0;
+            return SizedBox(
+              width: 300,
+              child: Card(
+                // padding: const EdgeInsets.symmetric(vertical: 2.0),
+                child: Row(
+                  children: [
+                    Container(
+                        width: 12,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: delayInMs < 0
+                                ? Colors.red
+                                : delayInMs == 0
+                                    ? Colors.grey
+                                    : delayInMs <= 100
+                                        ? Colors.green
+                                        : delayInMs <= 500
+                                            ? Colors.lightBlue
+                                            : delayInMs <= 1000
+                                                ? Colors.blue
+                                                : Colors.orange,
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                bottomLeft: Radius.circular(5)))),
+                    Expanded(
+                      child: BrnRadioButton(
+                          radioIndex: index++,
+                          behavior: HitTestBehavior.opaque,
+                          mainAxisSize: MainAxisSize.max,
+                          child: Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Tooltip(
+                                    message: itemName.toString(),
+                                    child: Text(
+                                      itemName,
+                                      style: const TextStyle(fontSize: 16),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              // ping
-                              Text(
-                                "${delayInMs == 0 ? '' : '${delayInMs}ms'}",
-                                style:
-                                    TextStyle(fontSize: 12, color: Colors.grey),
-                              ).marginOnly(right: 4.0)
-                            ],
+                                // ping
+                                Text(
+                                  "${delayInMs == 0 ? '' : '${delayInMs}ms'}",
+                                  style: TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                ).marginOnly(right: 4.0)
+                              ],
+                            ),
                           ),
-                        ),
-                        onValueChangedAtIndex: (newIndex, value) {
-                          Get.find<ClashService>()
-                              .changeProxy(selectName, allItems[newIndex])
-                              .then((res) {
-                            if (res) {
-                              BrnToast.show(
-                                  'switch to name success.'.trParams(
-                                      {"name": "${allItems[newIndex]}"}),
-                                  context);
-                            } else {
-                              BrnToast.show(
-                                  'switch to name failed.'.trParams(
-                                      {"name": "${allItems[newIndex]}"}),
-                                  context);
-                            }
-                          });
-                        },
-                        isSelected: itemName == now),
-                  ),
-                ],
+                          onValueChangedAtIndex: (newIndex, value) {
+                            Get.find<ClashService>()
+                                .changeProxy(selectName, allItems[newIndex])
+                                .then((res) {
+                              if (res) {
+                                BrnToast.show(
+                                    'switch to name success.'.trParams(
+                                        {"name": "${allItems[newIndex]}"}),
+                                    context);
+                              } else {
+                                BrnToast.show(
+                                    'switch to name failed.'.trParams(
+                                        {"name": "${allItems[newIndex]}"}),
+                                    context);
+                              }
+                            });
+                          },
+                          isSelected: itemName == now),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        }).toList(growable: false),
-      ),
+            );
+          }).toList(growable: false),
+        );
+      },
     );
   }
 }
