@@ -16,6 +16,10 @@
 ![commit](https://img.shields.io/github/commit-activity/y/kingtous/fclash)
 [![stars](https://img.shields.io/github/stars/kingtous/fclash?style=social)]()
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=kingtous/fclash&type=Date)](https://star-history.com/#kingtous/fclash&Date)
+
 
 ## Install
 
