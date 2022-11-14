@@ -24,7 +24,7 @@ jobs:
           go-version: '>=1.19.0'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.1'
+          flutter-version: '3.0.5'
           channel: 'stable'
       - name: Enable Linux Desktop Support
         run: flutter config --enable-linux-desktop

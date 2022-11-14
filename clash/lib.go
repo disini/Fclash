@@ -83,6 +83,42 @@ func is_config_valid(config_path *C.char) int {
 	return 0
 }
 
+//export get_all_connections
+func get_all_connections() *C.char {
+	snapshot := statistic.DefaultManager.Snapshot()
+	data, err := json.Marshal(snapshot)
+	if err != nil {
+		fmt.Println("Error: %s", err)
+		return C.CString("")
+	}
+	return C.CString(string(data))
+}
+
+//export close_all_connections
+func close_all_connections() {
+	for _, connection := range statistic.DefaultManager.Snapshot().Connections {
+		err := connection.Close()
+		if err != nil {
+			fmt.Println("warning: %s", err)
+		}
+	}
+}
+
+//export close_connection
+func close_connection(id *C.char) bool {
+	connection_id := C.GoString(id)
+	for _, connection := range statistic.DefaultManager.Snapshot().Connections {
+		if connection.ID() == connection_id {
+			err := connection.Close()
+			if err != nil {
+				fmt.Println("warning: %s", err)
+			}
+			return true
+		}
+	}
+	return false
+}
+
 //export parse_options
 func parse_options() bool {
 	err := hub.Parse(options...)

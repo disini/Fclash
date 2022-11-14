@@ -4,6 +4,7 @@ import 'package:fclash/screen/component/speed.dart';
 import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/screen/page/about.dart';
 import 'package:fclash/screen/page/clash_log.dart';
+import 'package:fclash/screen/page/connection.dart';
 import 'package:fclash/screen/page/profile.dart';
 import 'package:fclash/screen/page/proxy.dart';
 import 'package:fclash/screen/page/setting.dart';
@@ -103,8 +104,9 @@ class _MainScreenState extends State<MainScreen>
             _buildOptions(0, 'Proxy'.tr),
             _buildOptions(1, 'Profile'.tr),
             _buildOptions(2, 'Setting'.tr),
-            _buildOptions(3, 'Log'.tr),
-            _buildOptions(4, 'About'.tr),
+            _buildOptions(3, 'Connections'.tr),
+            _buildOptions(4, 'Log'.tr),
+            _buildOptions(5, 'About'.tr),
             Expanded(
               child: Container(
                   alignment: Alignment.center,
@@ -148,6 +150,7 @@ class _MainScreenState extends State<MainScreen>
           Proxy(),
           Profile(),
           Setting(),
+          Connections(),
           ClashLog(),
           AboutPage()
         ],

@@ -136,6 +136,21 @@ class ClashService extends GetxService with TrayListener {
     }
   }
 
+  Map<String, dynamic> getConnections() {
+    String connections =
+        clashFFI.get_all_connections().cast<Utf8>().toDartString();
+    return json.decode(connections);
+  }
+
+  void closeAllConnections() {
+    clashFFI.close_all_connections();
+  }
+
+  bool closeConnection(String connectionId) {
+    final id = connectionId.toNativeUtf8().cast<ffi.Char>();
+    return clashFFI.close_connection(id) == 1;
+  }
+
   Future<void> getCurrentClashConfig() async {
     configEntity.value =
         ClashConfigEntity.fromJson(await Request.get('/configs'));

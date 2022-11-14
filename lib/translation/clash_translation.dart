@@ -51,7 +51,11 @@ class ClashTranslations extends Translations {
           "Error": "Error",
           "Is running": "Fclash is now running.",
           "Copy link": "Copy Subscribe Link",
-          "Success": "Success"
+          "Success": "Success",
+          "Connections": "Connections",
+          "No Connections": "No Active Connections yet",
+          "Close all connections": "Close all connections",
+          "Close": "Close"
         },
         'zh_CN': {
           "http_port": "HTTP端口",
@@ -142,6 +146,10 @@ class ClashTranslations extends Translations {
           "Error": "错误",
           "Is running": "Fclash正在运行",
           "Copy link": "复制订阅链接",
+          "Connections": "连接",
+          "No Connections": "当前暂无活动连接",
+          "Close all connections": "关闭所有连接",
+          "Close": "关闭"
         }
       };
 }

@@ -107,6 +107,39 @@ class NativeLibrary {
   late final _is_config_valid =
       _is_config_validPtr.asFunction<int Function(ffi.Pointer<ffi.Char>)>();
 
+  ffi.Pointer<ffi.Char> get_all_connections() {
+    return _get_all_connections();
+  }
+
+  late final _get_all_connectionsPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+          'get_all_connections');
+  late final _get_all_connections =
+      _get_all_connectionsPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  void close_all_connections() {
+    return _close_all_connections();
+  }
+
+  late final _close_all_connectionsPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>('close_all_connections');
+  late final _close_all_connections =
+      _close_all_connectionsPtr.asFunction<void Function()>();
+
+  int close_connection(
+    ffi.Pointer<ffi.Char> id,
+  ) {
+    return _close_connection(
+      id,
+    );
+  }
+
+  late final _close_connectionPtr =
+      _lookup<ffi.NativeFunction<GoUint8 Function(ffi.Pointer<ffi.Char>)>>(
+          'close_connection');
+  late final _close_connection =
+      _close_connectionPtr.asFunction<int Function(ffi.Pointer<ffi.Char>)>();
+
   int parse_options() {
     return _parse_options();
   }
