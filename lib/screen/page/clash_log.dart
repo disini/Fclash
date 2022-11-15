@@ -15,7 +15,7 @@ class ClashLog extends StatefulWidget {
 class _ClashLogState extends State<ClashLog> {
   final logs = RxList<String>();
   final connected = false.obs;
-  static const logMaxLen = 1000;
+  static const logMaxLen = 100;
   StreamSubscription<List<int>>? streamSubscription;
 
   @override

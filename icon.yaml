@@ -7,3 +7,6 @@ icons_launcher:
     windows:
       enable: true
       image_path: 'assets/images/app_tray.png'
+    macos:
+      enable: true
+      image_path: 'assets/images/app_tray.png'
