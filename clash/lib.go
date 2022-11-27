@@ -1,5 +1,8 @@
 package main
 
+/*
+#include "stdint.h"
+*/
 import "C"
 import (
 	"encoding/json"
@@ -168,17 +171,31 @@ func start_log(port C.long) {
 	fmt.Println("[GO] subscribe logger on dart bridge port %s", int64(port))
 }
 
+func change_proxy(selector_name *C.char, proxy_name *C.char) C.long {
+	// todo
+	return C.long(-1)
+}
+
+func change_config_field(selector_name *C.char, proxy_name *C.char) C.long {
+	// todo
+	return C.long(-1)
+}
+
+func test_delay(proxy_name *C.char, url *C.char) C.long {
+	return C.long(-1)
+}
+
+//export get_proxies
+func get_proxies() *C.char {
+	// todo: return json
+	return C.CString("todo")
+}
+
+func get_configs() *C.char {
+	// todo: check if is get_config above
+	return C.CString("todo")
+}
+
 func main() {
 	fmt.Println("hello clash")
-	// in := make(chan constant.ConnContext, 100)
-	// defer close(in)
-
-	// _, err := socks.New("127.0.0.1:8000", in)
-
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// direct := outbound.New
-
 }

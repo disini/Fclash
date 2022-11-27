@@ -244,12 +244,12 @@ class ClashService extends GetxService with TrayListener {
   // }
 
   // @Deprecated
-  Future<Stream<Uint8List>?> _getLog({String type = "info"}) async {
-    Response<ResponseBody> resp = await Request.dioClient.get('/logs',
-        options: Options(responseType: ResponseType.stream),
-        queryParameters: {"level": type});
-    return resp.data?.stream;
-  }
+  // Future<Stream<Uint8List>?> _getLog({String type = "info"}) async {
+  //   Response<ResponseBody> resp = await Request.dioClient.get('/logs',
+  //       options: Options(responseType: ResponseType.stream),
+  //       queryParameters: {"level": type});
+  //   return resp.data?.stream;
+  // }
 
   Future<void> startLogging() async {
     final receiver = ReceivePort();

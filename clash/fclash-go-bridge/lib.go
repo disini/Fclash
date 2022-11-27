@@ -29,5 +29,5 @@ func SendToPort(port int64, msg string) {
 	// union type, we do a force convertion
 	ptr := unsafe.Pointer(&obj.value[0])
 	*(**C.char)(ptr) = msg_obj
-	C.GoDart_PostCObject(C.long(port), &obj)
+	C.GoDart_PostCObject(C.Dart_Port_DL(port), &obj)
 }
