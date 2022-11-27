@@ -103,7 +103,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
 
-  build-debian-package:
+  build-linux-amd64-package:
     runs-on: ubuntu-18.04
 
     steps:
@@ -136,4 +136,74 @@ jobs:
         with:
           allowUpdates: true
           artifacts: "./debian/cn.kingtous.fclash-${{ env.VERSION }}-x86_64.deb"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux-aarch64-package:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Prepare env
+        run: |
+          sudo apt update -y
+          sudo apt-get -qq install -y git
+
+      - name: Download Flutter
+        shell: bash
+        run: |
+          # disable git safe.directory
+          git config --global --add safe.directory "*"
+          pushd /opt
+          # clone repo and reset to flutter 3.0.5
+          git clone https://github.com/sony/flutter-elinux.git || true
+          pushd flutter-elinux
+            # reset to flutter 3.0.5
+            git fetch
+            git reset --hard b09a90eee643859ce4e676839227edd9fd3feba8 
+          popd
+
+      - uses: Kingtous/run-on-arch-action@amd64-support
+        name: Build fclash binary for arm64
+        id: arm64
+        with:
+          arch: aarch64
+          distro: ubuntu18.04
+          githubToken: ${{ github.token }}
+          setup: |
+            ls -l "${PWD}"
+          dockerRunArgs: |
+            --volume "${PWD}:/workspace"
+            --volume "/opt/flutter-elinux:/opt/flutter-elinux"
+          shell: /bin/bash
+          install: |
+            apt update -y
+            apt-get -qq install -y git cmake g++ gcc build-essential nasm yasm curl unzip xz-utils python3 wget pkg-config ninja-build pkg-config libgtk-3-dev liblzma-dev clang libappindicator3-dev
+          run: |
+            # disable git safe.directory
+            git config --global --add safe.directory "*"
+            pushd /opt
+            # download go and compile go lib
+            wget https://go.dev/dl/go1.19.3.linux-arm64.tar.gz
+            tar zxf go1.19.3.linux-arm64.tar.gz
+            export PATH=$PATH:/opt/go/bin
+            pushd /workspace
+            python3 build-clash-lib.py
+            popd
+            export PATH=$PATH:/opt/go/bin://opt/flutter-elinux/bin
+            flutter-elinux doctor -v
+            # patch control
+            pushd /workspace
+            sed -i "s/Architecture: amd64/Architecture: arm64/g" ./debian/build-src/DEBIAN/control
+            sed -i "s/Architecture: amd64/Architecture: arm64/g" ./debian/DEBIAN/control
+            ./build-deb.sh
+
+      - name: Rename deb package
+        run: |
+          mv ./debian/cn.kingtous.fclash.deb ./debian/cn.kingtous.fclash-${{ env.VERSION }}-aarch64.deb
+      - uses: ncipollo/release-action@v1
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          allowUpdates: true
+          artifacts: "./debian/cn.kingtous.fclash-${{ env.VERSION }}-aarch64.deb"
           token: ${{ secrets.GITHUB_TOKEN }}
