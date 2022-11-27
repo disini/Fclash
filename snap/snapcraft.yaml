@@ -25,8 +25,9 @@ parts:
     build-snaps: [go/1.19/stable]
     source: .
     flutter-target: lib/main.dart
-    override-pull: |
+    override-build: |
       ./build-clash-lib.py
+      flutter build linux --release
     build-packages:
       - libappindicator3-dev
     stage-packages:
