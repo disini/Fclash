@@ -28,7 +28,7 @@ class _ProfileState extends State<Profile> {
       floatingActionButton: FloatingActionButton(
         tooltip: "add a subcription link.".tr,
         onPressed: () {
-          _addProfile();
+          _addProfile(context);
         },
         child: const Icon(Icons.add),
       ),
@@ -134,7 +134,7 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  void _addProfile() {
+  void _addProfile(BuildContext context) {
     Get.find<DialogService>().inputDialog(
         title: "Input a valid subscription link url".tr,
         onText: (txt) async {
@@ -142,6 +142,9 @@ class _ProfileState extends State<Profile> {
             Get.find<DialogService>().inputDialog(
                 title: "What is your config name".tr,
                 onText: (name) async {
+                  if (name == "config") {
+                    BrnToast.show("Cannot use this special name", context);
+                  }
                   Future.delayed(Duration.zero, () async {
                     try {
                       BrnLoadingDialog.show(Get.context!,

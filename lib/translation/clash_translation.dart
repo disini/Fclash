@@ -40,6 +40,7 @@ class ClashTranslations extends Translations {
           "Input a valid subscription link url":
               "Input a valid subscription link url",
           "What is your config name": "What is your config name",
+          "Cannot use this special name": "Cannot use this special name",
           'version:': "version: @version",
           "Author:": "Author: @name",
           "Download speed": "Download: @speed",
@@ -149,7 +150,8 @@ class ClashTranslations extends Translations {
           "Connections": "连接",
           "No Connections": "当前暂无活动连接",
           "Close all connections": "关闭所有连接",
-          "Close": "关闭"
+          "Close": "关闭",
+          "Cannot use this special name": "不能使用这个名字哦"
         }
       };
 }

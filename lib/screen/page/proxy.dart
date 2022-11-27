@@ -212,21 +212,19 @@ class _ProxyState extends State<Proxy> {
                             ),
                           ),
                           onValueChangedAtIndex: (newIndex, value) {
-                            Get.find<ClashService>()
-                                .changeProxy(selectName, allItems[newIndex])
-                                .then((res) {
-                              if (res) {
-                                BrnToast.show(
-                                    'switch to name success.'.trParams(
-                                        {"name": "${allItems[newIndex]}"}),
-                                    context);
-                              } else {
-                                BrnToast.show(
-                                    'switch to name failed.'.trParams(
-                                        {"name": "${allItems[newIndex]}"}),
-                                    context);
-                              }
-                            });
+                            final res = Get.find<ClashService>()
+                                .changeProxy(selectName, allItems[newIndex]);
+                            if (res) {
+                              BrnToast.show(
+                                  'switch to name success.'.trParams(
+                                      {"name": "${allItems[newIndex]}"}),
+                                  context);
+                            } else {
+                              BrnToast.show(
+                                  'switch to name failed.'.trParams(
+                                      {"name": "${allItems[newIndex]}"}),
+                                  context);
+                            }
                           },
                           isSelected: itemName == now),
                     ),

@@ -5,18 +5,25 @@ package main
 */
 import "C"
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
+	"time"
 	"unsafe"
 
-	"os"
-
+	"github.com/Dreamacro/clash/adapter"
+	"github.com/Dreamacro/clash/adapter/outboundgroup"
+	"github.com/Dreamacro/clash/component/profile/cachefile"
+	"github.com/Dreamacro/clash/component/resolver"
 	"github.com/Dreamacro/clash/config"
 	"github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/hub"
 	"github.com/Dreamacro/clash/hub/executor"
+	P "github.com/Dreamacro/clash/listener"
 	"github.com/Dreamacro/clash/log"
+	"github.com/Dreamacro/clash/tunnel"
 	"github.com/Dreamacro/clash/tunnel/statistic"
 	fclashgobridge "github.com/kingtous/fclash-go-bridge"
 )
@@ -171,29 +178,146 @@ func start_log(port C.long) {
 	fmt.Println("[GO] subscribe logger on dart bridge port %s", int64(port))
 }
 
+//export change_proxy
 func change_proxy(selector_name *C.char, proxy_name *C.char) C.long {
-	// todo
-	return C.long(-1)
+	proxies := tunnel.Proxies()
+	proxy := proxies[C.GoString(selector_name)]
+	if proxy == nil {
+		return C.long(-1)
+	}
+	adapter_proxy := proxy.(*adapter.Proxy)
+	selector, ok := adapter_proxy.ProxyAdapter.(*outboundgroup.Selector)
+	if !ok {
+		// not selector
+		return C.long(-1)
+	}
+	if err := selector.Set(C.GoString(proxy_name)); err != nil {
+		fmt.Println("%s", err)
+		return C.long(-1)
+	}
+	cachefile.Cache().SetSelected(string(C.GoString(selector_name)), string(C.GoString(proxy_name)))
+	return C.long(0)
 }
 
-func change_config_field(selector_name *C.char, proxy_name *C.char) C.long {
-	// todo
-	return C.long(-1)
+type configSchema struct {
+	Port        *int               `json:"port"`
+	SocksPort   *int               `json:"socks-port"`
+	RedirPort   *int               `json:"redir-port"`
+	TProxyPort  *int               `json:"tproxy-port"`
+	MixedPort   *int               `json:"mixed-port"`
+	AllowLan    *bool              `json:"allow-lan"`
+	BindAddress *string            `json:"bind-address"`
+	Mode        *tunnel.TunnelMode `json:"mode"`
+	LogLevel    *log.LogLevel      `json:"log-level"`
+	IPv6        *bool              `json:"ipv6"`
 }
 
-func test_delay(proxy_name *C.char, url *C.char) C.long {
-	return C.long(-1)
+func pointerOrDefault(p *int, def int) int {
+	if p != nil {
+		return *p
+	}
+
+	return def
+}
+
+//export change_config_field
+func change_config_field(s *C.char) C.long {
+	// todo
+	general := &configSchema{}
+	json_str := C.GoString(s)
+	if err := json.Unmarshal([]byte(json_str), general); err != nil {
+		fmt.Println(err)
+		return C.long(-1)
+	}
+	// copy from clash source code
+	if general.AllowLan != nil {
+		P.SetAllowLan(*general.AllowLan)
+	}
+
+	if general.BindAddress != nil {
+		P.SetBindAddress(*general.BindAddress)
+	}
+
+	ports := P.GetPorts()
+
+	tcpIn := tunnel.TCPIn()
+	udpIn := tunnel.UDPIn()
+
+	P.ReCreateHTTP(pointerOrDefault(general.Port, ports.Port), tcpIn)
+	P.ReCreateSocks(pointerOrDefault(general.SocksPort, ports.SocksPort), tcpIn, udpIn)
+	P.ReCreateRedir(pointerOrDefault(general.RedirPort, ports.RedirPort), tcpIn, udpIn)
+	P.ReCreateTProxy(pointerOrDefault(general.TProxyPort, ports.TProxyPort), tcpIn, udpIn)
+	P.ReCreateMixed(pointerOrDefault(general.MixedPort, ports.MixedPort), tcpIn, udpIn)
+
+	if general.Mode != nil {
+		tunnel.SetMode(*general.Mode)
+	}
+
+	if general.LogLevel != nil {
+		log.SetLevel(*general.LogLevel)
+	}
+
+	if general.IPv6 != nil {
+		resolver.DisableIPv6 = !*general.IPv6
+	}
+	return C.long(0)
+}
+
+//export async_test_delay
+func async_test_delay(proxy_name *C.char, url *C.char, timeout C.long, port C.long) {
+	go func() {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(int64(timeout)))
+		defer cancel()
+		proxies := tunnel.Proxies()
+		proxy := proxies[C.GoString(proxy_name)]
+		if proxy == nil {
+			data, err := json.Marshal(map[string]int64{
+				"delay": -1,
+			})
+			if err != nil {
+				return
+			}
+			fclashgobridge.SendToPort(int64(port), string(data))
+			return
+		}
+		delay, err := proxy.URLTest(ctx, C.GoString(url))
+		if err != nil || delay == 0 {
+			data, err := json.Marshal(map[string]int64{
+				"delay": -1,
+			})
+			if err != nil {
+				return
+			}
+			fclashgobridge.SendToPort(int64(port), string(data))
+			return
+		}
+		data, err := json.Marshal(map[string]uint16{
+			"delay": delay,
+		})
+		fclashgobridge.SendToPort(int64(port), string(data))
+	}()
 }
 
 //export get_proxies
 func get_proxies() *C.char {
-	// todo: return json
-	return C.CString("todo")
+	proxies := tunnel.Proxies()
+	data, err := json.Marshal(map[string]map[string]constant.Proxy{
+		"proxies": proxies,
+	})
+	if err != nil {
+		return C.CString("")
+	}
+	return C.CString(string(data))
 }
 
+//export get_configs
 func get_configs() *C.char {
-	// todo: check if is get_config above
-	return C.CString("todo")
+	general := executor.GetGeneral()
+	data, err := json.Marshal(general)
+	if err != nil {
+		return C.CString("")
+	}
+	return C.CString(string(data))
 }
 
 func main() {

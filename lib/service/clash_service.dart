@@ -153,40 +153,40 @@ class ClashService extends GetxService with TrayListener {
     return clashFFI.close_connection(id) == 1;
   }
 
-  Future<void> getCurrentClashConfig() async {
-    configEntity.value =
-        ClashConfigEntity.fromJson(await Request.get('/configs'));
+  void getCurrentClashConfig() {
+    configEntity.value = ClashConfigEntity.fromJson(
+        json.decode(clashFFI.get_configs().cast<Utf8>().toDartString()));
   }
 
   Future<void> reload() async {
     // get configs
     getConfigs();
-    await getCurrentClashConfig();
+    getCurrentClashConfig();
     // proxies
-    await getProxies();
+    getProxies();
     updateTray();
   }
 
-  Future<bool> isRunning() async {
-    try {
-      final resp = await Request.get(clashBaseUrl,
-          options: Options(sendTimeout: 1000, receiveTimeout: 1000));
-      if ('clash' == resp['hello']) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      return false;
-    }
-  }
+  // Future<bool> isRunning() async {
+  //   try {
+  //     final resp = await Request.get(clashBaseUrl,
+  //         options: Options(sendTimeout: 1000, receiveTimeout: 1000));
+  //     if ('clash' == resp['hello']) {
+  //       return true;
+  //     }
+  //     return false;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
 
   void initDaemon() async {
     printInfo(info: 'init clash service');
     // wait for online
-    while (!await isRunning()) {
-      printInfo(info: 'waiting online status');
-      await Future.delayed(const Duration(milliseconds: 500));
-    }
+    // while (!await isRunning()) {
+    //   printInfo(info: 'waiting online status');
+    //   await Future.delayed(const Duration(milliseconds: 500));
+    // }
     // get traffic
     Timer.periodic(const Duration(seconds: 1), (t) {
       final traffic = clashFFI.get_traffic().cast<Utf8>().toDartString();
@@ -231,9 +231,9 @@ class ClashService extends GetxService with TrayListener {
     await _clashLock?.unlock();
   }
 
-  Future<void> getProxies() async {
-    final proxies = await Request.get('/proxies');
-    this.proxies.value = proxies;
+  void getProxies() {
+    proxies.value =
+        json.decode(clashFFI.get_proxies().cast<Utf8>().toDartString());
   }
 
   /// @Deprecated
@@ -297,23 +297,22 @@ class ClashService extends GetxService with TrayListener {
     }
   }
 
-  Future<bool> changeProxy(selectName, String proxyName) async {
-    final resp = await Request.dioClient
-        .put('/proxies/$selectName', data: {"name": proxyName});
-    if (resp.statusCode == 204) {
+  bool changeProxy(String selectName, String proxyName) {
+    final ret = clashFFI.change_proxy(selectName.toNativeUtf8().cast(), proxyName.toNativeUtf8().cast());
+    if (ret == 0) {
       reload();
     }
-    return resp.statusCode == 204;
+    return ret == 0;
   }
 
-  Future<bool> changeConfigField(String field, dynamic value) async {
+  bool changeConfigField(String field, dynamic value) {
     try {
-      final resp =
-          await Request.dioClient.patch('/configs', data: {field: value});
-      SpUtil.setData(field, value);
-      return resp.statusCode == 204;
+      int ret = clashFFI.change_config_field(json.encode(<String, dynamic>{
+        field: value
+      }).toNativeUtf8().cast());
+      return ret == 0;
     } finally {
-      await getCurrentClashConfig();
+      getCurrentClashConfig();
       if (field.endsWith("port") && isSystemProxy()) {
         setSystemProxy();
       }
@@ -461,13 +460,13 @@ class ClashService extends GetxService with TrayListener {
   Future<void> checkPort() async {
     if (configEntity.value != null) {
       if (configEntity.value!.port == 0) {
-        await changeConfigField('port', initializedHttpPort);
+        changeConfigField('port', initializedHttpPort);
       }
       if (configEntity.value!.mixedPort == 0) {
-        await changeConfigField('mixed-port', initializedMixedPort);
+        changeConfigField('mixed-port', initializedMixedPort);
       }
       if (configEntity.value!.socksPort == 0) {
-        await changeConfigField('socks-port', initializedSockPort);
+        changeConfigField('socks-port', initializedSockPort);
       }
     }
   }
@@ -475,15 +474,23 @@ class ClashService extends GetxService with TrayListener {
   Future<int> delay(String proxyName,
       {int timeout = 5000, String url = "https://www.google.com"}) async {
     try {
-      final resp = await Request.dioClient.get('/proxies/$proxyName/delay',
-          queryParameters: {"timeout": timeout, "url": url});
-      final data = jsonDecode(resp.data);
-      print(data.toString());
-      if (data['message'] != null) {
-        print(data['message'].toString());
-        return -1;
-      }
-      return data['delay'] ?? -1;
+      final completer = Completer<int>();
+      final receiver = ReceivePort();
+      clashFFI.async_test_delay(proxyName.toNativeUtf8().cast(),
+          url.toNativeUtf8().cast(), timeout, receiver.sendPort.nativePort);
+      final subs = receiver.listen((message) {
+        if (!completer.isCompleted) {
+          completer.complete(json.decode(message)['delay']);
+        }
+      });
+      // 5s timeout, we add 1s
+      Future.delayed(const Duration(seconds: 6), () {
+        if (!completer.isCompleted) {
+          completer.complete(-1);
+        }
+        subs.cancel();
+      });
+      return completer.future;
     } catch (e) {
       return -1;
     }
