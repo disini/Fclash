@@ -23,11 +23,24 @@
 
 ## Install
 
+### Windows
+
+Please download .exe setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+
+### MacOS
+
+
+Please download .dmg setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+
+Note that macOS will treat the `FClash` as an untrusted app, so please go to settings and trust it manually.
+
+### Linux 
+
 - For Arch/Manjaro users, using AUR
   - `yay -S fclash`
 - For Ubuntu/Debian users, download deb files directly
   - [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
-- For other distro users, using snap app.
+- For other distro users, please to use the snap app.
   - [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/fclash)
 
 ## Feature
