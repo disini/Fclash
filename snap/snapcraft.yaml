@@ -16,9 +16,6 @@ license: GPL-3.0+
 #    bus: session
 #    name: cn.kingtous.fclash
 
-architectures:
-  - build-on: amd64
-
 parts:
   fclash:
     plugin: flutter
@@ -27,12 +24,14 @@ parts:
     flutter-target: lib/main.dart
     override-build: |
       ./build-clash-lib.py
-      flutter build linux --release -v
+      LD_PRELOAD=/usr/lib/libfreetype.so flutter build linux --release -v
     build-packages:
       - libappindicator3-dev
+      - libfreetype6-dev
     stage-packages:
       - libappindicator3-1
       - libgl1-mesa-dri
+      - libfreetype6
 
 plugs:
   gsettings:
