@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+
+# Symlink bin command to /usr/bin
+rm /usr/bin/fclash
+ln -s /opt/apps/cn.kingtous.fclash/files/fclash /usr/bin/fclash
+
+# Copy to /usr/share/applications
+cp /opt/apps/cn.kingtous.fclash/entries/applications/cn.kingtous.fclash.desktop /usr/share/applications/cn.kingtous.fclash.desktop
+update-desktop-database
+
+echo "fclash has successfully installed!"
