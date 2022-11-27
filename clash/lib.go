@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"unsafe"
 
 	"os"
 
@@ -12,7 +13,9 @@ import (
 	"github.com/Dreamacro/clash/constant"
 	"github.com/Dreamacro/clash/hub"
 	"github.com/Dreamacro/clash/hub/executor"
+	"github.com/Dreamacro/clash/log"
 	"github.com/Dreamacro/clash/tunnel/statistic"
+	fclashgobridge "github.com/kingtous/fclash-go-bridge"
 )
 
 var (
@@ -141,6 +144,28 @@ func get_traffic() *C.char {
 		return C.CString("")
 	}
 	return C.CString(string(data))
+}
+
+//export init_native_api_bridge
+func init_native_api_bridge(api unsafe.Pointer) {
+	fclashgobridge.InitDartApi(api)
+}
+
+//export start_log
+func start_log(port C.long) {
+	subscibe := log.Subscribe()
+	go func() {
+		for elem := range subscibe {
+			lg := elem.(log.Event)
+			data, err := json.Marshal(lg)
+			if err != nil {
+				fmt.Errorf("Error: %s", err)
+			}
+			ret_str := string(data)
+			fclashgobridge.SendToPort(int64(port), ret_str)
+		}
+	}()
+	fmt.Println("[GO] subscribe logger on dart bridge port %s", int64(port))
 }
 
 func main() {

@@ -2,6 +2,8 @@ module github.com/kingtous/flutter-clash-binding
 
 go 1.18
 
+replace github.com/kingtous/fclash-go-bridge => ./fclash-go-bridge
+
 require (
 	github.com/Dreamacro/clash v1.11.12 // indirect
 	github.com/ajg/form v1.5.1 // indirect
@@ -32,4 +34,5 @@ require (
 	golang.org/x/tools v0.3.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	github.com/kingtous/fclash-go-bridge v1.0.0
 )

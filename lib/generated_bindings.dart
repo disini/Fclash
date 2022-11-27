@@ -157,6 +157,32 @@ class NativeLibrary {
           'get_traffic');
   late final _get_traffic =
       _get_trafficPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
+
+  void init_native_api_bridge(
+    ffi.Pointer<ffi.Void> api,
+  ) {
+    return _init_native_api_bridge(
+      api,
+    );
+  }
+
+  late final _init_native_api_bridgePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+          'init_native_api_bridge');
+  late final _init_native_api_bridge = _init_native_api_bridgePtr
+      .asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+
+  void start_log(
+    int port,
+  ) {
+    return _start_log(
+      port,
+    );
+  }
+
+  late final _start_logPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Long)>>('start_log');
+  late final _start_log = _start_logPtr.asFunction<void Function(int)>();
 }
 
 class max_align_t extends ffi.Opaque {}

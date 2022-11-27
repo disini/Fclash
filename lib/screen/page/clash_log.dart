@@ -16,7 +16,7 @@ class _ClashLogState extends State<ClashLog> {
   final logs = RxList<String>();
   final connected = false.obs;
   static const logMaxLen = 100;
-  StreamSubscription<List<int>>? streamSubscription;
+  StreamSubscription<dynamic>? streamSubscription;
 
   @override
   void initState() {
@@ -28,11 +28,11 @@ class _ClashLogState extends State<ClashLog> {
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (streamSubscription == null) {
         if (Get.find<ClashService>().logStream == null) {
-          // printInfo(info: 'clash log stream not opened');
+          printInfo(info: 'clash log stream not opened');
         }
         streamSubscription =
             Get.find<ClashService>().logStream?.listen((event) {
-          final logStr = utf8.decode(event);
+          String logStr = event;
           Get.printInfo(info: 'Log widget: $logStr');
           logs.insert(0, logStr);
           if (logs.length > logMaxLen) {
@@ -40,7 +40,7 @@ class _ClashLogState extends State<ClashLog> {
           }
         });
         if (streamSubscription == null) {
-          // printInfo(info: 'log service retry');
+          printInfo(info: 'log service retry');
         } else {
           printInfo(info: 'log service connected'.tr);
           connected.value = true;
@@ -95,12 +95,12 @@ class _ClashLogState extends State<ClashLog> {
     return Stack(
       children: [
         Text(
-          json['payload'] ?? "",
+          json['Payload'] ?? "",
           style: TextStyle(fontFamily: 'nssc'),
         ),
         Align(
           alignment: Alignment.topRight,
-          child: BrnStateTag(tagText: '${json['type']}'),
+          child: BrnStateTag(tagText: '${json['LogLevel']}'),
         )
       ],
     );

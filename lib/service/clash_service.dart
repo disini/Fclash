@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
 import 'dart:io';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -51,7 +52,7 @@ class ClashService extends GetxService with TrayListener {
   Rx<ClashConfigEntity?> configEntity = Rx(null);
 
   // log
-  Stream<List<int>>? logStream;
+  Stream<dynamic>? logStream;
   RxMap<String, dynamic> proxies = RxMap();
   RxBool isSystemProxyObs = RxBool(false);
 
@@ -67,6 +68,7 @@ class ClashService extends GetxService with TrayListener {
     }
     final lib = ffi.DynamicLibrary.open(fullPath);
     clashFFI = NativeLibrary(lib);
+    clashFFI.init_native_api_bridge(ffi.NativeApi.initializeApiDLData);
   }
 
   Future<ClashService> init() async {
@@ -202,17 +204,7 @@ class ClashService extends GetxService with TrayListener {
         Get.printError(info: '$e');
       }
     });
-    _getLog().then((stream) {
-      logStream = stream?.asBroadcastStream();
-      if (logStream == null) {
-        printError(info: 'log stream opened failed!');
-      } else {
-        print("log stream opened success");
-      }
-      logStream?.listen((event) {
-        Get.printInfo(info: '[LOG]: ${utf8.decode(event)}');
-      });
-    });
+    await startLogging();
     // system proxy
     // listen port
     await reload();
@@ -244,17 +236,31 @@ class ClashService extends GetxService with TrayListener {
     this.proxies.value = proxies;
   }
 
-  Future<Stream<Uint8List>?> getTraffic() async {
-    Response<ResponseBody> resp = await Request.dioClient
-        .get('/traffic', options: Options(responseType: ResponseType.stream));
-    return resp.data?.stream;
-  }
+  /// @Deprecated
+  // Future<Stream<Uint8List>?> getTraffic() async {
+  //   Response<ResponseBody> resp = await Request.dioClient
+  //       .get('/traffic', options: Options(responseType: ResponseType.stream));
+  //   return resp.data?.stream;
+  // }
 
+  // @Deprecated
   Future<Stream<Uint8List>?> _getLog({String type = "info"}) async {
     Response<ResponseBody> resp = await Request.dioClient.get('/logs',
         options: Options(responseType: ResponseType.stream),
         queryParameters: {"level": type});
     return resp.data?.stream;
+  }
+
+  Future<void> startLogging() async {
+    final receiver = ReceivePort();
+    logStream = receiver.asBroadcastStream();
+    if (kDebugMode) {
+      logStream?.listen((event) {
+        print("LOG: ${event}");
+      });
+    }
+    final nativePort = receiver.sendPort.nativePort;
+    clashFFI.start_log(nativePort);
   }
 
   Future<bool> _changeConfig(FileSystemEntity config) async {
