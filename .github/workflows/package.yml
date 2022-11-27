@@ -190,11 +190,13 @@ jobs:
             # download go and compile go lib
             wget https://go.dev/dl/go1.19.3.linux-arm64.tar.gz
             tar zxf go1.19.3.linux-arm64.tar.gz
-            export PATH=$PATH:/opt/go/bin
+            export PATH=$PATH:/opt/go/bin:/opt/flutter-elinux/bin
             pushd /workspace
+            # we use flutter-elinux to build our rustdesk
+            sed -i "s/flutter build linux --release/flutter-elinux build linux/g" ./build-deb.sh
+            sed -i "s/linux\/x64/linux\/arm64/g" ./build-deb.sh
             python3 build-clash-lib.py
             popd
-            export PATH=$PATH:/opt/go/bin://opt/flutter-elinux/bin
             flutter-elinux doctor -v
             # patch control
             pushd /workspace
