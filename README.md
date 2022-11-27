@@ -4,7 +4,7 @@
 
 
 <p align="center" style="font-size: 20px">A Clash Proxy Fronted based on Clash</p>
-<p align="center" style="font-size: 16px">Windows / Linux Supported, macOS comming soon!</p>
+<p align="center" style="font-size: 16px">Windows / macOS / Linux(amd64/arm64) Supported!</p>
 
 [![flutter awesome](https://img.shields.io/badge/Flutter-Awesome-orange)](https://flutterawesome.com/clash-fronted-client-by-flutter-linux-supported/)
 [![fclash](https://snapcraft.io/fclash/badge.svg)](https://snapcraft.io/fclash)
