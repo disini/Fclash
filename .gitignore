@@ -57,3 +57,4 @@ app.*.map.json
 */*.deb
 */*.exe
 clash/libclash.h
+**/libclash.so
