@@ -27,7 +27,7 @@ parts:
     flutter-target: lib/main.dart
     override-build: |
       ./build-clash-lib.py
-      flutter build linux --release
+      flutter build linux --release -v
     build-packages:
       - libappindicator3-dev
     stage-packages:
