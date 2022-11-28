@@ -197,40 +197,40 @@ class _SettingState extends State<Setting> {
                         },
                         title: Text('Dark Theme'.tr)),
                     if (isDesktop)
-                    SettingsTile.switchTile(
-                        title: Text(
-                          "Set as system proxy".tr,
-                          style: textStyle,
-                        ),
-                        initialValue:
-                            SpUtil.getData("system_proxy", defValue: false),
-                        onToggle: (e) async {
-                          if (e) {
-                            await Get.find<ClashService>().setSystemProxy();
-                            await SpUtil.setData("system_proxy", true);
-                          } else {
-                            await Get.find<ClashService>().clearSystemProxy();
-                            await SpUtil.setData("system_proxy", false);
-                          }
-                          setState(() {
-                            Tips.info("success");
-                          });
-                        }),
+                      SettingsTile.switchTile(
+                          title: Text(
+                            "Set as system proxy".tr,
+                            style: textStyle,
+                          ),
+                          initialValue:
+                              SpUtil.getData("system_proxy", defValue: false),
+                          onToggle: (e) async {
+                            if (e) {
+                              await Get.find<ClashService>().setSystemProxy();
+                              await SpUtil.setData("system_proxy", true);
+                            } else {
+                              await Get.find<ClashService>().clearSystemProxy();
+                              await SpUtil.setData("system_proxy", false);
+                            }
+                            setState(() {
+                              Tips.info("success");
+                            });
+                          }),
                     if (isDesktop)
-                    SettingsTile.switchTile(
-                        title: Text(
-                          "Start with system".tr,
-                          style: textStyle,
-                        ),
-                        initialValue:
-                            Get.find<AutostartService>().isEnabled.value,
-                        onToggle: (e) async {
-                          if (e) {
-                            Get.find<AutostartService>().enableAutostart();
-                          } else {
-                            Get.find<AutostartService>().disableAutostart();
-                          }
-                        }),
+                      SettingsTile.switchTile(
+                          title: Text(
+                            "Start with system".tr,
+                            style: textStyle,
+                          ),
+                          initialValue:
+                              Get.find<AutostartService>().isEnabled.value,
+                          onToggle: (e) async {
+                            if (e) {
+                              Get.find<AutostartService>().enableAutostart();
+                            } else {
+                              Get.find<AutostartService>().disableAutostart();
+                            }
+                          }),
                     if (isDesktop)
                       SettingsTile.switchTile(
                           title: Text(

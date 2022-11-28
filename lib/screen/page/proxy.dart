@@ -65,9 +65,6 @@ class _ProxyState extends State<Proxy> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(onPressed: ()  async {
-        final clashDirectory = await getApplicationSupportDirectory();
-      }, child: Icon(Icons.folder_open_outlined),),
     );
   }
 

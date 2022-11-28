@@ -56,7 +56,8 @@ class ClashTranslations extends Translations {
           "Connections": "Connections",
           "No Connections": "No Active Connections yet",
           "Close all connections": "Close all connections",
-          "Close": "Close"
+          "Close": "Close",
+          "Open config folder": "Open config folder"
         },
         'zh_CN': {
           "http_port": "HTTP端口",
@@ -152,6 +153,7 @@ class ClashTranslations extends Translations {
           "Close all connections": "关闭所有连接",
           "Close": "关闭",
           "Cannot use this special name": "不能使用这个名字哦",
+          "Open config folder": "打开配置文件夹"
         }
       };
 }
