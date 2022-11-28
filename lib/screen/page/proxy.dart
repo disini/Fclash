@@ -3,6 +3,7 @@ import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Proxy extends StatefulWidget {
   const Proxy({Key? key}) : super(key: key);
@@ -22,8 +23,8 @@ class _ProxyState extends State<Proxy> {
   @override
   Widget build(BuildContext context) {
     final cs = Get.find<ClashService>();
-    return Container(
-      child: Stack(
+    return Scaffold(
+      body: Stack(
         children: [
           Opacity(
               opacity: 0.4,
@@ -48,7 +49,11 @@ class _ProxyState extends State<Proxy> {
                         : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
                             .tr,
                     rightWidget: cs.isSystemProxyObs.value
-                        ? Offstage()
+                        ? TextButton(
+                            onPressed: () {
+                              cs.clearSystemProxy();
+                            },
+                            child: Text("Cancel".tr))
                         : TextButton(
                             onPressed: () {
                               cs.setSystemProxy();
@@ -60,6 +65,9 @@ class _ProxyState extends State<Proxy> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(onPressed: ()  async {
+        final clashDirectory = await getApplicationSupportDirectory();
+      }, child: Icon(Icons.folder_open_outlined),),
     );
   }
 

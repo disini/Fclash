@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fclash/main.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
@@ -36,46 +37,48 @@ class _ConnectionsState extends State<Connections> {
     return Scaffold(
       body: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(color: Colors.white),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Obx(
-                  () => BrnEnhanceNumberCard(
-                    itemChildren: [
-                      BrnNumberInfoItemModel(
-                          number: getTrafficString(connections["uploadTotal"]),
-                          title: "Upload".tr,
-                          lastDesc: "MB"),
-                    ],
+          if (isDesktop)
+            Container(
+              decoration: BoxDecoration(color: Colors.white),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Obx(
+                    () => BrnEnhanceNumberCard(
+                      itemChildren: [
+                        BrnNumberInfoItemModel(
+                            number:
+                                getTrafficString(connections["uploadTotal"]),
+                            title: "Upload".tr,
+                            lastDesc: "MB"),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 16,
-                ),
-                Obx(
-                  () => BrnEnhanceNumberCard(
-                    itemChildren: [
-                      BrnNumberInfoItemModel(
-                          number:
-                              getTrafficString(connections["downloadTotal"]),
-                          title: "Download".tr,
-                          lastDesc: "MB"),
-                    ],
+                  SizedBox(
+                    height: 16,
                   ),
-                ),
-                BrnNormalButton(
-                  onTap: () {
-                    Get.find<ClashService>().closeAllConnections();
-                    BrnToast.show("Success".tr, context);
-                  },
-                  text: "Close all connections".tr,
-                  backgroundColor: Colors.redAccent,
-                ).paddingSymmetric(horizontal: 32, vertical: 32)
-              ],
+                  Obx(
+                    () => BrnEnhanceNumberCard(
+                      itemChildren: [
+                        BrnNumberInfoItemModel(
+                            number:
+                                getTrafficString(connections["downloadTotal"]),
+                            title: "Download".tr,
+                            lastDesc: "MB"),
+                      ],
+                    ),
+                  ),
+                  BrnNormalButton(
+                    onTap: () {
+                      Get.find<ClashService>().closeAllConnections();
+                      BrnToast.show("Success".tr, context);
+                    },
+                    text: "Close all connections".tr,
+                    backgroundColor: Colors.redAccent,
+                  ).paddingSymmetric(horizontal: 32, vertical: 32)
+                ],
+              ),
             ),
-          ),
           Expanded(
             child: Column(
               children: [

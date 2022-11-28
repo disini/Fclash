@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fclash/main.dart';
 import 'package:fclash/screen/component/speed.dart';
 import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/screen/page/about.dart';
@@ -82,15 +83,31 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
+    return isDesktop ? _buildDesktop() : _buildMobile();
+  }
+
+  _buildMobile() {
+    return SafeArea(
+      child: Scaffold(
+          appBar: BrnAppBar(
+            title: "fclash",
+          ),
+          body: Column(
+            children: [buildMobileOptions(), Expanded(child: buildFrame())],
+          )),
+    );
+  }
+
+  _buildDesktop() {
     return DragToResizeArea(
       child: Scaffold(
           body: Column(
-        children: [buildOptions(), Expanded(child: buildFrame())],
+        children: [buildDesktopOptions(), Expanded(child: buildFrame())],
       )),
     );
   }
 
-  Widget buildOptions() {
+  Widget buildDesktopOptions() {
     return GestureDetector(
       onPanStart: (_) {
         windowManager.startDragging();
@@ -116,6 +133,28 @@ class _MainScreenState extends State<MainScreen>
                   child: const SpeedWidget()),
             ),
             const WindowPanel()
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildMobileOptions() {
+    return SizedBox(
+      height: 75,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            _buildOptions(0, 'Proxy'.tr),
+            _buildOptions(1, 'Profile'.tr),
+            _buildOptions(2, 'Setting'.tr),
+            _buildOptions(3, 'Connections'.tr),
+            _buildOptions(4, 'Log'.tr),
+            _buildOptions(5, 'About'.tr),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:fclash/main.dart';
 import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/autostart_service.dart';
 import 'package:fclash/service/clash_service.dart';
@@ -195,6 +196,7 @@ class _SettingState extends State<Setting> {
                           setState(() {});
                         },
                         title: Text('Dark Theme'.tr)),
+                    if (isDesktop)
                     SettingsTile.switchTile(
                         title: Text(
                           "Set as system proxy".tr,
@@ -214,6 +216,7 @@ class _SettingState extends State<Setting> {
                             Tips.info("success");
                           });
                         }),
+                    if (isDesktop)
                     SettingsTile.switchTile(
                         title: Text(
                           "Start with system".tr,
@@ -228,18 +231,20 @@ class _SettingState extends State<Setting> {
                             Get.find<AutostartService>().disableAutostart();
                           }
                         }),
-                    SettingsTile.switchTile(
-                        title: Text(
-                          "Hide window when start fclash".tr,
-                          style: textStyle,
-                        ),
-                        initialValue:
-                            Get.find<ClashService>().isHideWindowWhenStart(),
-                        onToggle: (e) async {
-                          setState(() {
-                            Get.find<ClashService>().setHideWindowWhenStart(e);
-                          });
-                        }),
+                    if (isDesktop)
+                      SettingsTile.switchTile(
+                          title: Text(
+                            "Hide window when start fclash".tr,
+                            style: textStyle,
+                          ),
+                          initialValue:
+                              Get.find<ClashService>().isHideWindowWhenStart(),
+                          onToggle: (e) async {
+                            setState(() {
+                              Get.find<ClashService>()
+                                  .setHideWindowWhenStart(e);
+                            });
+                          }),
                   ])
             ]),
     );

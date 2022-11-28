@@ -50,6 +50,8 @@ dependencies:
   clipboard: ^0.1.3
   url_launcher: any
   icons_launcher: ^2.0.4
+  system_proxy: ^0.1.0
+  open_settings: ^2.0.2
 
 dev_dependencies:
   flutter_test:

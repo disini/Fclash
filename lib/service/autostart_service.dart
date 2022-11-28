@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fclash/main.dart';
 import 'package:fclash/tools/autostart_utils.dart';
 import 'package:kommon/kommon.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
@@ -11,18 +12,26 @@ class AutostartService extends GetxService {
   Future<AutostartService> init() async {
     // setup
     final packageInfo = await PackageInfo.fromPlatform();
-    launchAtStartup.setup(
-        appName: packageInfo.appName, appPath: Platform.resolvedExecutable);
-    isEnabled.value = await launchAtStartup.isEnabled();
+    if (isDesktop) {
+      launchAtStartup.setup(
+          appName: packageInfo.appName, appPath: Platform.resolvedExecutable);
+      isEnabled.value = await launchAtStartup.isEnabled();
+    }
     return this;
   }
 
   Future<bool> enableAutostart() async {
+    if (!isDesktop) {
+      return false;
+    }
     isEnabled.value = await AutostartUtils.enable();
     return isEnabled.value;
   }
 
   Future<bool> disableAutostart() async {
+    if (!isDesktop) {
+      return false;
+    }
     isEnabled.value = !(await AutostartUtils.disable());
     return isEnabled.value;
   }

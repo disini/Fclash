@@ -14,10 +14,12 @@ import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:kommon/kommon.dart' hide ProxyTypes;
+import 'package:open_settings/open_settings.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:proxy_manager/proxy_manager.dart';
+import 'package:system_proxy/system_proxy.dart';
 import 'package:tray_manager/tray_manager.dart';
 
 late NativeLibrary clashFFI;
@@ -117,7 +119,9 @@ class ClashService extends GetxService with TrayListener {
       initDaemon();
     });
     // tray show issue
-    trayManager.addListener(this);
+    if (isDesktop) {
+      trayManager.addListener(this);
+    }
     // wait getx initialize
     Future.delayed(const Duration(seconds: 3), () {
       Get.find<NotificationService>()
@@ -298,7 +302,8 @@ class ClashService extends GetxService with TrayListener {
   }
 
   bool changeProxy(String selectName, String proxyName) {
-    final ret = clashFFI.change_proxy(selectName.toNativeUtf8().cast(), proxyName.toNativeUtf8().cast());
+    final ret = clashFFI.change_proxy(
+        selectName.toNativeUtf8().cast(), proxyName.toNativeUtf8().cast());
     if (ret == 0) {
       reload();
     }
@@ -307,9 +312,8 @@ class ClashService extends GetxService with TrayListener {
 
   bool changeConfigField(String field, dynamic value) {
     try {
-      int ret = clashFFI.change_config_field(json.encode(<String, dynamic>{
-        field: value
-      }).toNativeUtf8().cast());
+      int ret = clashFFI.change_config_field(
+          json.encode(<String, dynamic>{field: value}).toNativeUtf8().cast());
       return ret == 0;
     } finally {
       getCurrentClashConfig();
@@ -330,32 +334,122 @@ class ClashService extends GetxService with TrayListener {
   }
 
   Future<void> setSystemProxy() async {
-    if (configEntity.value != null) {
-      final entity = configEntity.value!;
-      if (entity.port != 0) {
-        await proxyManager.setAsSystemProxy(
-            ProxyTypes.http, '127.0.0.1', entity.port!);
-        print("set http");
-        await proxyManager.setAsSystemProxy(
-            ProxyTypes.https, '127.0.0.1', entity.port!);
+    if (isDesktop) {
+      if (configEntity.value != null) {
+        final entity = configEntity.value!;
+        if (entity.port != 0) {
+          await proxyManager.setAsSystemProxy(
+              ProxyTypes.http, '127.0.0.1', entity.port!);
+          print("set http");
+          await proxyManager.setAsSystemProxy(
+              ProxyTypes.https, '127.0.0.1', entity.port!);
+        }
+        if (entity.socksPort != 0 && !Platform.isWindows) {
+          print("set socks");
+          await proxyManager.setAsSystemProxy(
+              ProxyTypes.socks, '127.0.0.1', entity.socksPort!);
+        }
+        await setIsSystemProxy(true);
       }
-      if (entity.socksPort != 0 && !Platform.isWindows) {
-        print("set socks");
-        await proxyManager.setAsSystemProxy(
-            ProxyTypes.socks, '127.0.0.1', entity.socksPort!);
-      }
-      await setIsSystemProxy(true);
+    } else {
+      await Clipboard.setData(
+          ClipboardData(text: "${configEntity.value?.port}"));
+      final dialog = BrnDialog(
+        titleText: "请手动设置代理",
+        messageText:
+            "端口号已复制。请进入已连接WiFi的详情设置，将代理设置为手动，主机名填写127.0.0.1，端口填写${configEntity.value?.port}，然后返回点击已完成即可",
+        actionsText: ["取消", "已完成", "去设置填写"],
+        indexedActionCallback: (index) async {
+          if (index == 0) {
+            if (Get.isOverlaysOpen) {
+              Get.back();
+            }
+          } else if (index == 1) {
+            final proxy = await SystemProxy.getProxySettings();
+            if (proxy != null) {
+              if (proxy["host"] == "127.0.0.1" &&
+                  int.parse(proxy["port"].toString()) ==
+                      configEntity.value?.port) {
+                Future.delayed(Duration.zero, () {
+                  if (Get.overlayContext != null) {
+                    BrnToast.show("设置成功", Get.overlayContext!);
+                    setIsSystemProxy(true);
+                  }
+                });
+                if (Get.isOverlaysOpen) {
+                  Get.back();
+                }
+              }
+            } else {
+              Future.delayed(Duration.zero, () {
+                if (Get.overlayContext != null) {
+                  BrnToast.show("好像未完成设置哦", Get.overlayContext!);
+                }
+              });
+            }
+          } else {
+            Future.delayed(Duration.zero, () {
+              BrnToast.show("端口号已复制", Get.context!);
+            });
+            await OpenSettings.openWIFISetting();
+          }
+        },
+      );
+      Get.dialog(dialog);
     }
   }
 
   Future<void> clearSystemProxy({bool permanent = true}) async {
-    await proxyManager.cleanSystemProxy();
-    if (permanent) {
-      await setIsSystemProxy(false);
+    if (isDesktop) {
+      await proxyManager.cleanSystemProxy();
+      if (permanent) {
+        await setIsSystemProxy(false);
+      }
+    } else {
+      final dialog = BrnDialog(
+        titleText: "请手动设置代理",
+        messageText: "请进入已连接WiFi的详情设置，将代理设置为无",
+        actionsText: ["取消", "已完成", "去设置清除"],
+        indexedActionCallback: (index) async {
+          if (index == 0) {
+            if (Get.isOverlaysOpen) {
+              Get.back();
+            }
+          } else if (index == 1) {
+            final proxy = await SystemProxy.getProxySettings();
+            if (proxy != null) {
+              Future.delayed(Duration.zero, () {
+                if (Get.overlayContext != null) {
+                  BrnToast.show("好像没有清除成功哦，当前代理${proxy}", Get.overlayContext!);
+                }
+              });
+            } else {
+              Future.delayed(Duration.zero, () {
+                if (Get.overlayContext != null) {
+                  BrnToast.show("清除成功", Get.overlayContext!);
+                }
+                setIsSystemProxy(false);
+                if (Get.isOverlaysOpen) {
+                  Get.back();
+                }
+              });
+            }
+          } else {
+            OpenSettings.openWIFISetting().then((_) async {
+              final proxy = await SystemProxy.getProxySettings();
+              debugPrint("$proxy");
+            });
+          }
+        },
+      );
+      Get.dialog(dialog);
     }
   }
 
   void updateTray() {
+    if (!isDesktop) {
+      return;
+    }
     final stringList = List<MenuItem>.empty(growable: true);
     // yaml
     stringList

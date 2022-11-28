@@ -14,13 +14,20 @@ import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 
 final proxyManager = ProxyManager();
+final isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-  await Future.wait([initAppService(), initWindow()]);
+  await initAppService();
+  if (isDesktop) {
+    await windowManager.ensureInitialized();
+    await windowManager.setPreventClose(true);
+    await initWindow();
+  }
   runApp(const MyApp());
-  initAppTray();
+  if (isDesktop) {
+    initAppTray();
+  }
 }
 
 Future<void> initWindow() async {
