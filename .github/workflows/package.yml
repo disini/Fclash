@@ -148,18 +148,18 @@ jobs:
       - name: Check out Git repository
         uses: actions/checkout@v2
       - uses: actions/setup-go@v3
-          with:
-            go-version: '>=1.19.0'
+        with:
+          go-version: '>=1.19.0'
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.0.5'
           channel: 'stable'
           cache: true
       - uses: nttld/setup-ndk@v1
-          id: setup-ndk
-          with:
-            ndk-version: r21e
-            add-to-path: true
+        id: setup-ndk
+        with:
+          ndk-version: r21e
+          add-to-path: true
       - name: Build Golang lib
         shell: bash
         env:
@@ -175,9 +175,9 @@ jobs:
           flutter build apk --release --target-platform android-arm64
           mv build/app/outputs/flutter-apk/app-release.apk fclash-${{ env.VERSION}}-arm64v8a.apk
       - uses: actions/upload-artifact@v2
-          with:
-            name: fclash-${{ env.VERSION}}-arm64v8a.apk
-            path: fclash-${{ env.VERSION}}-arm64v8a.apk
+        with:
+          name: fclash-${{ env.VERSION}}-arm64v8a.apk
+          path: fclash-${{ env.VERSION}}-arm64v8a.apk
       - uses: ncipollo/release-action@v1
         if: startsWith(github.ref, 'refs/tags/v')
         with:
