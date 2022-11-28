@@ -4,7 +4,7 @@
 
 
 <p align="center" style="font-size: 20px">A Clash Proxy Fronted based on Clash</p>
-<p align="center" style="font-size: 16px">Windows / macOS / Linux(amd64/arm64) Supported!</p>
+<p align="center" style="font-size: 16px">Windows / macOS / Linux(amd64/arm64) / Android(Beta) Supported!</p>
 
 [![flutter awesome](https://img.shields.io/badge/Flutter-Awesome-orange)](https://flutterawesome.com/clash-fronted-client-by-flutter-linux-supported/)
 [![fclash](https://snapcraft.io/fclash/badge.svg)](https://snapcraft.io/fclash)
@@ -23,18 +23,7 @@
 
 ## Install
 
-### Windows
-
-Please download .exe setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
-
-### MacOS
-
-
-Please download .dmg setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
-
-Note that macOS will treat the `FClash` as an untrusted app, so please go to settings and trust it manually.
-
-### Linux 
+### Linux
 
 - For Arch/Manjaro users, using AUR
   - `yay -S fclash`
@@ -42,6 +31,20 @@ Note that macOS will treat the `FClash` as an untrusted app, so please go to set
   - [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
 - For other distro users, please to use the snap app.
   - [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/fclash)
+
+### Windows
+
+Please download .exe setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+
+### MacOS
+
+Please download .dmg setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+
+Note that macOS will treat the `FClash` as an untrusted app, so please go to settings and trust it manually.
+
+### Windows
+
+Please download .apk directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
 
 ## Feature
 
