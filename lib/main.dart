@@ -18,17 +18,26 @@ final proxyManager = ProxyManager();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
-  await initAppService();
-  await initWindow();
+  await Future.wait([initAppService(), initWindow()]);
   runApp(const MyApp());
   initAppTray();
 }
 
 Future<void> initWindow() async {
   WindowOptions opts = const WindowOptions(
-      minimumSize: Size(1024, 768), titleBarStyle: TitleBarStyle.hidden);
+      minimumSize: Size(1024, 768),
+      size: Size(1024, 768),
+      titleBarStyle: TitleBarStyle.hidden);
   windowManager.waitUntilReadyToShow(opts, () {
-    // ignore
+    windowManager.setPreventClose(true);
+    // hide window when start
+    if (Get.find<ClashService>().isHideWindowWhenStart() && kReleaseMode) {
+      if (Platform.isMacOS) {
+        windowManager.minimize();
+      } else {
+        windowManager.hide();
+      }
+    }
   });
 }
 
@@ -57,17 +66,11 @@ void initAppTray({List<MenuItem>? details, bool isUpdate = false}) async {
 }
 
 Future<void> initAppService() async {
-  await windowManager.setPreventClose(true);
   await SpUtil.getInstance();
   await Get.putAsync(() => NotificationService().init());
   await Get.putAsync(() => ClashService().init());
   await Get.putAsync(() => DialogService().init());
   await Get.putAsync(() => AutostartService().init());
-
-  // hide window when start
-  if (Get.find<ClashService>().isHideWindowWhenStart() && kReleaseMode) {
-    await windowManager.hide();
-  }
 }
 
 class MyApp extends StatelessWidget {

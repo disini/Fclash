@@ -26,11 +26,12 @@ class _MainScreenState extends State<MainScreen>
   var index = 0.obs;
 
   @override
-  void onWindowEvent(String eventName) {
-    switch (eventName) {
-      case "close":
-        windowManager.hide();
-        break;
+  void onWindowClose() {
+    super.onWindowClose();
+    if (Platform.isMacOS) {
+      windowManager.minimize();
+    } else {
+      windowManager.hide();
     }
   }
 
@@ -63,11 +64,12 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   void initState() {
+    super.initState();
     windowManager.addListener(this);
     trayManager.addListener(this);
-    super.initState();
     Get.put(ThemeController());
     changeTheme();
+    // ignore
   }
 
   @override

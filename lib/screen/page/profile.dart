@@ -143,7 +143,7 @@ class _ProfileState extends State<Profile> {
                 title: "What is your config name".tr,
                 onText: (name) async {
                   if (name == "config") {
-                    BrnToast.show("Cannot use this special name", context);
+                    BrnToast.show("Cannot use this special name".tr, context);
                   }
                   Future.delayed(Duration.zero, () async {
                     try {
