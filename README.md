@@ -5,6 +5,7 @@
 
 <p align="center" style="font-size: 20px">A Clash Proxy Fronted based on Clash</p>
 <p align="center" style="font-size: 16px">Windows / macOS / Linux(amd64/arm64) / Android(Beta) Supported!</p>
+<p align="center" style="font-size: 16px">This app mainly focused on all Linux distros, which brings a better experience for linux users/developers.</p>
 
 [![flutter awesome](https://img.shields.io/badge/Flutter-Awesome-orange)](https://flutterawesome.com/clash-fronted-client-by-flutter-linux-supported/)
 [![fclash](https://snapcraft.io/fclash/badge.svg)](https://snapcraft.io/fclash)
