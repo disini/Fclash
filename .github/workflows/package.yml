@@ -120,7 +120,7 @@ jobs:
       - name: Enable Linux Desktop Support
         run: flutter config --enable-linux-desktop
       - name: install dependencies
-        run: sudo apt update -y && sudo apt install -y libappindicator3-dev ninja-build build-essential
+        run: sudo apt update -y && sudo apt install -y libayatana-appindicator3-dev ninja-build build-essential
       - name: build linux debian package
         run: ./build-deb.sh
       - uses: actions/upload-artifact@v2
@@ -226,7 +226,7 @@ jobs:
           shell: /bin/bash
           install: |
             apt update -y
-            apt-get -qq install -y git cmake g++ gcc build-essential nasm yasm curl unzip xz-utils python3 wget pkg-config ninja-build pkg-config libgtk-3-dev liblzma-dev clang libappindicator3-dev
+            apt-get -qq install -y git cmake g++ gcc build-essential nasm yasm curl unzip xz-utils python3 wget pkg-config ninja-build pkg-config libgtk-3-dev liblzma-dev clang libayatana-appindicator3-dev
           run: |
             # disable git safe.directory
             git config --global --add safe.directory "*"
