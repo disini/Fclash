@@ -153,7 +153,9 @@ class ClashTranslations extends Translations {
           "Close all connections": "关闭所有连接",
           "Close": "关闭",
           "Cannot use this special name": "不能使用这个名字哦",
-          "Open config folder": "打开配置文件夹"
+          "Open config folder": "打开配置文件夹",
+          "Test complete.": "测试完成",
+          "Set update interval": "设置更新间隔"
         }
       };
 }

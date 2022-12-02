@@ -208,11 +208,11 @@ class ClashService extends GetxService with TrayListener {
         Get.printError(info: '$e');
       }
     });
-    await startLogging();
+    startLogging();
     // system proxy
     // listen port
     await reload();
-    await checkPort();
+    checkPort();
     if (isSystemProxy()) {
       setSystemProxy();
     }
@@ -255,7 +255,7 @@ class ClashService extends GetxService with TrayListener {
   //   return resp.data?.stream;
   // }
 
-  Future<void> startLogging() async {
+  void startLogging() {
     final receiver = ReceivePort();
     logStream = receiver.asBroadcastStream();
     if (kDebugMode) {
@@ -320,7 +320,6 @@ class ClashService extends GetxService with TrayListener {
       if (field.endsWith("port") && isSystemProxy()) {
         setSystemProxy();
       }
-      updateTray();
     }
   }
 
@@ -551,7 +550,7 @@ class ClashService extends GetxService with TrayListener {
     }
   }
 
-  Future<void> checkPort() async {
+  void checkPort() {
     if (configEntity.value != null) {
       if (configEntity.value!.port == 0) {
         changeConfigField('port', initializedHttpPort);
@@ -562,6 +561,7 @@ class ClashService extends GetxService with TrayListener {
       if (configEntity.value!.socksPort == 0) {
         changeConfigField('socks-port', initializedSockPort);
       }
+      updateTray();
     }
   }
 

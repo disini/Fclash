@@ -25,9 +25,6 @@ void main() async {
     await initWindow();
   }
   runApp(const MyApp());
-  if (isDesktop) {
-    initAppTray();
-  }
 }
 
 Future<void> initWindow() async {
@@ -48,10 +45,8 @@ Future<void> initWindow() async {
   });
 }
 
-void initAppTray({List<MenuItem>? details, bool isUpdate = false}) async {
-  // if (!isUpdate) {
-  //   // TODO
-  // }
+Future<void> initAppTray(
+    {List<MenuItem>? details, bool isUpdate = false}) async {
   await trayManager.setIcon(Platform.isWindows
       ? 'assets/images/app_tray.ico'
       : 'assets/images/app_tray.png');
