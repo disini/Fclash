@@ -14,6 +14,8 @@ class ClashLog extends StatefulWidget {
 
 class _ClashLogState extends State<ClashLog> {
   final logs = RxList<String>();
+  final buffer = List<String>.empty(growable: true);
+  late Timer? _timer;
   final connected = false.obs;
   static const logMaxLen = 100;
   StreamSubscription<dynamic>? streamSubscription;
@@ -25,6 +27,15 @@ class _ClashLogState extends State<ClashLog> {
   }
 
   void tryConnect() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (buffer.isNotEmpty) {
+        logs.insertAll(0, buffer.reversed);
+        buffer.clear();
+        if (logs.length > logMaxLen) {
+          logs.value = logs.sublist(0, logMaxLen);
+        }
+      }
+    });
     Timer.periodic(const Duration(seconds: 1), (timer) {
       if (streamSubscription == null) {
         if (Get.find<ClashService>().logStream == null) {
@@ -33,11 +44,8 @@ class _ClashLogState extends State<ClashLog> {
         streamSubscription =
             Get.find<ClashService>().logStream?.listen((event) {
           String logStr = event;
+          buffer.add(logStr);
           Get.printInfo(info: 'Log widget: $logStr');
-          logs.insert(0, logStr);
-          if (logs.length > logMaxLen) {
-            logs.value = logs.sublist(logMaxLen);
-          }
         });
         if (streamSubscription == null) {
           printInfo(info: 'log service retry');
@@ -56,6 +64,7 @@ class _ClashLogState extends State<ClashLog> {
   void dispose() {
     Get.printInfo(info: 'log dispose');
     streamSubscription?.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -79,6 +88,7 @@ class _ClashLogState extends State<ClashLog> {
           child: Obx(() => ListView.builder(
                 itemBuilder: (cxt, index) {
                   return Padding(
+                    key: ValueKey(logs[index]),
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: buildLogItem(logs[index]),
                   );
@@ -96,7 +106,7 @@ class _ClashLogState extends State<ClashLog> {
       children: [
         Text(
           json['Payload'] ?? "",
-          style: TextStyle(fontFamily: 'nssc'),
+          style: const TextStyle(fontFamily: 'nssc'),
         ),
         Align(
           alignment: Alignment.topRight,

@@ -25,6 +25,14 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen>
     with WindowListener, TrayListener {
   var index = 0.obs;
+  final pages = const [
+    Proxy(),
+    Profile(),
+    Setting(),
+    Connections(),
+    ClashLog(),
+    AboutPage()
+  ];
 
   @override
   void onWindowClose() {
@@ -185,17 +193,7 @@ class _MainScreenState extends State<MainScreen>
 
   Widget buildFrame() {
     return Obx(
-      () => IndexedStack(
-        index: index.value,
-        children: const [
-          Proxy(),
-          Profile(),
-          Setting(),
-          Connections(),
-          ClashLog(),
-          AboutPage()
-        ],
-      ),
+      () => pages[index.value],
     );
   }
 
