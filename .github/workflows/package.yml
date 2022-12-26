@@ -208,7 +208,7 @@ jobs:
           pushd flutter-elinux
             # reset to flutter 3.3.10
             git fetch
-            git reset --hard b09a90eee643859ce4e676839227edd9fd3feba8 
+            git reset --hard 19a1b05ea20675c36c705955c4148ad40b205161 
           popd
 
       - uses: Kingtous/run-on-arch-action@amd64-support
