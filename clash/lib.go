@@ -29,7 +29,8 @@ import (
 )
 
 var (
-	options []hub.Option
+	options        []hub.Option
+	log_subscriber <-chan any
 )
 
 //export clash_init
@@ -163,9 +164,13 @@ func init_native_api_bridge(api unsafe.Pointer) {
 
 //export start_log
 func start_log(port C.long) {
-	subscibe := log.Subscribe()
+	if log_subscriber != nil {
+		log.UnSubscribe(log_subscriber)
+		log_subscriber = nil
+	}
+	log_subscriber = log.Subscribe()
 	go func() {
-		for elem := range subscibe {
+		for elem := range log_subscriber {
 			lg := elem.(log.Event)
 			data, err := json.Marshal(lg)
 			if err != nil {
@@ -176,6 +181,15 @@ func start_log(port C.long) {
 		}
 	}()
 	fmt.Println("[GO] subscribe logger on dart bridge port %s", int64(port))
+}
+
+//export stop_log
+func stop_log() {
+	if log_subscriber != nil {
+		log.UnSubscribe(log_subscriber)
+		fmt.Println("Logger stopped")
+		log_subscriber = nil
+	}
 }
 
 //export change_proxy

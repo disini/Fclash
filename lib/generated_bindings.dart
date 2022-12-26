@@ -184,6 +184,14 @@ class NativeLibrary {
       _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Long)>>('start_log');
   late final _start_log = _start_logPtr.asFunction<void Function(int)>();
 
+  void stop_log() {
+    return _stop_log();
+  }
+
+  late final _stop_logPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function()>>('stop_log');
+  late final _stop_log = _stop_logPtr.asFunction<void Function()>();
+
   int change_proxy(
     ffi.Pointer<ffi.Char> selector_name,
     ffi.Pointer<ffi.Char> proxy_name,

@@ -144,33 +144,33 @@ class _ProfileState extends State<Profile> {
                                         child: Tooltip(
                                             message: link,
                                             child: Text("Copy link".tr))),
-                                    TextButton(
-                                        onPressed: () async {
-                                          BrnToast.show('Updating'.tr, context);
-                                          try {
-                                            final res =
-                                                await Get.find<ClashService>()
-                                                    .updateSubscription(key);
-                                            if (res) {
-                                              BrnToast.show(
-                                                  'Update and apply settings success!'
-                                                      .tr,
-                                                  context);
-                                            } else {
-                                              BrnToast.show(
-                                                  'Update failed, please retry!'
-                                                      .tr,
-                                                  context);
-                                            }
-                                          } catch (e) {
-                                            BrnToast.show(
-                                                e.toString(), context);
-                                          }
-                                        },
-                                        child: Tooltip(
-                                            message: link,
-                                            child: Text(
-                                                "Set update interval".tr))),
+                                    // TextButton(
+                                    //     onPressed: () async {
+                                    //       BrnToast.show('Updating'.tr, context);
+                                    //       try {
+                                    //         final res =
+                                    //             await Get.find<ClashService>()
+                                    //                 .updateSubscription(key);
+                                    //         if (res) {
+                                    //           BrnToast.show(
+                                    //               'Update and apply settings success!'
+                                    //                   .tr,
+                                    //               context);
+                                    //         } else {
+                                    //           BrnToast.show(
+                                    //               'Update failed, please retry!'
+                                    //                   .tr,
+                                    //               context);
+                                    //         }
+                                    //       } catch (e) {
+                                    //         BrnToast.show(
+                                    //             e.toString(), context);
+                                    //       }
+                                    //     },
+                                    //     child: Tooltip(
+                                    //         message: link,
+                                    //         child: Text(
+                                    //             "Set update interval".tr))),
                                   ],
                                 )
                         ],

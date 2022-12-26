@@ -208,7 +208,6 @@ class ClashService extends GetxService with TrayListener {
         Get.printError(info: '$e');
       }
     });
-    startLogging();
     // system proxy
     // listen port
     await reload();
@@ -700,5 +699,10 @@ class ClashService extends GetxService with TrayListener {
           .showNotification("Fclash", "Already running, Now exit.".tr);
       exit(0);
     }
+  }
+
+  void stopLog() {
+    logStream = null;
+    clashFFI.stop_log();
   }
 }

@@ -27,6 +27,7 @@ class _ClashLogState extends State<ClashLog> {
   }
 
   void tryConnect() {
+    Get.find<ClashService>().startLogging();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (buffer.isNotEmpty) {
         logs.insertAll(0, buffer.reversed);
@@ -36,7 +37,7 @@ class _ClashLogState extends State<ClashLog> {
         }
       }
     });
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(milliseconds: 100), (timer) {
       if (streamSubscription == null) {
         if (Get.find<ClashService>().logStream == null) {
           printInfo(info: 'clash log stream not opened');
@@ -63,6 +64,7 @@ class _ClashLogState extends State<ClashLog> {
   @override
   void dispose() {
     Get.printInfo(info: 'log dispose');
+    Get.find<ClashService>().stopLog();
     streamSubscription?.cancel();
     _timer?.cancel();
     super.dispose();

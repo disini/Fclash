@@ -109,10 +109,9 @@ class _ConnectionsState extends State<Connections> {
                           .contains(searchField.value));
                     }
                     final li = conns.toList(growable: false);
-                    return Wrap(
-                      children: li
-                          .map((e) => _buildConnection(e))
-                          .toList(growable: false),
+                    return ListView.builder(
+                      itemCount: li.length,
+                      itemBuilder: (context, index) => _buildConnection(li[index]),
                     );
                   },
                 ))
