@@ -21,6 +21,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:proxy_manager/proxy_manager.dart';
 import 'package:system_proxy/system_proxy.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:yaml/yaml.dart';
+import 'package:yaml_writer/yaml_writer.dart';
 
 late NativeLibrary clashFFI;
 
@@ -267,6 +269,16 @@ class ClashService extends GetxService with TrayListener {
   }
 
   Future<bool> _changeConfig(FileSystemEntity config) async {
+    // check if it has `rule-set`, and try to convert it
+    final content = await convertConfig(await File(config.path).readAsString())
+        .catchError((e) {
+      printError(info: e);
+      BrnLoadingDialog.dismiss(Get.overlayContext!);
+    });
+    BrnLoadingDialog.dismiss(Get.overlayContext!);
+    if (content.isNotEmpty) {
+      await File(config.path).writeAsString(content);
+    }
     // judge valid
     if (clashFFI.is_config_valid(config.path.toNativeUtf8().cast()) == 0) {
       final resp = await Request.dioClient.put('/configs',
@@ -704,5 +716,67 @@ class ClashService extends GetxService with TrayListener {
   void stopLog() {
     logStream = null;
     clashFFI.stop_log();
+  }
+}
+
+Future<String> convertConfig(String content) async {
+  try {
+    final yamlWriter = YAMLWriter();
+    final payloadMap = <String, List>{};
+    Map doc = json.decode(json.encode(loadYaml(content, recover: true)));
+    // 下载rule-provider对应的payload文件
+    if (doc.containsKey('rule-providers')) {
+      BrnLoadingDialog.show(Get.overlayContext!,
+          content:
+              "Converting the premium profile to the profile supported by open source clash"
+                  .tr);
+      Map providers = doc['rule-providers'];
+      var downloadFutures = <Future>[];
+      for (final provider in providers.entries) {
+        downloadFutures.add(Future.delayed(Duration.zero, () async {
+          final key = provider.key;
+          final value = provider.value;
+          final url = value['url'];
+          print("Downloading $url");
+          if (url != null) {
+            final resp = await (Dio().get(url));
+            Map respDoc = loadYaml(resp.data, recover: true);
+            payloadMap[key] = List.of(respDoc['payload']);
+            print("$url completed");
+          }
+        }));
+      }
+      await Future.wait(downloadFutures);
+      // 开始转换rules
+      var rules = doc['rules'];
+      var newRules = [];
+      for (var i = 0; i < rules.length; i++) {
+        String rule = rules[i];
+        final tuple = rule.split(",");
+        assert(tuple.length == 3);
+        // RULE-SET,其它影音站点,其它影音站点
+        if (tuple[0] == 'RULE-SET') {
+          final provider = tuple[1];
+          final proxyTo = tuple[2];
+          if (payloadMap[provider] != null) {
+            for (final payload in payloadMap[provider]!) {
+              newRules.add("$payload,$proxyTo");
+            }
+          }
+        } else {
+          newRules.add(rule);
+        }
+      }
+      doc['rules'] = newRules;
+      final outputString = yamlWriter.write(doc);
+      return outputString;
+    } else {
+      // no need to update
+      return "";
+    }
+  } catch (e) {
+    debugPrint("$e");
+    // ignore
+    return "";
   }
 }

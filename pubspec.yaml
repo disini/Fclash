@@ -52,6 +52,8 @@ dependencies:
   icons_launcher: ^2.0.4
   system_proxy: ^0.1.0
   open_settings: ^2.0.2
+  yaml: ^3.1.1
+  yaml_writer: ^1.0.3
 
 dev_dependencies:
   flutter_test:
