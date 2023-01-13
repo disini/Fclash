@@ -829,7 +829,6 @@ Future<String> convertConfig(String content) async {
       doc.remove('rule-providers');
       doc['rules'] = newRules;
       final outputString = yamlWriter.write(doc);
-      File("/tmp/test").writeAsStringSync(outputString);
       return outputString;
     } else {
       // no need to update
