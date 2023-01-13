@@ -14,7 +14,7 @@ class AboutPage extends StatelessWidget {
         children: [
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 50.0),
-            child: const CircleAvatar(
+            child: CircleAvatar(
               foregroundImage: AssetImage("assets/images/app_tray.png"),
               radius: 100,
             ),
@@ -29,7 +29,7 @@ class AboutPage extends StatelessWidget {
             ),
           ),
           Text(
-            "version:".trParams({"version": '1.3.7'}),
+            "version:".trParams({"version": '1.3.8'}),
             style: const TextStyle(fontFamily: 'nssc'),
           ),
           TextButton(

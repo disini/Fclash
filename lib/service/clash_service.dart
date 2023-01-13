@@ -12,6 +12,7 @@ import 'package:fclash/main.dart';
 import 'package:fclash/service/notification_service.dart';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter/services.dart';
 import 'package:kommon/kommon.dart' hide ProxyTypes;
 import 'package:open_settings/open_settings.dart';
@@ -273,9 +274,7 @@ class ClashService extends GetxService with TrayListener {
     final content = await convertConfig(await File(config.path).readAsString())
         .catchError((e) {
       printError(info: e);
-      BrnLoadingDialog.dismiss(Get.overlayContext!);
     });
-    BrnLoadingDialog.dismiss(Get.overlayContext!);
     if (content.isNotEmpty) {
       await File(config.path).writeAsString(content);
     }
@@ -726,27 +725,73 @@ Future<String> convertConfig(String content) async {
     Map doc = json.decode(json.encode(loadYaml(content, recover: true)));
     // 下载rule-provider对应的payload文件
     if (doc.containsKey('rule-providers')) {
-      BrnLoadingDialog.show(Get.overlayContext!,
-          content:
-              "Converting the premium profile to the profile supported by open source clash"
-                  .tr);
+      if (Get.overlayContext != null) {
+        final completer = Completer<bool>();
+        if (Get.isOverlaysOpen) {
+          Get.back();
+        }
+        BrnDialogManager.showConfirmDialog(Get.overlayContext!,
+            title: 'Convert profile'.tr,
+            message:
+                'Your profile contains RULE-SET which needs to convert to the profile supported by open source clash'
+                    .tr,
+            cancel: 'Continue anyway'.tr,
+            confirm: 'OK'.tr, onCancel: () {
+          Get.back();
+          completer.complete(false);
+        }, onConfirm: () {
+          Get.back();
+          completer.complete(true);
+        }, barrierDismissible: false);
+        final res = await completer.future;
+        if (!res) {
+          return content;
+        }
+      }
+      BrnLoadingDialog.show(Get.overlayContext!);
       Map providers = doc['rule-providers'];
+      final total = providers.keys.length;
+      final index = 0.obs;
+      // 进度显示
+      Get.dialog(BrnDialog(
+        titleText: 'Converting',
+        contentWidget: Center(
+          child: Obx(
+            () => Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: BrnPageLoading(),
+                ),
+                Text("$index/$total")
+              ],
+            ),
+          ),
+        ),
+      ));
+
       var downloadFutures = <Future>[];
       for (final provider in providers.entries) {
         downloadFutures.add(Future.delayed(Duration.zero, () async {
           final key = provider.key;
           final value = provider.value;
           final url = value['url'];
-          print("Downloading $url");
+          debugPrint("Downloading $url");
           if (url != null) {
             final resp = await (Dio().get(url));
             Map respDoc = loadYaml(resp.data, recover: true);
             payloadMap[key] = List.of(respDoc['payload']);
-            print("$url completed");
+            debugPrint("$url completed");
+            index.value++;
           }
         }));
       }
       await Future.wait(downloadFutures);
+      if (Get.isOverlaysOpen) {
+        Get.back();
+      }
       // 开始转换rules
       var rules = doc['rules'];
       var newRules = [];
@@ -760,15 +805,31 @@ Future<String> convertConfig(String content) async {
           final proxyTo = tuple[2];
           if (payloadMap[provider] != null) {
             for (final payload in payloadMap[provider]!) {
-              newRules.add("$payload,$proxyTo");
+              var payloadArr = payload.toString().split(',');
+              if (payloadArr.isEmpty) {
+                continue;
+              }
+              // IP加上IP-CIDR
+              if (int.tryParse(payloadArr.first.substring(0, 1)) != null) {
+                payloadArr.insert(0, 'IP-CIDR');
+              }
+              // https://github.com/Dreamacro/clash/wiki/configuration#no-resolve
+              if (payload.endsWith('no-resolve')) {
+                payloadArr.insert(payloadArr.length - 1, proxyTo);
+              } else {
+                payloadArr.add(proxyTo);
+              }
+              newRules.add(payloadArr.join(','));
             }
           }
         } else {
           newRules.add(rule);
         }
       }
+      doc.remove('rule-providers');
       doc['rules'] = newRules;
       final outputString = yamlWriter.write(doc);
+      File("/tmp/test").writeAsStringSync(outputString);
       return outputString;
     } else {
       // no need to update
@@ -778,5 +839,7 @@ Future<String> convertConfig(String content) async {
     debugPrint("$e");
     // ignore
     return "";
+  } finally {
+    BrnLoadingDialog.dismiss(Get.overlayContext!);
   }
 }

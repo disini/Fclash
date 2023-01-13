@@ -111,7 +111,8 @@ class _ConnectionsState extends State<Connections> {
                     final li = conns.toList(growable: false);
                     return ListView.builder(
                       itemCount: li.length,
-                      itemBuilder: (context, index) => _buildConnection(li[index]),
+                      itemBuilder: (context, index) =>
+                          _buildConnection(li[index]),
                     );
                   },
                 ))

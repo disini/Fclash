@@ -155,7 +155,13 @@ class ClashTranslations extends Translations {
           "Cannot use this special name": "不能使用这个名字哦",
           "Open config folder": "打开配置文件夹",
           "Test complete.": "测试完成",
-          "Set update interval": "设置更新间隔"
+          "Set update interval": "设置更新间隔",
+          "Your profile contains RULE-SET which needs to convert to the profile supported by open source clash":
+              "该配置文件包含RULE-SET，需要转换才可以在开源clash中使用，转换需要下载配置文件中的所有规则，需要一些时间，是否继续？",
+          "Continue anyway": "忽略并继续",
+          "OK": "好的",
+          "Convert profile": "转换配置文件",
+          "Converting": "正在转换"
         }
       };
 }
