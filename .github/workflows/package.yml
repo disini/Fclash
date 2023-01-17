@@ -79,6 +79,10 @@ jobs:
           brew install create-dmg tree
       - name: Build clash lib
         shell: bash
+        env:
+          # backport to macos 10.11
+          CGO_CFLAGS: "-mmacosx-version-min=10.11"
+          CGO_LDFLAGS: "-mmacosx-version-min=10.11"
         run: |
           pushd clash
           go build -buildmode=c-shared -o ./libclash.dylib

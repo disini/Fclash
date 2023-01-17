@@ -442,7 +442,7 @@
 					/usr/lib/swift,
 					../clash,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MARKETING_VERSION = 1.3.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kingtous.fclash;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -579,7 +579,7 @@
 					/usr/lib/swift,
 					../clash,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MARKETING_VERSION = 1.3.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kingtous.fclash;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -608,7 +608,7 @@
 					/usr/lib/swift,
 					../clash,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MARKETING_VERSION = 1.3.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kingtous.fclash;
 				PROVISIONING_PROFILE_SPECIFIER = "";
