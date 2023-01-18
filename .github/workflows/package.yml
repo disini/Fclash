@@ -178,7 +178,7 @@ jobs:
         with:
           tag: v${{ env.VERSION }}
           allowUpdates: true
-          artifacts: "$HOME/rpmbuild/RPMS/x86_64/FClash-${{ env.VERSION }}-*.rpm"
+          artifacts: "~/rpmbuild/RPMS/x86_64/FClash-${{ env.VERSION }}-*.rpm"
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build-android-arm64v8a-package:
