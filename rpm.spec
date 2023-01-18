@@ -18,7 +18,7 @@ A Clash Proxy Fronted based on Clash.
 %install
 bsdtar -zxvf ${FCLASH_SRC}/debian/cn.kingtous.fclash.deb
 tar -xvf data.tar.xz
-
+mkdir -p "%{buildroot}/opt"
 cp -r "./opt"  "%{buildroot}/opt"
 install -Dm0755 "${FCLASH_SRC}/debian/build-src/opt/apps/cn.kingtous.fclash/entries/applications/cn.kingtous.fclash.desktop" "%{buildroot}/usr/share/applications/cn.kingtous.fclash.desktop"
 

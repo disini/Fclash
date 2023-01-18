@@ -103,6 +103,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         # if: startsWith(github.ref, 'refs/tags/v')
         with:
+          tag: v${{ env.VERSION }}
           allowUpdates: true
           artifacts: "fclash-${{ env.VERSION}}.dmg"
           token: ${{ secrets.GITHUB_TOKEN }}
