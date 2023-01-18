@@ -54,7 +54,7 @@ jobs:
           name: fclash-${{ env.VERSION }}-x86_64.exe
           path: ./Output/fclash-${{ env.VERSION }}-x86_64.exe
       - uses: ncipollo/release-action@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        # if: startsWith(github.ref, 'refs/tags/v')
         with:
           allowUpdates: true
           artifacts: Output/fclash-${{ env.VERSION }}-x86_64.exe
@@ -100,14 +100,14 @@ jobs:
           name: fclash-${{ env.VERSION}}.dmg
           path: fclash-${{ env.VERSION}}.dmg
       - uses: ncipollo/release-action@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        # if: startsWith(github.ref, 'refs/tags/v')
         with:
           allowUpdates: true
           artifacts: "fclash-${{ env.VERSION}}.dmg"
           token: ${{ secrets.GITHUB_TOKEN }}
 
 
-  build-linux-amd64-package:
+  build-linux-amd64-deb-package:
     runs-on: ubuntu-18.04
 
     steps:
@@ -140,10 +140,41 @@ jobs:
           name: cn.kingtous.fclash-${{ env.VERSION }}-x86_64.deb
           path: ./debian/cn.kingtous.fclash-${{ env.VERSION }}-x86_64.deb
       - uses: ncipollo/release-action@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        # if: startsWith(github.ref, 'refs/tags/v')
         with:
           allowUpdates: true
           artifacts: "./debian/cn.kingtous.fclash-${{ env.VERSION }}-x86_64.deb"
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux-amd64-rpm-package:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.10'
+          channel: 'stable'
+          cache: true
+      - name: Enable Linux Desktop Support
+        run: flutter config --enable-linux-desktop
+      - name: install dependencies
+        run: sudo apt update -y && sudo apt install -y libayatana-appindicator3-dev ninja-build build-essential rpm
+      - name: build linux rpm package
+        shell: bash
+        run: | 
+          ./build-deb.sh
+          FCLASH_SRC=`pwd` rpmbuild -bb ./rpm.spec
+      
+      - uses: ncipollo/release-action@v1
+        # if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          allowUpdates: true
+          artifacts: "$HOME/rpmbuild/RPMS/x86_64/FClash-${{ env.VERSION }}-*.rpm"
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build-android-arm64v8a-package:
@@ -184,13 +215,13 @@ jobs:
           name: fclash-${{ env.VERSION}}-arm64-v8a.apk
           path: fclash-${{ env.VERSION}}-arm64-v8a.apk
       - uses: ncipollo/release-action@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        # if: startsWith(github.ref, 'refs/tags/v')
         with:
           allowUpdates: true
           artifacts: fclash-${{ env.VERSION}}-arm64-v8a.apk
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-linux-aarch64-package:
+  build-linux-aarch64-deb-package:
     runs-on: ubuntu-18.04
     steps:
       - name: Check out Git repository
@@ -261,7 +292,7 @@ jobs:
           name: cn.kingtous.fclash-${{ env.VERSION }}-aarch64.deb
           path: ./debian/cn.kingtous.fclash-${{ env.VERSION }}-aarch64.deb
       - uses: ncipollo/release-action@v1
-        if: startsWith(github.ref, 'refs/tags/v')
+        # if: startsWith(github.ref, 'refs/tags/v')
         with:
           allowUpdates: true
           artifacts: "./debian/cn.kingtous.fclash-${{ env.VERSION }}-aarch64.deb"
