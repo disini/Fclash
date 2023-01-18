@@ -24,7 +24,7 @@ parts:
     flutter-target: lib/main.dart
     override-build: |
       ./build-clash-lib.py
-      LD_PRELOAD=/usr/lib/libfreetype.so flutter build linux --release -v
+      flutter build linux --release
     build-packages:
       - libappindicator3-dev
       - libfreetype6-dev
