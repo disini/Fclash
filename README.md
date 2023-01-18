@@ -32,6 +32,8 @@
   - `yay -S fclash`
 - For Ubuntu/Debian users, download deb files directly
   - [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+- For Redhat/Fedora/OpenSuse users, download rpm files directly.
+  - [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
 - For other distro users, please to use the snap app.
   - [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/fclash)
 
@@ -45,9 +47,11 @@ Please download .dmg setup directly. [https://github.com/Kingtous/Fclash/release
 
 Note that macOS will treat the `FClash` as an untrusted app, so please go to settings and trust it manually.
 
-### Windows
+### Android
 
-Please download .apk directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+Please download .apk(still not in full functional) directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+
+Note: the Android version is looking for contributors.
 
 ## Feature
 
