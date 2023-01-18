@@ -165,7 +165,7 @@ jobs:
       - name: Enable Linux Desktop Support
         run: flutter config --enable-linux-desktop
       - name: install dependencies
-        run: sudo apt update -y && sudo apt install -y libayatana-appindicator3-dev ninja-build build-essential rpm
+        run: sudo apt update -y && sudo apt install -y libayatana-appindicator3-dev ninja-build build-essential rpm libarchive-tools
       - name: build linux rpm package
         shell: bash
         run: | 
