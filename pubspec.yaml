@@ -54,6 +54,11 @@ dependencies:
   open_settings: ^2.0.2
   yaml: ^3.1.1
   yaml_writer: ^1.0.3
+  # FIXME: 临时解决bruno Badge在3.7.x下的冲突问题
+  bruno: 
+    git:
+      url: "https://github.com/LianjiaTech/bruno.git"
+      ref: "3.7.x"
 
 dev_dependencies:
   flutter_test:
