@@ -72,22 +72,26 @@ Note: the Android version is looking for contributors.
 ## Preview
 
 - Proxy Page
-  ![](docs/images/%E6%B7%B1%E5%BA%A6%E6%88%AA%E5%9B%BE_%E9%80%89%E6%8B%A9%E5%8C%BA%E5%9F%9F_20220414110524.png)
+  ![image](https://user-images.githubusercontent.com/39793325/215257245-f712eb8d-3740-4e08-82ac-d14f357f6c48.png)
 
 - Profile Page
-  ![](docs/images/深度截图_选择区域_20220414110533.png)
+  ![image](https://user-images.githubusercontent.com/39793325/215257268-3a3a2859-17be-44d8-8a52-e08d87b52b2a.png)
 
 - Setting Page
-  ![](docs/images/深度截图_选择区域_20220414110541.png)
+  ![image](https://user-images.githubusercontent.com/39793325/215257279-d8b17f26-df46-4c59-80c0-c6e971d343d3.png)
 
 - Logs Page
-  ![](docs/images/深度截图_选择区域_20220414110604.png)
+  ![image](https://user-images.githubusercontent.com/39793325/215257305-b6d52b8e-e94e-4020-b847-1352b3faa029.png)
 
 - Add a subscription page
   ![](docs/images/深度截图_选择区域_20220414110622.png)
+  
+  - support `RULE-SET` convert (a feature of Clash Premium).
+  ![image](https://user-images.githubusercontent.com/39793325/215257349-2e55d8ec-3d73-4244-8ea1-f652a0627086.png)
+
 
 - About Page
-  ![](docs/images/深度截图_选择区域_20220414114331.png)
+  ![image](https://user-images.githubusercontent.com/39793325/215257313-eb1e3a5b-8c28-41c3-8c6d-038f452d7913.png)
 
 - App system menu bar
   ![](docs/images/Screenshot_20220414_112025.png)
