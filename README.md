@@ -105,4 +105,4 @@ Note: the Android version is looking for contributors.
 
 ## Build from source
 
-FClash depends `libappindicatior3-dev` when compiling.
+FClash depends `libappindicator3-dev` when compiling.
