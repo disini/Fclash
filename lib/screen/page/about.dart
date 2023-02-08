@@ -29,7 +29,7 @@ class AboutPage extends StatelessWidget {
             ),
           ),
           Text(
-            "version:".trParams({"version": '1.3.8'}),
+            "version:".trParams({"version": '1.3.9'}),
             style: const TextStyle(fontFamily: 'nssc'),
           ),
           TextButton(

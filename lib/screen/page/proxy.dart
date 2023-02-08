@@ -1,3 +1,4 @@
+import 'package:expandable/expandable.dart';
 import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/foundation.dart';
@@ -94,35 +95,65 @@ class _ProxyState extends State<Proxy> {
 
   Widget buildSelector(Map<String, dynamic> selector) {
     final proxyName = selector['name'];
+    final isExpanded = false.obs;
+    const headStyle = TextStyle(
+        fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black);
+    final body = Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: buildSelectItem(selector)),
+          ],
+        ).paddingSymmetric(horizontal: 4.0),
+        // for debug
+        // kDebugMode ? BrnExpandableText(text: selector.toString(),maxLines: 1,textStyle: TextStyle(fontSize: 20,
+        // color: Colors.black),) : Offstage(),
+      ],
+    );
     return Stack(
       children: [
         Obx(
-          () => BrnExpandableGroup(
-            title: proxyName ?? "",
-            subtitle: selector['now'],
-            themeData: BrnFormItemConfig(
-              headTitleTextStyle: BrnTextStyle(
-                  color: Get.find<ThemeController>().isDarkMode.value
-                      ? Colors.white70
-                      : Colors.black87),
-              titleTextStyle: BrnTextStyle(fontSize: 20),
-              subTitleTextStyle: BrnTextStyle(fontSize: 18),
-              // backgroundColor: Get.find<ThemeController>().isDarkMode.value
-              //     ? Colors.black12
-              //     : Colors.white
-            ),
-            backgroundColor: Get.find<ThemeController>().isDarkMode.value
-                ? Colors.black12
-                : Colors.white,
+          () => ExpansionPanelList(
+            expansionCallback: (index, expand) {
+              isExpanded.value = !expand;
+            },
             children: [
-              Row(
-                children: [
-                  Expanded(child: buildSelectItem(selector)),
-                ],
-              ).paddingSymmetric(horizontal: 4.0),
-              // for debug
-              // kDebugMode ? BrnExpandableText(text: selector.toString(),maxLines: 1,textStyle: TextStyle(fontSize: 20,
-              // color: Colors.black),) : Offstage(),
+              ExpansionPanel(
+                // title: proxyName ?? "",
+                // subtitle: selector['now'],
+                canTapOnHeader: true,
+                isExpanded: isExpanded.value,
+                headerBuilder: (context, isExpanded) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    proxyName ?? "",
+                                    style: headStyle,
+                                  ).marginOnly(bottom: 4.0),
+                                ),
+                              ],
+                            ),
+                            Text(selector['now'])
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ).paddingAll(8.0),
+                // backgroundColor: Get.find<ThemeController>().isDarkMode.value
+                //     ? Colors.black12
+                //     : Colors.white,
+                body: body,
+              ),
+          
             ],
           ),
         ),
@@ -147,7 +178,7 @@ class _ProxyState extends State<Proxy> {
                       fontWeight: FontWeight.bold, fontSize: 16),
                 ),
               )),
-        )
+        ).paddingAll(4.0)
       ],
     );
   }
@@ -164,76 +195,83 @@ class _ProxyState extends State<Proxy> {
           crossAxisAlignment: WrapCrossAlignment.start,
           children: allItems.map((itemName) {
             final delayInMs = service.proxyStatus[itemName.toString()] ?? 0;
-            return SizedBox(
+            return Container(
               width: 300,
+              height: 75,
               child: Card(
-                // padding: const EdgeInsets.symmetric(vertical: 2.0),
-                child: Row(
-                  children: [
-                    Container(
-                        width: 12,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            color: delayInMs < 0
-                                ? Colors.red
-                                : delayInMs == 0
-                                    ? Colors.grey
-                                    : delayInMs <= 100
-                                        ? Colors.green
-                                        : delayInMs <= 500
-                                            ? Colors.lightBlue
-                                            : delayInMs <= 1000
-                                                ? Colors.blue
-                                                : Colors.orange,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(5),
-                                bottomLeft: Radius.circular(5)))),
-                    Expanded(
-                      child: BrnRadioButton(
-                          radioIndex: index++,
-                          behavior: HitTestBehavior.opaque,
-                          mainAxisSize: MainAxisSize.max,
-                          child: Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: Tooltip(
-                                    message: itemName.toString(),
-                                    child: Text(
-                                      itemName,
-                                      style: const TextStyle(fontSize: 16),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
+                child: InkWell(
+                  onTap: () {},
+                  child: Row(
+                    children: [
+                      Container(
+                          width: 12,
+                          height: 75,
+                          decoration: BoxDecoration(
+                              color: delayInMs < 0
+                                  ? Colors.red
+                                  : delayInMs == 0
+                                      ? Colors.grey
+                                      : delayInMs <= 100
+                                          ? Colors.green
+                                          : delayInMs <= 500
+                                              ? Colors.lightBlue
+                                              : delayInMs <= 1000
+                                                  ? Colors.blue
+                                                  : Colors.orange,
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(5),
+                                  bottomLeft: Radius.circular(5)))),
+                      Expanded(
+                        child: BrnRadioButton(
+                            radioIndex: index++,
+                            behavior: HitTestBehavior.opaque,
+                            mainAxisSize: MainAxisSize.max,
+                            onValueChangedAtIndex: (newIndex, value) {
+                              final res = Get.find<ClashService>()
+                                  .changeProxy(selectName, allItems[newIndex]);
+                              if (res) {
+                                BrnToast.show(
+                                    'switch to name success.'.trParams(
+                                        {"name": "${allItems[newIndex]}"}),
+                                    context);
+                              } else {
+                                BrnToast.show(
+                                    'switch to name failed.'.trParams(
+                                        {"name": "${allItems[newIndex]}"}),
+                                    context);
+                              }
+                            },
+                            isSelected: itemName == now,
+                            child: Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Tooltip(
+                                      message: itemName.toString(),
+                                      child: Text(
+                                        itemName,
+                                        textAlign: TextAlign.start,
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w400),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ).marginOnly(left: 4.0),
                                   ),
-                                ),
-                                // ping
-                                Text(
-                                  "${delayInMs == 0 ? '' : '${delayInMs}ms'}",
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.grey),
-                                ).marginOnly(right: 4.0)
-                              ],
-                            ),
-                          ),
-                          onValueChangedAtIndex: (newIndex, value) {
-                            final res = Get.find<ClashService>()
-                                .changeProxy(selectName, allItems[newIndex]);
-                            if (res) {
-                              BrnToast.show(
-                                  'switch to name success.'.trParams(
-                                      {"name": "${allItems[newIndex]}"}),
-                                  context);
-                            } else {
-                              BrnToast.show(
-                                  'switch to name failed.'.trParams(
-                                      {"name": "${allItems[newIndex]}"}),
-                                  context);
-                            }
-                          },
-                          isSelected: itemName == now),
-                    ),
-                  ],
+                                  // ping
+                                  Text(
+                                    delayInMs == 0 ? '' : '${delayInMs}ms',
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ).marginOnly(right: 4.0)
+                                ],
+                              ),
+                            )),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

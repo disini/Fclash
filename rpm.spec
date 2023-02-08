@@ -1,5 +1,5 @@
 Name:       FClash
-Version:    1.3.8
+Version:    1.3.9
 Release:    1
 Summary:    A Clash Proxy Fronted based on Clash
 License:    GPL-3
