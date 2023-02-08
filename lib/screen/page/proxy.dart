@@ -1,10 +1,6 @@
-import 'package:expandable/expandable.dart';
-import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
-import 'package:path_provider/path_provider.dart';
 
 class Proxy extends StatefulWidget {
   const Proxy({Key? key}) : super(key: key);

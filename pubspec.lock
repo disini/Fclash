@@ -209,14 +209,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.5"
-  expandable:
-    dependency: "direct main"
-    description:
-      name: expandable
-      sha256: "9604d612d4d1146dafa96c6d8eec9c2ff0994658d6d09fed720ab788c7f5afc2"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "5.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -1190,10 +1182,10 @@ packages:
     dependency: "direct main"
     description:
       name: window_manager
-      sha256: d812d3189d23465d2e94baa2505a4462b46dde4939012ff370711c6897d747ae
+      sha256: "5bdd29dc5f1f3185fc90696373a571d77968e03e5e820fb1ecdbdade3f5d8fff"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.2.9"
+    version: "0.3.0"
   xdg_directories:
     dependency: transitive
     description:

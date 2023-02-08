@@ -40,7 +40,7 @@ dependencies:
   path: ^1.8.0
   path_provider: ^2.0.9
   tray_manager: ^0.2.0
-  window_manager: ^0.2.7
+  window_manager: ^0.3.0
   settings_ui: ^2.0.2
   launch_at_startup: ^0.1.7
   package_info_plus: ^1.4.2
@@ -54,7 +54,6 @@ dependencies:
   open_settings: ^2.0.2
   yaml: ^3.1.1
   yaml_writer: ^1.0.3
-  expandable: ^5.0.1
 
 dev_dependencies:
   flutter_test:
