@@ -15,6 +15,7 @@ on:
 
 env:
   VERSION: 1.3.9
+  FLUTTER_BASE_VERSION: ${{ env.FLUTTER_BASE_VERSION }}
 
 jobs:
 
@@ -29,7 +30,7 @@ jobs:
           go-version: '>=1.19.0'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.1'
+          flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
           channel: 'stable'
           cache: true
       - name: Build clash lib
@@ -72,7 +73,7 @@ jobs:
           go-version: '>=1.19.0'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.1'
+          flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
           channel: 'stable'
           cache: true
       - name: Build macos dmg
@@ -120,7 +121,7 @@ jobs:
           go-version: '>=1.19.0'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.1'
+          flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
           channel: 'stable'
           cache: true
       - name: Enable Linux Desktop Support
@@ -160,7 +161,7 @@ jobs:
           go-version: '>=1.19.0'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.1'
+          flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
           channel: 'stable'
           cache: true
       - name: Enable Linux Desktop Support
@@ -191,7 +192,7 @@ jobs:
           go-version: '>=1.19.0'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.7.1'
+          flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
           channel: 'stable'
           cache: true
       - uses: nttld/setup-ndk@v1
@@ -243,13 +244,19 @@ jobs:
           # disable git safe.directory
           git config --global --add safe.directory "*"
           pushd /opt
-          # clone repo and reset to flutter 3.7.1
+          # clone repo and reset to flutter ${{ env.FLUTTER_BASE_VERSION }}
           git clone https://github.com/sony/flutter-elinux.git || true
           pushd flutter-elinux
-            # reset to flutter 3.7.1
+            # reset to flutter ${{ env.FLUTTER_BASE_VERSION }}
             git fetch
             git reset --hard 5cc0e4fd62a689c51b72612cdd9745dc66086475 
           popd
+          /opt/flutter-elinux/bin/flutter-elinux precache --linux
+          # Patch arm64 engine for flutter 3.6.0+
+          pushd /tmp
+          curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${{ env.FLUTTER_BASE_VERSION }}-stable.tar.xz
+          tar -xvf flutter_linux_${{ env.FLUTTER_BASE_VERSION }}-stable.tar.xz flutter/bin/cache/artifacts/engine/linux-x64/shader_lib
+          cp -R flutter/bin/cache/artifacts/engine/linux-x64/shader_lib /opt/flutter-elinux/flutter/bin/cache/artifacts/engine/linux-arm64
 
       - uses: Kingtous/run-on-arch-action@amd64-support
         name: Build fclash binary for arm64
