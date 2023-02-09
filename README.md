@@ -18,12 +18,11 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1d9c16d3c94f45fc9b4ee95d9c2e6f8c)](https://www.codacy.com/gh/Kingtous/Fclash/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Kingtous/Fclash&amp;utm_campaign=Badge_Grade)
 ![commit](https://img.shields.io/github/commit-activity/y/kingtous/fclash)
 [![stars](https://img.shields.io/github/stars/kingtous/fclash?style=social)]()
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FKingtous%2FFclash.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FKingtous%2FFclash?ref=badge_shield)
 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=kingtous/fclash&type=Date)](https://star-history.com/#kingtous/fclash&Date)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FKingtous%2FFclash.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FKingtous%2FFclash?ref=badge_shield)
-
 
 ## Install
 
