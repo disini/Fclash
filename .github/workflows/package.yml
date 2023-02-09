@@ -252,12 +252,6 @@ jobs:
             git fetch
             git reset --hard ${{ env.FLUTTER_ELINUX_GIT_COMMIT_ID }} 
           popd
-          /opt/flutter-elinux/bin/flutter-elinux precache --linux
-          # Patch arm64 engine for flutter 3.6.0+
-          pushd /tmp
-          curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${{ env.FLUTTER_BASE_VERSION }}-stable.tar.xz
-          tar -xvf flutter_linux_${{ env.FLUTTER_BASE_VERSION }}-stable.tar.xz flutter/bin/cache/artifacts/engine/linux-x64/shader_lib
-          cp -R flutter/bin/cache/artifacts/engine/linux-x64/shader_lib /opt/flutter-elinux/flutter/bin/cache/artifacts/engine/linux-arm64
 
       - uses: Kingtous/run-on-arch-action@amd64-support
         name: Build fclash binary for arm64
@@ -283,6 +277,16 @@ jobs:
             wget https://go.dev/dl/go1.19.3.linux-arm64.tar.gz
             tar zxf go1.19.3.linux-arm64.tar.gz
             export PATH=$PATH:/opt/go/bin:/opt/flutter-elinux/bin
+            # Patch arm64
+            flutter-elinux doctor -v
+            flutter-elinux precache --linux
+            # Patch arm64 engine for flutter 3.6.0+
+            pushd /tmp
+            curl -O https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${{ env.FLUTTER_BASE_VERSION }}-stable.tar.xz
+            tar -xvf flutter_linux_${{ env.FLUTTER_BASE_VERSION }}-stable.tar.xz flutter/bin/cache/artifacts/engine/linux-x64/shader_lib
+            cp -R flutter/bin/cache/artifacts/engine/linux-x64/shader_lib /opt/flutter-elinux/flutter/bin/cache/artifacts/engine/linux-arm64
+            popd
+            # Build
             pushd /workspace
             # we use flutter-elinux to build our rustdesk
             sed -i "s/flutter build linux --release/flutter-elinux build linux/g" ./build-deb.sh
