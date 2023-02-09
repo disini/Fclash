@@ -1,3 +1,4 @@
+import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
@@ -92,8 +93,7 @@ class _ProxyState extends State<Proxy> {
   Widget buildSelector(Map<String, dynamic> selector) {
     final proxyName = selector['name'];
     final isExpanded = false.obs;
-    const headStyle = TextStyle(
-        fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black);
+    const headStyle = TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold);
     final body = Column(
       children: [
         Row(
@@ -110,6 +110,8 @@ class _ProxyState extends State<Proxy> {
       children: [
         Obx(
           () => ExpansionPanelList(
+            elevation: 0,
+            key: ValueKey(proxyName),
             expansionCallback: (index, expand) {
               isExpanded.value = !expand;
             },
@@ -119,7 +121,9 @@ class _ProxyState extends State<Proxy> {
                 // subtitle: selector['now'],
                 canTapOnHeader: true,
                 isExpanded: isExpanded.value,
-                headerBuilder: (context, isExpanded) => Padding(
+                headerBuilder: (context, isExpanded) => Container(
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [

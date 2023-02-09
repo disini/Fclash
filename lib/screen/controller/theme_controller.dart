@@ -4,25 +4,31 @@ import 'package:kommon/kommon.dart';
 enum ThemeType { light, dark }
 
 class ThemeController extends GetxController {
-  RxBool isDarkMode = false.obs;
 
-  final ThemeData lightTheme = ThemeData.light();
-  final ThemeData darkTheme = ThemeData.dark();
+  bool? get isDark => SpUtil.getData<bool>("dark_theme", defValue: null); 
 
-  init() async {
-    isDarkMode.value = Get.theme.brightness == Brightness.dark;
+  ThemeMode getThemeMode() {
+    final darkMode = isDark;
+    switch (darkMode) {
+      case null:
+        return ThemeMode.system;
+      case true:
+        return ThemeMode.dark;
+      case false:
+        return ThemeMode.light;
+      default:
+        return ThemeMode.system;
+    }
   }
 
   changeTheme(ThemeType type) {
     switch (type) {
       case ThemeType.light:
-        isDarkMode.value = false;
-        Get.changeTheme(lightTheme);
+        Get.changeThemeMode(ThemeMode.light);
         SpUtil.setData<bool>('dark_theme', false);
         break;
       case ThemeType.dark:
-        isDarkMode.value = true;
-        Get.changeTheme(darkTheme);
+        Get.changeThemeMode(ThemeMode.dark);
         SpUtil.setData<bool>('dark_theme', true);
         break;
     }

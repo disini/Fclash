@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/screen/main_screen.dart';
 import 'package:fclash/service/autostart_service.dart';
 import 'package:fclash/service/clash_service.dart';
@@ -76,6 +77,7 @@ Future<void> initAppService() async {
   await Get.putAsync(() => ClashService().init());
   await Get.putAsync(() => DialogService().init());
   await Get.putAsync(() => AutostartService().init());
+  Get.put(ThemeController());
 }
 
 class MyApp extends StatelessWidget {
@@ -100,7 +102,10 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       title: 'Fclash',
-      theme: ThemeData(primarySwatch: Colors.blue, fontFamily: 'nssc'),
+      theme: ThemeData(
+          primarySwatch: Colors.blue, fontFamily: 'nssc', useMaterial3: true),
+      darkTheme: ThemeData.dark(useMaterial3: true),
+      themeMode: Get.find<ThemeController>().getThemeMode(),
       home: const MainScreen(),
     );
   }

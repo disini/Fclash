@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fclash/main.dart';
+import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
@@ -34,17 +35,18 @@ class _ConnectionsState extends State<Connections> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<ThemeController>();
     return Scaffold(
       body: Row(
         children: [
           if (isDesktop)
             Container(
-              decoration: BoxDecoration(color: Colors.white),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Obx(
                     () => BrnEnhanceNumberCard(
+                      backgroundColor: Theme.of(context).colorScheme.background,
                       itemChildren: [
                         BrnNumberInfoItemModel(
                             number:
@@ -59,6 +61,7 @@ class _ConnectionsState extends State<Connections> {
                   ),
                   Obx(
                     () => BrnEnhanceNumberCard(
+                      backgroundColor: Theme.of(context).colorScheme.background,
                       itemChildren: [
                         BrnNumberInfoItemModel(
                             number:

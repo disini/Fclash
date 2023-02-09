@@ -76,7 +76,6 @@ class _MainScreenState extends State<MainScreen>
     super.initState();
     windowManager.addListener(this);
     trayManager.addListener(this);
-    Get.put(ThemeController());
     changeTheme();
     // ignore
   }
@@ -85,7 +84,6 @@ class _MainScreenState extends State<MainScreen>
   void dispose() {
     windowManager.removeListener(this);
     trayManager.removeListener(this);
-    Get.delete<ThemeController>();
     super.dispose();
   }
 

@@ -343,18 +343,21 @@ class ClashService extends GetxService with TrayListener {
   }
 
   Future<void> setSystemProxy() async {
+    
     if (isDesktop) {
       if (configEntity.value != null) {
         final entity = configEntity.value!;
         if (entity.port != 0) {
-          await proxyManager.setAsSystemProxy(
-              ProxyTypes.http, '127.0.0.1', entity.port!);
-          print("set http");
-          await proxyManager.setAsSystemProxy(
-              ProxyTypes.https, '127.0.0.1', entity.port!);
+          await Future.wait([
+            proxyManager.setAsSystemProxy(
+                ProxyTypes.http, '127.0.0.1', entity.port!),
+            proxyManager.setAsSystemProxy(
+                ProxyTypes.https, '127.0.0.1', entity.port!)
+          ]);
+          debugPrint("set http");
         }
         if (entity.socksPort != 0 && !Platform.isWindows) {
-          print("set socks");
+          debugPrint("set socks");
           await proxyManager.setAsSystemProxy(
               ProxyTypes.socks, '127.0.0.1', entity.socksPort!);
         }
