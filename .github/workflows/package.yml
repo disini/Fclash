@@ -15,7 +15,8 @@ on:
 
 env:
   VERSION: 1.3.9
-  FLUTTER_BASE_VERSION: ${{ env.FLUTTER_BASE_VERSION }}
+  FLUTTER_BASE_VERSION: 3.7.1
+  FLUTTER_ELINUX_GIT_COMMIT_ID: 5cc0e4fd62a689c51b72612cdd9745dc66086475
 
 jobs:
 
@@ -249,7 +250,7 @@ jobs:
           pushd flutter-elinux
             # reset to flutter ${{ env.FLUTTER_BASE_VERSION }}
             git fetch
-            git reset --hard 5cc0e4fd62a689c51b72612cdd9745dc66086475 
+            git reset --hard ${{ env.FLUTTER_ELINUX_GIT_COMMIT_ID }} 
           popd
           /opt/flutter-elinux/bin/flutter-elinux precache --linux
           # Patch arm64 engine for flutter 3.6.0+
