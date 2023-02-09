@@ -22,6 +22,7 @@
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=kingtous/fclash&type=Date)](https://star-history.com/#kingtous/fclash&Date)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FKingtous%2FFclash.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FKingtous%2FFclash?ref=badge_shield)
 
 
 ## Install
@@ -106,3 +107,7 @@ Note: the Android version is looking for contributors.
 ## Build from source
 
 FClash depends `libappindicator3-dev` when compiling.
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FKingtous%2FFclash.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FKingtous%2FFclash?ref=badge_large)
+
