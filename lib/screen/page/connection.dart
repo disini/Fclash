@@ -86,16 +86,16 @@ class _ConnectionsState extends State<Connections> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
-              height: 100.0,
-              decoration: BoxDecoration(
-                color: Colors.white
-              ),
+              height: 115.0,
+              // decoration: BoxDecoration(
+              //   color: Colors.white
+              // ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Obx(
                     () => BrnEnhanceNumberCard(
-                      // backgroundColor: Theme.of(context).colorScheme.background,
+                      backgroundColor: Colors.transparent,
                       itemChildren: [
                         BrnNumberInfoItemModel(
                             number:
@@ -110,7 +110,7 @@ class _ConnectionsState extends State<Connections> {
                   ),
                   Obx(
                     () => BrnEnhanceNumberCard(
-                      // backgroundColor: Theme.of(context).colorScheme.background,
+                      backgroundColor: Colors.transparent,
                       itemChildren: [
                         BrnNumberInfoItemModel(
                             number:
