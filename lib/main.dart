@@ -103,8 +103,10 @@ class MyApp extends StatelessWidget {
       ],
       title: 'Fclash',
       theme: ThemeData(
-          primarySwatch: Colors.blue, fontFamily: 'nssc', useMaterial3: true),
-      darkTheme: ThemeData.dark(useMaterial3: true),
+          primaryColor: Colors.blue,
+          primarySwatch: Colors.blue,
+          fontFamily: 'nssc'),
+      darkTheme: ThemeData.dark(),
       themeMode: Get.find<ThemeController>().getThemeMode(),
       home: const MainScreen(),
     );

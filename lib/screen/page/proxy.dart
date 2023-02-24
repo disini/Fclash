@@ -20,7 +20,6 @@ class _ProxyState extends State<Proxy> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Get.find<ClashService>();
     return Scaffold(
       body: Stack(
         children: [
@@ -34,32 +33,7 @@ class _ProxyState extends State<Proxy> {
                   ))),
           Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
-              Obx(() => BrnNoticeBar(
-                  content: 'Current using'
-                      .trParams({"name": cs.currentYaml.value}))),
-              Obx(() => BrnNoticeBar(
-                    noticeStyle: cs.isSystemProxyObs.value
-                        ? NoticeStyles.succeedWithArrow
-                        : NoticeStyles.warningWithArrow,
-                    content: cs.isSystemProxyObs.value
-                        ? "Fclash is running as system proxy now. Enjoy.".tr
-                        : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
-                            .tr,
-                    rightWidget: cs.isSystemProxyObs.value
-                        ? TextButton(
-                            onPressed: () {
-                              cs.clearSystemProxy();
-                            },
-                            child: Text("Cancel".tr))
-                        : TextButton(
-                            onPressed: () {
-                              cs.setSystemProxy();
-                            },
-                            child: Text("set Fclash as system proxy".tr)),
-                  )),
-              Expanded(child: Obx(() => buildTiles()))
-            ],
+            children: [Expanded(child: buildTiles())],
           ),
         ],
       ),
@@ -68,6 +42,7 @@ class _ProxyState extends State<Proxy> {
 
   Widget buildTiles() {
     final c = Get.find<ClashService>().proxies;
+
     if (c.value == null) {
       return BrnAbnormalStateWidget(
         title: 'No Proxies'.tr,
@@ -77,16 +52,45 @@ class _ProxyState extends State<Proxy> {
     Map<String, dynamic> maps = c.value['proxies'] ?? {};
     printInfo(info: 'proxies: ${maps.toString()}');
 
-    final selectors = maps.keys.where((proxy) {
-      return maps[proxy]['type'] == 'Selector';
-    }).toList(growable: false);
-
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        final selectorName = selectors[index];
-        return buildSelector(maps[selectorName]);
+    return Obx(
+      () {
+        var selectors = maps.keys.where((proxy) {
+          return maps[proxy]['type'] == 'Selector';
+        }).toList(growable: false);
+        final mode =
+            Get.find<ClashService>().configEntity.value?.mode ?? "direct";
+        if (mode == "direct") {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "assets/images/rocket.png",
+                  width: 100.0,
+                  fit: BoxFit.cover,
+                ),
+                Text(
+                  "direct".tr,
+                  style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          );
+        } else if (mode == "global") {
+// global
+          selectors = selectors
+              .where((sel) => maps[sel]['name'].toLowerCase() == 'global')
+              .toList();
+        }
+        return ListView.builder(
+          itemBuilder: (context, index) {
+            final selectorName = selectors[index];
+            return buildSelector(maps[selectorName]);
+          },
+          itemCount: selectors.length,
+        );
       },
-      itemCount: selectors.length,
     );
   }
 
@@ -109,23 +113,23 @@ class _ProxyState extends State<Proxy> {
     return Stack(
       children: [
         Obx(
-          () => ExpansionPanelList(
-            elevation: 0,
-            key: ValueKey(proxyName),
-            expansionCallback: (index, expand) {
-              isExpanded.value = !expand;
-            },
-            children: [
-              ExpansionPanel(
-                // title: proxyName ?? "",
-                // subtitle: selector['now'],
-                canTapOnHeader: true,
-                isExpanded: isExpanded.value,
-                headerBuilder: (context, isExpanded) => Container(
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
+          () => Container(
+            margin: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.0), color: Colors.blue),
+            child: ExpansionPanelList(
+              elevation: 0,
+              key: ValueKey(proxyName),
+              expansionCallback: (index, expand) {
+                isExpanded.value = !expand;
+              },
+              children: [
+                ExpansionPanel(
+                  // title: proxyName ?? "",
+                  // subtitle: selector['now'],
+                  canTapOnHeader: true,
+                  isExpanded: isExpanded.value,
+                  headerBuilder: (context, isExpanded) => Row(
                     children: [
                       Expanded(
                         child: Column(
@@ -146,15 +150,14 @@ class _ProxyState extends State<Proxy> {
                         ),
                       ),
                     ],
-                  ),
-                ).paddingAll(8.0),
-                // backgroundColor: Get.find<ThemeController>().isDarkMode.value
-                //     ? Colors.black12
-                //     : Colors.white,
-                body: body,
-              ),
-          
-            ],
+                  ).paddingAll(8.0),
+                  // backgroundColor: Get.find<ThemeController>().isDarkMode.value
+                  //     ? Colors.black12
+                  //     : Colors.white,
+                  body: body,
+                ),
+              ],
+            ),
           ),
         ),
         Align(
@@ -195,8 +198,8 @@ class _ProxyState extends State<Proxy> {
           crossAxisAlignment: WrapCrossAlignment.start,
           children: allItems.map((itemName) {
             final delayInMs = service.proxyStatus[itemName.toString()] ?? 0;
-            return Container(
-              width: 300,
+            return SizedBox(
+              width: 250,
               height: 75,
               child: Card(
                 child: InkWell(

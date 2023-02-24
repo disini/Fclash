@@ -23,9 +23,9 @@ class _ProfileState extends State<Profile> {
     return Scaffold(
       body: Column(
         children: [
-          Obx(() => BrnNoticeBar(
-              content: 'Current using'.trParams(
-                  {"name": Get.find<ClashService>().currentYaml.value}))),
+          // Obx(() => BrnNoticeBar(
+          //     content: 'Current using'.trParams(
+          //         {"name": Get.find<ClashService>().currentYaml.value}))),
           Expanded(child: Obx(() => buildProfileList()))
         ],
       ),

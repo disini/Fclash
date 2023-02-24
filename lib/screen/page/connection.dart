@@ -37,16 +37,65 @@ class _ConnectionsState extends State<Connections> {
   Widget build(BuildContext context) {
     final controller = Get.find<ThemeController>();
     return Scaffold(
-      body: Row(
+      body: Stack(
         children: [
-          if (isDesktop)
-            Container(
-              child: Column(
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            onChanged: (s) {
+                              searchField.value = s;
+                            },
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.search),
+                              border: InputBorder.none,
+                              isDense: true,
+                            ),
+                          ).paddingSymmetric(horizontal: 32),
+                        ),
+                      ],
+                    ),
+                    Expanded(child: Obx(
+                      () {
+                        Iterable<dynamic> conns = connections["connections"];
+                        // search
+                        if (searchField.isNotEmpty) {
+                          conns = conns.where((element) => element["metadata"]
+                                  ['host']
+                              .toString()
+                              .contains(searchField.value));
+                        }
+                        final li = conns.toList(growable: false);
+                        return ListView.builder(
+                          itemCount: li.length,
+                          itemBuilder: (context, index) =>
+                              _buildConnection(li[index]),
+                        );
+                      },
+                    ))
+                  ],
+                ),
+              )
+            ],
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 100.0,
+              decoration: BoxDecoration(
+                color: Colors.white
+              ),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Obx(
                     () => BrnEnhanceNumberCard(
-                      backgroundColor: Theme.of(context).colorScheme.background,
+                      // backgroundColor: Theme.of(context).colorScheme.background,
                       itemChildren: [
                         BrnNumberInfoItemModel(
                             number:
@@ -61,7 +110,7 @@ class _ConnectionsState extends State<Connections> {
                   ),
                   Obx(
                     () => BrnEnhanceNumberCard(
-                      backgroundColor: Theme.of(context).colorScheme.background,
+                      // backgroundColor: Theme.of(context).colorScheme.background,
                       itemChildren: [
                         BrnNumberInfoItemModel(
                             number:
@@ -81,45 +130,6 @@ class _ConnectionsState extends State<Connections> {
                   ).paddingSymmetric(horizontal: 32, vertical: 32)
                 ],
               ),
-            ),
-          Expanded(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        onChanged: (s) {
-                          searchField.value = s;
-                        },
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.search),
-                          border: InputBorder.none,
-                          isDense: true,
-                        ),
-                      ).paddingSymmetric(horizontal: 32),
-                    ),
-                  ],
-                ),
-                Expanded(child: Obx(
-                  () {
-                    Iterable<dynamic> conns = connections["connections"];
-                    // search
-                    if (searchField.isNotEmpty) {
-                      conns = conns.where((element) => element["metadata"]
-                              ['host']
-                          .toString()
-                          .contains(searchField.value));
-                    }
-                    final li = conns.toList(growable: false);
-                    return ListView.builder(
-                      itemCount: li.length,
-                      itemBuilder: (context, index) =>
-                          _buildConnection(li[index]),
-                    );
-                  },
-                ))
-              ],
             ),
           )
         ],

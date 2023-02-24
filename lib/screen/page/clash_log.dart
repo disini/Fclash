@@ -74,18 +74,18 @@ class _ClashLogState extends State<ClashLog> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Obx(
-          () => BrnNoticeBar(
-            content: connected.value
-                ? 'Log is running. Any logs will show below.'.tr
-                : "No Logs currently / Connecting to clash log daemon...".tr,
-            showLeftIcon: true,
-            showRightIcon: true,
-            noticeStyle: connected.value
-                ? NoticeStyles.succeedWithArrow
-                : NoticeStyles.runningWithArrow,
-          ),
-        ),
+        // Obx(
+        //   () => BrnNoticeBar(
+        //     content: connected.value
+        //         ? 'Log is running. Any logs will show below.'.tr
+        //         : "No Logs currently / Connecting to clash log daemon...".tr,
+        //     showLeftIcon: true,
+        //     showRightIcon: true,
+        //     noticeStyle: connected.value
+        //         ? NoticeStyles.succeedWithArrow
+        //         : NoticeStyles.runningWithArrow,
+        //   ),
+        // ),
         Expanded(
           child: Obx(() => ListView.builder(
                 itemBuilder: (cxt, index) {
@@ -104,17 +104,25 @@ class _ClashLogState extends State<ClashLog> {
 
   Widget buildLogItem(String log) {
     final json = jsonDecode(log) ?? {};
-    return Stack(
-      children: [
-        Text(
-          json['Payload'] ?? "",
-          style: const TextStyle(fontFamily: 'nssc'),
-        ),
-        Align(
-          alignment: Alignment.topRight,
-          child: BrnStateTag(tagText: '${json['LogLevel']}'),
-        )
-      ],
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+      margin: EdgeInsets.symmetric(vertical: 2.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.0),
+        color: Colors.grey.shade200
+      ),
+      child: Stack(
+        children: [
+          Text(
+            json['Payload'] ?? "",
+            style: const TextStyle(fontFamily: 'nssc'),
+          ),
+          Align(
+            alignment: Alignment.topRight,
+            child: BrnStateTag(tagText: '${json['LogLevel']}'),
+          )
+        ],
+      ),
     );
   }
 }
