@@ -127,8 +127,10 @@ class ClashService extends GetxService with TrayListener {
     }
     // wait getx initialize
     Future.delayed(const Duration(seconds: 3), () {
-      Get.find<NotificationService>()
+      if (!Platform.isWindows) {
+        Get.find<NotificationService>()
           .showNotification("Fclash", "Is running".tr);
+      }
     });
     return this;
   }
@@ -266,6 +268,7 @@ class ClashService extends GetxService with TrayListener {
       });
     }
     final nativePort = receiver.sendPort.nativePort;
+    print("port: $nativePort");
     clashFFI.start_log(nativePort);
   }
 
@@ -709,8 +712,10 @@ class ClashService extends GetxService with TrayListener {
       _clashLock = await lockFile.open(mode: FileMode.write);
       await _clashLock?.lock();
     } catch (e) {
-      await Get.find<NotificationService>()
+      if (!Platform.isWindows) {
+        await Get.find<NotificationService>()
           .showNotification("Fclash", "Already running, Now exit.".tr);
+      }
       exit(0);
     }
   }

@@ -36,6 +36,8 @@ jobs:
           cache: true
       - name: Build clash lib
         shell: bash
+        env:
+          CGO_ENABLED: 1
         run: |
           pushd clash
           go build -buildmode=c-shared -o ./libclash.dll

@@ -48,7 +48,7 @@ func clash_init(home_dir *C.char) int {
 func set_config(config_path *C.char) int {
 	file := C.GoString(config_path)
 	if _, err := executor.ParseWithPath(file); err != nil {
-		fmt.Printf("config validate failed: %s", err)
+		fmt.Println("config validate failed:", err)
 		return -1
 	}
 	constant.SetConfig(file)
@@ -60,12 +60,12 @@ func set_home_dir(home *C.char) int {
 	home_gostr := C.GoString(home)
 	info, err := os.Stat(home_gostr)
 	if err == nil && info.IsDir() {
-		fmt.Println("GO: set home dir to %s", home_gostr)
+		fmt.Println("GO: set home dir to", home_gostr)
 		constant.SetHomeDir(home_gostr)
 		return 0
 	} else {
 		if err != nil {
-			fmt.Println("error: %s", err)
+			fmt.Println("error:", err)
 		}
 	}
 	return -1
@@ -91,7 +91,7 @@ func clear_ext_options() {
 //export is_config_valid
 func is_config_valid(config_path *C.char) int {
 	if _, err := executor.ParseWithPath(C.GoString(config_path)); err != nil {
-		fmt.Println("error reading config: %s", err)
+		fmt.Println("error reading config:", err)
 		return -1
 	}
 	return 0
@@ -102,7 +102,7 @@ func get_all_connections() *C.char {
 	snapshot := statistic.DefaultManager.Snapshot()
 	data, err := json.Marshal(snapshot)
 	if err != nil {
-		fmt.Println("Error: %s", err)
+		fmt.Println("Error:", err)
 		return C.CString("")
 	}
 	return C.CString(string(data))
@@ -113,7 +113,7 @@ func close_all_connections() {
 	for _, connection := range statistic.DefaultManager.Snapshot().Connections {
 		err := connection.Close()
 		if err != nil {
-			fmt.Println("warning: %s", err)
+			fmt.Println("warning:", err)
 		}
 	}
 }
@@ -125,7 +125,7 @@ func close_connection(id *C.char) bool {
 		if connection.ID() == connection_id {
 			err := connection.Close()
 			if err != nil {
-				fmt.Println("warning: %s", err)
+				fmt.Println("warning:", err)
 			}
 			return true
 		}
@@ -151,7 +151,7 @@ func get_traffic() *C.char {
 	}
 	data, err := json.Marshal(traffic)
 	if err != nil {
-		fmt.Println("Error: %s", err)
+		fmt.Println("Error:", err)
 		return C.CString("")
 	}
 	return C.CString(string(data))
@@ -163,7 +163,7 @@ func init_native_api_bridge(api unsafe.Pointer) {
 }
 
 //export start_log
-func start_log(port C.long) {
+func start_log(port C.longlong) {
 	if log_subscriber != nil {
 		log.UnSubscribe(log_subscriber)
 		log_subscriber = nil
@@ -174,13 +174,13 @@ func start_log(port C.long) {
 			lg := elem.(log.Event)
 			data, err := json.Marshal(lg)
 			if err != nil {
-				fmt.Errorf("Error: %s", err)
+				fmt.Println("Error:", err)
 			}
 			ret_str := string(data)
 			fclashgobridge.SendToPort(int64(port), ret_str)
 		}
 	}()
-	fmt.Println("[GO] subscribe logger on dart bridge port %s", int64(port))
+	fmt.Println("[GO] subscribe logger on dart bridge port", int64(port))
 }
 
 //export stop_log
@@ -278,7 +278,7 @@ func change_config_field(s *C.char) C.long {
 }
 
 //export async_test_delay
-func async_test_delay(proxy_name *C.char, url *C.char, timeout C.long, port C.long) {
+func async_test_delay(proxy_name *C.char, url *C.char, timeout C.long, port C.longlong) {
 	go func() {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(int64(timeout)))
 		defer cancel()
@@ -308,6 +308,9 @@ func async_test_delay(proxy_name *C.char, url *C.char, timeout C.long, port C.lo
 		data, err := json.Marshal(map[string]uint16{
 			"delay": delay,
 		})
+		if err != nil {
+			fmt.Println("err: ", err)
+		}
 		fclashgobridge.SendToPort(int64(port), string(data))
 	}()
 }
