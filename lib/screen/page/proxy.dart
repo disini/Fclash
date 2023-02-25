@@ -72,7 +72,8 @@ class _ProxyState extends State<Proxy> {
                 ),
                 Text(
                   "direct".tr,
-                  style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18.0, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -243,6 +244,9 @@ class _ProxyState extends State<Proxy> {
                                         {"name": "${allItems[newIndex]}"}),
                                     context);
                               }
+                              Future.delayed(Duration.zero, () {
+                                setState(() {});
+                              });
                             },
                             isSelected: itemName == now,
                             child: Expanded(
