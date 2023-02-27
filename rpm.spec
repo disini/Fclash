@@ -4,6 +4,7 @@ Release:    1
 Summary:    A Clash Proxy Fronted based on Clash
 License:    GPL-3
 Requires:   gtk3 libappindicator-gtk3
+Provides:   libproxy_manager_plugin.so()(64bit) libclash.so()(64bit) libflutter_linux_gtk.so()(64bit) libproxy_manager_plugin.so()(64bit) libscreen_retriever_plugin.so()(64bit) libtray_manager_plugin.so()(64bit) liburl_launcher_linux_plugin.so()(64bit) libwindow_manager_plugin.so()(64bit)
 
 %description
 A Clash Proxy Fronted based on Clash.
@@ -18,8 +19,7 @@ A Clash Proxy Fronted based on Clash.
 %install
 bsdtar -zxvf ${FCLASH_SRC}/debian/cn.kingtous.fclash.deb
 tar -xvf data.tar.xz
-mkdir -p "%{buildroot}/opt"
-cp -r "./opt"  "%{buildroot}/opt"
+cp -r "./opt"  "%{buildroot}"
 install -Dm0755 "${FCLASH_SRC}/debian/build-src/opt/apps/cn.kingtous.fclash/entries/applications/cn.kingtous.fclash.desktop" "%{buildroot}/usr/share/applications/cn.kingtous.fclash.desktop"
 
 %files
