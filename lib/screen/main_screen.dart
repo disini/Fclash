@@ -329,7 +329,9 @@ class _MainScreenState extends State<MainScreen>
           width: 128.0,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12.0),
-              color: selected ? Colors.blueAccent : Color.fromARGB(255, 171, 170, 170)),
+              color: selected
+                  ? Colors.blueAccent
+                  : Color.fromARGB(255, 171, 170, 170)),
           child: InkWell(
             onTap: () {
               this.index.value = index;

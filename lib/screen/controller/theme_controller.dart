@@ -4,8 +4,7 @@ import 'package:kommon/kommon.dart';
 enum ThemeType { light, dark }
 
 class ThemeController extends GetxController {
-
-  bool? get isDark => SpUtil.getData<bool>("dark_theme", defValue: null); 
+  bool? get isDark => SpUtil.getData<bool>("dark_theme", defValue: null);
 
   ThemeMode getThemeMode() {
     final darkMode = isDark;

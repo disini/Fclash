@@ -108,9 +108,8 @@ class _ClashLogState extends State<ClashLog> {
       padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
       margin: EdgeInsets.symmetric(vertical: 2.0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.0),
-        color: Colors.grey.shade200
-      ),
+          borderRadius: BorderRadius.circular(12.0),
+          color: Colors.grey.shade200),
       child: Stack(
         children: [
           Text(

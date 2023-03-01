@@ -129,7 +129,7 @@ class ClashService extends GetxService with TrayListener {
     Future.delayed(const Duration(seconds: 3), () {
       if (!Platform.isWindows) {
         Get.find<NotificationService>()
-          .showNotification("Fclash", "Is running".tr);
+            .showNotification("Fclash", "Is running".tr);
       }
     });
     return this;
@@ -346,7 +346,6 @@ class ClashService extends GetxService with TrayListener {
   }
 
   Future<void> setSystemProxy() async {
-    
     if (isDesktop) {
       if (configEntity.value != null) {
         final entity = configEntity.value!;
@@ -714,7 +713,7 @@ class ClashService extends GetxService with TrayListener {
     } catch (e) {
       if (!Platform.isWindows) {
         await Get.find<NotificationService>()
-          .showNotification("Fclash", "Already running, Now exit.".tr);
+            .showNotification("Fclash", "Already running, Now exit.".tr);
       }
       exit(0);
     }
