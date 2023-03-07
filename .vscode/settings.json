@@ -1,5 +1,6 @@
 {
     "files.associations": {
         "*.rh": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "${workspaceFolder}/android/TunProxy/android_app/app"
 }
