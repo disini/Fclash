@@ -1,6 +1,6 @@
 # FClash
 
-<p align="center"><img src="assets/images/app_tray.png" style="border-radius: 50%;"/></p>
+<p align="center"><img src="assets/images/app_tray.png" style="border-radius: 50%" width="150px"/></p>
 
 
 <p align="center" style="font-size: 20px">A Clash Proxy Fronted based on Clash</p>
