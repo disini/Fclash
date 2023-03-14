@@ -119,6 +119,15 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
+      # - name: Install deps
+      #   run: |
+      #     apt update
+      #     apt install -y locate
+      # - name: Install AppImageTool
+      #   run: |
+      #     wget -O appimagetool "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+      #     chmod +x appimagetool
+      #     mv appimagetool /usr/local/bin/
       - uses: actions/setup-go@v3
         with:
           go-version: '>=1.19.0'
