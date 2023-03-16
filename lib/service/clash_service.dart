@@ -366,50 +366,53 @@ class ClashService extends GetxService with TrayListener {
         await setIsSystemProxy(true);
       }
     } else {
-      await Clipboard.setData(
-          ClipboardData(text: "${configEntity.value?.port}"));
-      final dialog = BrnDialog(
-        titleText: "请手动设置代理",
-        messageText:
-            "端口号已复制。请进入已连接WiFi的详情设置，将代理设置为手动，主机名填写127.0.0.1，端口填写${configEntity.value?.port}，然后返回点击已完成即可",
-        actionsText: ["取消", "已完成", "去设置填写"],
-        indexedActionCallback: (index) async {
-          if (index == 0) {
-            if (Get.isOverlaysOpen) {
-              Get.back();
-            }
-          } else if (index == 1) {
-            final proxy = await SystemProxy.getProxySettings();
-            if (proxy != null) {
-              if (proxy["host"] == "127.0.0.1" &&
-                  int.parse(proxy["port"].toString()) ==
-                      configEntity.value?.port) {
-                Future.delayed(Duration.zero, () {
-                  if (Get.overlayContext != null) {
-                    BrnToast.show("设置成功", Get.overlayContext!);
-                    setIsSystemProxy(true);
-                  }
-                });
-                if (Get.isOverlaysOpen) {
-                  Get.back();
-                }
-              }
-            } else {
-              Future.delayed(Duration.zero, () {
-                if (Get.overlayContext != null) {
-                  BrnToast.show("好像未完成设置哦", Get.overlayContext!);
-                }
-              });
-            }
-          } else {
-            Future.delayed(Duration.zero, () {
-              BrnToast.show("端口号已复制", Get.context!);
-            });
-            await OpenSettings.openWIFISetting();
-          }
-        },
-      );
-      Get.dialog(dialog);
+      const channel = MethodChannel("FClashPlugin");
+      channel.invokeMethod("StartProxy");
+      await setIsSystemProxy(true);
+      // await Clipboard.setData(
+      //     ClipboardData(text: "${configEntity.value?.port}"));
+      // final dialog = BrnDialog(
+      //   titleText: "请手动设置代理",
+      //   messageText:
+      //       "端口号已复制。请进入已连接WiFi的详情设置，将代理设置为手动，主机名填写127.0.0.1，端口填写${configEntity.value?.port}，然后返回点击已完成即可",
+      //   actionsText: ["取消", "已完成", "去设置填写"],
+      //   indexedActionCallback: (index) async {
+      //     if (index == 0) {
+      //       if (Get.isOverlaysOpen) {
+      //         Get.back();
+      //       }
+      //     } else if (index == 1) {
+      //       final proxy = await SystemProxy.getProxySettings();
+      //       if (proxy != null) {
+      //         if (proxy["host"] == "127.0.0.1" &&
+      //             int.parse(proxy["port"].toString()) ==
+      //                 configEntity.value?.port) {
+      //           Future.delayed(Duration.zero, () {
+      //             if (Get.overlayContext != null) {
+      //               BrnToast.show("设置成功", Get.overlayContext!);
+      //               setIsSystemProxy(true);
+      //             }
+      //           });
+      //           if (Get.isOverlaysOpen) {
+      //             Get.back();
+      //           }
+      //         }
+      //       } else {
+      //         Future.delayed(Duration.zero, () {
+      //           if (Get.overlayContext != null) {
+      //             BrnToast.show("好像未完成设置哦", Get.overlayContext!);
+      //           }
+      //         });
+      //       }
+      //     } else {
+      //       Future.delayed(Duration.zero, () {
+      //         BrnToast.show("端口号已复制", Get.context!);
+      //       });
+      //       await OpenSettings.openWIFISetting();
+      //     }
+      //   },
+      // );
+      // Get.dialog(dialog);
     }
   }
 
@@ -420,43 +423,47 @@ class ClashService extends GetxService with TrayListener {
         await setIsSystemProxy(false);
       }
     } else {
-      final dialog = BrnDialog(
-        titleText: "请手动设置代理",
-        messageText: "请进入已连接WiFi的详情设置，将代理设置为无",
-        actionsText: ["取消", "已完成", "去设置清除"],
-        indexedActionCallback: (index) async {
-          if (index == 0) {
-            if (Get.isOverlaysOpen) {
-              Get.back();
-            }
-          } else if (index == 1) {
-            final proxy = await SystemProxy.getProxySettings();
-            if (proxy != null) {
-              Future.delayed(Duration.zero, () {
-                if (Get.overlayContext != null) {
-                  BrnToast.show("好像没有清除成功哦，当前代理${proxy}", Get.overlayContext!);
-                }
-              });
-            } else {
-              Future.delayed(Duration.zero, () {
-                if (Get.overlayContext != null) {
-                  BrnToast.show("清除成功", Get.overlayContext!);
-                }
-                setIsSystemProxy(false);
-                if (Get.isOverlaysOpen) {
-                  Get.back();
-                }
-              });
-            }
-          } else {
-            OpenSettings.openWIFISetting().then((_) async {
-              final proxy = await SystemProxy.getProxySettings();
-              debugPrint("$proxy");
-            });
-          }
-        },
-      );
-      Get.dialog(dialog);
+      const channel = MethodChannel("FClashPlugin");
+      channel.invokeMethod("StopProxy");
+      
+      await setIsSystemProxy(false);
+      // final dialog = BrnDialog(
+      //   titleText: "请手动设置代理",
+      //   messageText: "请进入已连接WiFi的详情设置，将代理设置为无",
+      //   actionsText: ["取消", "已完成", "去设置清除"],
+      //   indexedActionCallback: (index) async {
+      //     if (index == 0) {
+      //       if (Get.isOverlaysOpen) {
+      //         Get.back();
+      //       }
+      //     } else if (index == 1) {
+      //       final proxy = await SystemProxy.getProxySettings();
+      //       if (proxy != null) {
+      //         Future.delayed(Duration.zero, () {
+      //           if (Get.overlayContext != null) {
+      //             BrnToast.show("好像没有清除成功哦，当前代理${proxy}", Get.overlayContext!);
+      //           }
+      //         });
+      //       } else {
+      //         Future.delayed(Duration.zero, () {
+      //           if (Get.overlayContext != null) {
+      //             BrnToast.show("清除成功", Get.overlayContext!);
+      //           }
+      //           setIsSystemProxy(false);
+      //           if (Get.isOverlaysOpen) {
+      //             Get.back();
+      //           }
+      //         });
+      //       }
+      //     } else {
+      //       OpenSettings.openWIFISetting().then((_) async {
+      //         final proxy = await SystemProxy.getProxySettings();
+      //         debugPrint("$proxy");
+      //       });
+      //     }
+      //   },
+      // );
+      // Get.dialog(dialog);
     }
   }
 

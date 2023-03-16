@@ -21,15 +21,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   if (isDesktop) {
     await Future.wait([
-      initAppService(),
       Future.microtask(() async {
         await windowManager.ensureInitialized();
         await windowManager.setPreventClose(true);
       })
     ]);
   }
+  await initAppService();
   runApp(const MyApp());
-  initWindow();
+  if (isDesktop) {
+    initWindow();
+  }
 }
 
 Future<void> initWindow() async {
@@ -76,7 +78,9 @@ Future<void> initAppService() async {
   await Get.putAsync(() => NotificationService().init());
   await Get.putAsync(() => ClashService().init());
   await Get.putAsync(() => DialogService().init());
-  await Get.putAsync(() => AutostartService().init());
+  if (isDesktop) {
+     await Get.putAsync(() => AutostartService().init());
+  }
   Get.put(ThemeController());
 }
 
@@ -102,10 +106,10 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       title: 'Fclash',
-      theme: ThemeData(
+      theme: isDesktop ? ThemeData(
           primaryColor: Colors.blue,
           primarySwatch: Colors.blue,
-          fontFamily: 'nssc'),
+          fontFamily: 'nssc') : null,
       darkTheme: ThemeData.dark(),
       themeMode: Get.find<ThemeController>().getThemeMode(),
       home: const MainScreen(),

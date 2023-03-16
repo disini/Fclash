@@ -298,24 +298,52 @@ class _MainScreenState extends State<MainScreen>
   }
 
   Widget buildMobileOptions() {
-    return SizedBox(
-      height: 75,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            _buildOptions(0, 'Proxy'.tr),
-            _buildOptions(1, 'Profile'.tr),
-            _buildOptions(2, 'Setting'.tr),
-            _buildOptions(3, 'Connections'.tr),
-            _buildOptions(4, 'Log'.tr),
-            _buildOptions(5, 'About'.tr),
-          ],
+    final cs = Get.find<ClashService>();
+    return Column(
+      children: [
+        Obx(() => BrnNoticeBar(
+              content:
+                  'Current using'.trParams({"name": cs.currentYaml.value}))),
+          Obx(() => BrnNoticeBar(
+                noticeStyle: cs.isSystemProxyObs.value
+                    ? NoticeStyles.succeedWithArrow
+                    : NoticeStyles.warningWithArrow,
+                content: cs.isSystemProxyObs.value
+                    ? "Fclash is running as system proxy now. Enjoy.".tr
+                    : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
+                        .tr,
+                rightWidget: cs.isSystemProxyObs.value
+                    ? TextButton(
+                        onPressed: () {
+                          cs.clearSystemProxy();
+                        },
+                        child: Text("Cancel".tr))
+                    : TextButton(
+                        onPressed: () {
+                          cs.setSystemProxy();
+                        },
+                        child: Text("set Fclash as system proxy".tr)),
+              )),
+        SizedBox(
+          height: 75,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                _buildOptions(0, 'Proxy'.tr),
+                _buildOptions(1, 'Profile'.tr),
+                _buildOptions(2, 'Setting'.tr),
+                _buildOptions(3, 'Connections'.tr),
+                _buildOptions(4, 'Log'.tr),
+                _buildOptions(5, 'About'.tr),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 

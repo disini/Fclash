@@ -1,65 +1,105 @@
 package com.example.fclash
 
+import alihoseinpoor.com.open_settings.OpenSettingsPlugin
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.net.ProxyInfo
 import android.net.VpnService
 import android.os.ParcelFileDescriptor
 import android.util.Log
-import java.io.FileInputStream
-import java.io.OutputStream
+import androidx.core.app.NotificationCompat
+import com.baseflow.permissionhandler.PermissionHandlerPlugin
+import com.dexterous.flutterlocalnotifications.FlutterLocalNotificationsPlugin
+import com.kaivean.system_proxy.SystemProxyPlugin
+import com.mr.flutter.plugin.filepicker.FilePickerPlugin
+import com.tekartik.sqflite.SqflitePlugin
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugins.GeneratedPluginRegistrant
+import io.flutter.plugins.flutter_plugin_android_lifecycle.FlutterAndroidLifecyclePlugin
+import io.flutter.plugins.imagepicker.ImagePickerPlugin
+import io.flutter.plugins.pathprovider.PathProviderPlugin
+import io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin
+import io.flutter.plugins.urllauncher.UrlLauncherPlugin
+import io.flutter.plugins.webviewflutter.WebViewFlutterPlugin
+import io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin
 import java.net.Socket
 
 class FClashVPNService : VpnService() {
 
     companion object {
         const val TAG = "FClashPlugin"
+        const val CHANNEL = "FClashVpn"
+
         enum class Action {
             StartProxy,
-            StopProxy
+            StopProxy,
+            SetHttpPort
         }
     }
 
-    private var httpThread: Thread? = null
     private var mFd: ParcelFileDescriptor? = null
-    private var clashSocket: Socket? = null
+    private var serverPort = 7890
+        set(value) {
+            field = value
+        }
+
+    override fun onCreate() {
+        super.onCreate()
+        Log.d(TAG, "creating fclash vpn service.")
+        val channel = NotificationChannel(CHANNEL, "FClash", NotificationManager.IMPORTANCE_HIGH)
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+        val notification = with(NotificationCompat.Builder(this, CHANNEL)) {
+            setContentTitle("FClash")
+            setContentText("FClash正在运行")
+            build()
+        }
+        startForeground(1, notification)
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        mFd = with(Builder()) {
-            addAddress("10.0.0.2", 32)
-            addRoute("0.0.0.0", 0)
-            addDnsServer("8.8.8.8")
-            setMtu(1500)
-            setSession("FClash")
-            establish()
+        intent?.let {
+            when (it.action) {
+                "start" -> {
+                    mFd = with(Builder()) {
+                        addAddress("10.0.0.2", 32)
+                        setMtu(1500)
+                        setHttpProxy(ProxyInfo.buildDirectProxy("127.0.0.1", serverPort))
+                        setSession("FClash服务")
+                        establish()
+                    }
+                    if (mFd == null) {
+                        Log.e("FClash", "Interface creation failed")
+                    }
+                    return START_NOT_STICKY
+                }
+                "stop" -> {
+                    stopVpnService()
+                    stopForeground(Service.STOP_FOREGROUND_REMOVE)
+                    stopSelf()
+                    return START_NOT_STICKY
+                } else -> {
+                    return START_NOT_STICKY
+                }
+            }
         }
-        if (mFd == null) {
-            Log.e("FClash", "Interface creation failed")
-            return START_NOT_STICKY
-        }
-        httpThread = Thread {
-            startHttpService()
-        }
-        httpThread?.start()
-        return START_STICKY
-    }
-    private fun startHttpService() {
-        clashSocket = Socket("127.0.0.1", 7890)
-        protect(clashSocket)
-        val stream = FileInputStream(mFd?.fileDescriptor)
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         stopVpnService()
+        super.onDestroy()
     }
 
     private fun stopVpnService() {
         try {
-            httpThread?.interrupt()
             // Close the VPN interface
-            mFd?.close()
+            mFd!!.close()
+            Log.d(TAG, "fclash service stopped")
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
-
 }

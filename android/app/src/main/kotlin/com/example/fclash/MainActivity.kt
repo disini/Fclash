@@ -37,29 +37,24 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
                 stopVpnService()
                 result.success(null)
             }
+            FClashVPNService.Companion.Action.SetHttpPort.toString() -> {
+                setHttpPort(call.arguments)
+            }
             else -> {
                 result.notImplemented()
             }
         }
     }
 
+    private fun setHttpPort(arguments: Any?) {
+
+    }
+
     private fun startVpnService() {
-        // Start the VPN service
-        val intent = Intent(this, FClashVPNService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
-        isRunning = true
         // Request VPN permission
-        if (!hasVpnPermission()) {
-            val vpnPermissionIntent = VpnService.prepare(this)
-            if (vpnPermissionIntent != null) {
-                startActivityForResult(vpnPermissionIntent, VPN_PERMISSION_REQUEST_CODE)
-            } else {
-                onVpnPermissionResult(RESULT_OK)
-            }
+        val vpnPermissionIntent = VpnService.prepare(this)
+        if (vpnPermissionIntent != null) {
+            startActivityForResult(vpnPermissionIntent, VPN_PERMISSION_REQUEST_CODE)
         } else {
             onVpnPermissionResult(RESULT_OK)
         }
@@ -68,7 +63,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
     private fun stopVpnService() {
         if (isRunning) {
             val intent = Intent(this, FClashVPNService::class.java)
-            stopService(intent)
+            intent.action = "stop"
+            startService(intent)
             isRunning = false
         }
     }
@@ -76,7 +72,12 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
     private fun onVpnPermissionResult(resultCode: Int) {
         if (resultCode == RESULT_OK) {
             // VPN permission granted
-            Toast.makeText(this, "已授予VPN权限", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(this, "已授予VPN权限", Toast.LENGTH_SHORT).show()
+            // Start the VPN service
+            val intent = Intent(this, FClashVPNService::class.java)
+            intent.action = "start"
+            startForegroundService(intent)
+            isRunning = true
         } else {
             // VPN permission denied
             Toast.makeText(this, "VPN权限申请被拒绝", Toast.LENGTH_SHORT).show()
@@ -92,13 +93,8 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
     }
 
     private fun hasVpnPermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            (checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) &&
-                    (checkSelfPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_GRANTED) &&
-                    (checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE) == PackageManager.PERMISSION_GRANTED)
-        } else {
-            (checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) &&
-                    (checkSelfPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_GRANTED)
-        }
+        return (checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) &&
+                (checkSelfPermission(Manifest.permission.RECEIVE_BOOT_COMPLETED) == PackageManager.PERMISSION_GRANTED) &&
+                (checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE) == PackageManager.PERMISSION_GRANTED)
     }
 }
