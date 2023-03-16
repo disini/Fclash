@@ -15,7 +15,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter/services.dart';
 import 'package:kommon/kommon.dart' hide ProxyTypes;
-import 'package:open_settings/open_settings.dart';
 import 'package:path/path.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -26,6 +25,7 @@ import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
 
 late NativeLibrary clashFFI;
+const mobileChannel = MethodChannel("FClashPlugin");
 
 class ClashService extends GetxService with TrayListener {
   // 需要一起改端口
@@ -264,11 +264,11 @@ class ClashService extends GetxService with TrayListener {
     logStream = receiver.asBroadcastStream();
     if (kDebugMode) {
       logStream?.listen((event) {
-        print("LOG: ${event}");
+        debugPrint("LOG: ${event}");
       });
     }
     final nativePort = receiver.sendPort.nativePort;
-    print("port: $nativePort");
+    debugPrint("port: $nativePort");
     clashFFI.start_log(nativePort);
   }
 
@@ -366,9 +366,17 @@ class ClashService extends GetxService with TrayListener {
         await setIsSystemProxy(true);
       }
     } else {
-      const channel = MethodChannel("FClashPlugin");
-      channel.invokeMethod("StartProxy");
-      await setIsSystemProxy(true);
+      if (configEntity.value != null) {
+        final entity = configEntity.value!;
+        if (entity.port != 0) {
+          await mobileChannel.invokeMethod("SetHttpPort", {
+            "port": entity.port
+          });
+        }
+        mobileChannel.invokeMethod("StartProxy");
+        await setIsSystemProxy(true);
+      }
+      
       // await Clipboard.setData(
       //     ClipboardData(text: "${configEntity.value?.port}"));
       // final dialog = BrnDialog(
@@ -423,9 +431,7 @@ class ClashService extends GetxService with TrayListener {
         await setIsSystemProxy(false);
       }
     } else {
-      const channel = MethodChannel("FClashPlugin");
-      channel.invokeMethod("StopProxy");
-      
+      mobileChannel.invokeMethod("StopProxy");
       await setIsSystemProxy(false);
       // final dialog = BrnDialog(
       //   titleText: "请手动设置代理",

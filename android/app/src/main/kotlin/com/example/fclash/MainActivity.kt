@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.VpnService
 import android.os.Build
+import android.os.Bundle
 import android.widget.Toast
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -39,6 +40,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
             }
             FClashVPNService.Companion.Action.SetHttpPort.toString() -> {
                 setHttpPort(call.arguments)
+                result.success(null)
             }
             else -> {
                 result.notImplemented()
@@ -47,7 +49,12 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
     }
 
     private fun setHttpPort(arguments: Any?) {
-
+        val map = arguments as Map<*, *>
+        val port = map["port"] as Int
+        val intent = Intent(this, FClashVPNService::class.java)
+        intent.action = FClashVPNService.Companion.Action.SetHttpPort.toString()
+        intent.putExtra("port", port)
+        startService(intent)
     }
 
     private fun startVpnService() {

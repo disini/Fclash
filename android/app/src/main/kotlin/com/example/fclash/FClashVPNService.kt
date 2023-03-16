@@ -63,24 +63,25 @@ class FClashVPNService : VpnService() {
         intent?.let {
             when (it.action) {
                 "start" -> {
-                    mFd = with(Builder()) {
-                        addAddress("10.0.0.2", 32)
-                        setMtu(1500)
-                        setHttpProxy(ProxyInfo.buildDirectProxy("127.0.0.1", serverPort))
-                        setSession("FClash服务")
-                        establish()
-                    }
-                    if (mFd == null) {
-                        Log.e("FClash", "Interface creation failed")
-                    }
-                    return START_NOT_STICKY
+//                    stopVpnService()
+                    startVpnService()
+                    return START_STICKY
                 }
                 "stop" -> {
                     stopVpnService()
                     stopForeground(Service.STOP_FOREGROUND_REMOVE)
                     stopSelf()
                     return START_NOT_STICKY
-                } else -> {
+                }
+                Action.SetHttpPort.toString() -> {
+                    val port = it.extras!!.getInt("port")
+                    this.serverPort = port
+                    if (mFd != null) {
+                        stopVpnService()
+                        startVpnService()
+                    }
+                }
+                else -> {
                     return START_NOT_STICKY
                 }
             }
@@ -93,10 +94,24 @@ class FClashVPNService : VpnService() {
         super.onDestroy()
     }
 
+    private fun startVpnService() {
+        mFd?.close()
+        mFd = with(Builder()) {
+            addAddress("10.0.0.2", 32)
+            setMtu(1500)
+            setHttpProxy(ProxyInfo.buildDirectProxy("127.0.0.1", serverPort))
+            setSession("FClash服务")
+            establish()
+        }
+        if (mFd == null) {
+            Log.e("FClash", "Interface creation failed")
+        }
+    }
+
     private fun stopVpnService() {
         try {
             // Close the VPN interface
-            mFd!!.close()
+            mFd?.close()
             Log.d(TAG, "fclash service stopped")
         } catch (e: Exception) {
             e.printStackTrace()

@@ -14,6 +14,7 @@ import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kommon/kommon.dart';
 import 'package:tray_manager/tray_manager.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import 'package:window_manager/window_manager.dart';
 
 class MainScreen extends StatefulWidget {
@@ -97,7 +98,13 @@ class _MainScreenState extends State<MainScreen>
     return SafeArea(
       child: Scaffold(
           appBar: BrnAppBar(
-            title: "fclash",
+            title: "FClash",
+            brightness: Brightness.dark,
+            actions: InkWell(
+              onTap: () {
+                launchUrlString("https://github.com/FClash/FClash", mode: LaunchMode.externalApplication);
+              },
+              child: Icon(Icons.question_mark_sharp)),
           ),
           body: Column(
             children: [buildMobileOptions(), Expanded(child: buildFrame())],
@@ -113,9 +120,11 @@ class _MainScreenState extends State<MainScreen>
         children: [
           buildDesktopOptions(),
           Obx(() => BrnNoticeBar(
+            backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.black : null,
               content:
                   'Current using'.trParams({"name": cs.currentYaml.value}))),
           Obx(() => BrnNoticeBar(
+            backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.black : null,
                 noticeStyle: cs.isSystemProxyObs.value
                     ? NoticeStyles.succeedWithArrow
                     : NoticeStyles.warningWithArrow,

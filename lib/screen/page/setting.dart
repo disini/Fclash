@@ -196,7 +196,6 @@ class _SettingState extends State<Setting> {
                           setState(() {});
                         },
                         title: Text('Dark Theme'.tr)),
-                    if (isDesktop)
                       SettingsTile.switchTile(
                           title: Text(
                             "Set as system proxy".tr,

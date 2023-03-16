@@ -105,7 +105,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      title: 'Fclash',
+      title: 'FClash',
       theme: isDesktop ? ThemeData(
           primaryColor: Colors.blue,
           primarySwatch: Colors.blue,
