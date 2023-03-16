@@ -195,7 +195,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   build-android-arm64v8a-package:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v2
@@ -210,7 +210,7 @@ jobs:
       - uses: nttld/setup-ndk@v1
         id: setup-ndk
         with:
-          ndk-version: r21e
+          ndk-version: r25b
           add-to-path: true
       - name: Build Golang lib
         shell: bash
@@ -218,13 +218,14 @@ jobs:
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
         run: |
           pushd clash
-          env GOOS=android GOARCH=arm64 CC=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android30-clang GOARM=7 CGO_ENABLED=1 go build -buildmode=c-shared -o ./libclash.so
+          env GOOS=android GOARCH=arm64 CC=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang GOARM=7 CGO_ENABLED=1 go build -buildmode=c-shared -o ./libclash.so
           popd
           mkdir -p ./android/app/src/main/jniLibs/arm64-v8a
-          ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android-strip clash/libclash.so
+          ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip clash/libclash.so
           mv clash/libclash.so ./android/app/src/main/jniLibs/arm64-v8a/libclash.so
       - name: Build APK
         run: |
+          flutter clean && flutter pub get
           flutter build apk --release --target-platform android-arm64 --split-per-abi
           mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk fclash-${{ env.VERSION}}-arm64-v8a.apk
       - uses: actions/upload-artifact@v2

@@ -49,7 +49,7 @@ Note that macOS will treat the `FClash` as an untrusted app, so please go to set
 
 ### Android
 
-Please download .apk(still not in full functional) directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+Please download .apk directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
 
 Note: the Android version is looking for contributors.
 
