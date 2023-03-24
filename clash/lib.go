@@ -30,7 +30,7 @@ import (
 
 var (
 	options        []hub.Option
-	log_subscriber <-chan any
+	log_subscriber <-chan log.Event
 )
 
 //export clash_init
@@ -171,7 +171,7 @@ func start_log(port C.longlong) {
 	log_subscriber = log.Subscribe()
 	go func() {
 		for elem := range log_subscriber {
-			lg := elem.(log.Event)
+			lg := elem
 			data, err := json.Marshal(lg)
 			if err != nil {
 				fmt.Println("Error:", err)
@@ -256,11 +256,12 @@ func change_config_field(s *C.char) C.long {
 
 	tcpIn := tunnel.TCPIn()
 	udpIn := tunnel.UDPIn()
+	natTable := tunnel.NatTable()
 
 	P.ReCreateHTTP(pointerOrDefault(general.Port, ports.Port), tcpIn)
 	P.ReCreateSocks(pointerOrDefault(general.SocksPort, ports.SocksPort), tcpIn, udpIn)
-	P.ReCreateRedir(pointerOrDefault(general.RedirPort, ports.RedirPort), tcpIn, udpIn)
-	P.ReCreateTProxy(pointerOrDefault(general.TProxyPort, ports.TProxyPort), tcpIn, udpIn)
+	P.ReCreateRedir(pointerOrDefault(general.RedirPort, ports.RedirPort), tcpIn, udpIn, natTable)
+	P.ReCreateTProxy(pointerOrDefault(general.TProxyPort, ports.TProxyPort), tcpIn, udpIn, natTable)
 	P.ReCreateMixed(pointerOrDefault(general.MixedPort, ports.MixedPort), tcpIn, udpIn)
 
 	if general.Mode != nil {
