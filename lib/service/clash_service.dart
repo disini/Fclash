@@ -745,73 +745,73 @@ Future<String> convertConfig(String content) async {
     Map doc = json.decode(json.encode(loadYaml(content, recover: true)));
     // 下载rule-provider对应的payload文件
     if (doc.containsKey('rule-providers')) {
-      if (Get.overlayContext != null) {
-        final completer = Completer<bool>();
-        if (Get.isOverlaysOpen) {
-          Get.back();
-        }
-        BrnDialogManager.showConfirmDialog(Get.overlayContext!,
-            title: 'Convert profile'.tr,
-            message:
-                'Your profile contains RULE-SET which needs to convert to the profile supported by open source clash'
-                    .tr,
-            cancel: 'Continue anyway'.tr,
-            confirm: 'OK'.tr, onCancel: () {
-          Get.back();
-          completer.complete(false);
-        }, onConfirm: () {
-          Get.back();
-          completer.complete(true);
-        }, barrierDismissible: false);
-        final res = await completer.future;
-        if (!res) {
-          return content;
-        }
-      }
+      // if (Get.overlayContext != null) {
+      //   final completer = Completer<bool>();
+      //   if (Get.isOverlaysOpen) {
+      //     Get.back();
+      //   }
+      //   BrnDialogManager.showConfirmDialog(Get.overlayContext!,
+      //       title: 'Convert profile'.tr,
+      //       message:
+      //           'Your profile contains RULE-SET which needs to convert to the profile supported by open source clash'
+      //               .tr,
+      //       cancel: 'Continue anyway'.tr,
+      //       confirm: 'OK'.tr, onCancel: () {
+      //     Get.back();
+      //     completer.complete(false);
+      //   }, onConfirm: () {
+      //     Get.back();
+      //     completer.complete(true);
+      //   }, barrierDismissible: false);
+      //   final res = await completer.future;
+      //   if (!res) {
+      //     return content;
+      //   }
+      // }
       BrnLoadingDialog.show(Get.overlayContext!);
       Map providers = doc['rule-providers'];
       final total = providers.keys.length;
       final index = 0.obs;
       // 进度显示
-      Get.dialog(BrnDialog(
-        titleText: 'Converting',
-        contentWidget: Center(
-          child: Obx(
-            () => Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  width: 25,
-                  height: 25,
-                  child: BrnPageLoading(),
-                ),
-                Text("$index/$total")
-              ],
-            ),
-          ),
-        ),
-      ));
+      // Get.dialog(BrnDialog(
+      //   titleText: 'Converting',
+      //   contentWidget: Center(
+      //     child: Obx(
+      //       () => Column(
+      //         mainAxisAlignment: MainAxisAlignment.center,
+      //         children: [
+      //           const SizedBox(
+      //             width: 25,
+      //             height: 25,
+      //             child: BrnPageLoading(),
+      //           ),
+      //           Text("$index/$total")
+      //         ],
+      //       ),
+      //     ),
+      //   ),
+      // ));
 
-      var downloadFutures = <Future>[];
-      for (final provider in providers.entries) {
-        downloadFutures.add(Future.delayed(Duration.zero, () async {
-          final key = provider.key;
-          final value = provider.value;
-          final url = value['url'];
-          debugPrint("Downloading $url");
-          if (url != null) {
-            final resp = await (Dio().get(url));
-            Map respDoc = loadYaml(resp.data, recover: true);
-            payloadMap[key] = List.of(respDoc['payload']);
-            debugPrint("$url completed");
-            index.value++;
-          }
-        }));
-      }
-      await Future.wait(downloadFutures);
-      if (Get.isOverlaysOpen) {
-        Get.back();
-      }
+      // var downloadFutures = <Future>[];
+      // for (final provider in providers.entries) {
+      //   downloadFutures.add(Future.delayed(Duration.zero, () async {
+      //     final key = provider.key;
+      //     final value = provider.value;
+      //     final url = value['url'];
+      //     // debugPrint("Downloading $url");
+      //     // if (url != null) {
+      //     //   final resp = await (Dio().get(url));
+      //     //   Map respDoc = loadYaml(resp.data, recover: true);
+      //     //   payloadMap[key] = List.of(respDoc['payload']);
+      //     //   debugPrint("$url completed");
+      //     index.value++;
+      //     // }
+      //   }));
+      // }
+      // await Future.wait(downloadFutures);
+      // if (Get.isOverlaysOpen) {
+      //   Get.back();
+      // }
       // 开始转换rules
       var rules = doc['rules'];
       var newRules = [];
@@ -843,10 +843,12 @@ Future<String> convertConfig(String content) async {
             }
           }
         } else {
-          newRules.add(rule);
+          if (tuple.where((element) => element.isEmpty).isEmpty) {
+            newRules.add(rule);
+          }
         }
       }
-      doc.remove('rule-providers');
+      // doc.remove('rule-providers');
       doc['rules'] = newRules;
       final outputString = yamlWriter.write(doc);
       return outputString;

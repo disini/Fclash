@@ -55,6 +55,7 @@ Note: the Android version is looking for contributors.
 
 ## Feature
 
+- More features: FClash is based on the full open source [Clash.Meta](https://github.com/MetaCubeX/Clash.Meta).
 - Stable: Restart and restore clash status when clash kernel crashs automatically.
 - Stable: Monitor Realtime runtime status.
 - UI: Beautiful UI built by Flutter.
