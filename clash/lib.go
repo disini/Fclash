@@ -206,7 +206,7 @@ func change_proxy(selector_name *C.char, proxy_name *C.char) C.long {
 		return C.long(-1)
 	}
 	if err := selector.Set(C.GoString(proxy_name)); err != nil {
-		fmt.Println("%s", err)
+		fmt.Println("", err)
 		return C.long(-1)
 	}
 	cachefile.Cache().SetSelected(string(C.GoString(selector_name)), string(C.GoString(proxy_name)))
@@ -319,6 +319,11 @@ func async_test_delay(proxy_name *C.char, url *C.char, timeout C.long, port C.lo
 //export get_proxies
 func get_proxies() *C.char {
 	proxies := tunnel.Proxies()
+	for _, provider := range tunnel.Providers() {
+		for _, proxy := range provider.Proxies() {
+			proxies[proxy.Name()] = proxy
+		}
+	}
 	data, err := json.Marshal(map[string]map[string]constant.Proxy{
 		"proxies": proxies,
 	})
