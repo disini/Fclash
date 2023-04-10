@@ -1,5 +1,5 @@
 name: fclash
-base: core20
+base: core22
 version: '1.4.0'
 summary: A Linux Clash Proxy Fronted based on Clash # 79 char long summary
 description: |
@@ -9,6 +9,13 @@ description: |
 grade: stable
 confinement: strict
 license: GPL-3.0+
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  # - build-on: armhf
+  # - build-on: ppc64el
+  # - build-on: s390x
 
 #slots:
 #  dbus-fclash:
@@ -55,7 +62,7 @@ plugs:
 apps:
   fclash:
     command: fclash
-    extensions: [ flutter-stable ]
+    extensions: [ gnome ]
     plugs:
       - network
       - home
