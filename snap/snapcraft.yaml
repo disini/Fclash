@@ -32,6 +32,7 @@ parts:
     build-packages:
       - python3
       - git
+      - curl
       - clang
       - cmake
       - ninja-build
