@@ -50,14 +50,14 @@ android {
         versionName "1.0.1"
     }
 
-    signingConfigs {
-        release {
-            storeFile file("")
-            storePassword ''
-            keyPassword ''
-            keyAlias ''
-        }
-    }
+//    signingConfigs {
+//        release {
+//            storeFile file("")
+//            storePassword ''
+//            keyPassword ''
+//            keyAlias ''
+//        }
+//    }
 
     buildTypes {
         release {
