@@ -55,6 +55,7 @@ dependencies:
   yaml: ^3.1.1
   yaml_writer: ^1.0.3
   flutter_svg: ^2.0.2
+  google_mobile_ads: ^2.4.0
 
 dev_dependencies:
   flutter_test:

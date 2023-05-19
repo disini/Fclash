@@ -9,6 +9,7 @@ import 'package:fclash/translation/clash_translation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide MenuItem;
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kommon/kommon.dart';
 import 'package:proxy_manager/proxy_manager.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -19,6 +20,7 @@ final isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   if (isDesktop) {
     await Future.wait([
       Future.microtask(() async {
@@ -79,7 +81,7 @@ Future<void> initAppService() async {
   await Get.putAsync(() => ClashService().init());
   await Get.putAsync(() => DialogService().init());
   if (isDesktop) {
-     await Get.putAsync(() => AutostartService().init());
+    await Get.putAsync(() => AutostartService().init());
   }
   Get.put(ThemeController());
 }
@@ -106,10 +108,12 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       title: 'FClash',
-      theme: isDesktop ? ThemeData(
-          primaryColor: Colors.blue,
-          primarySwatch: Colors.blue,
-          fontFamily: 'nssc') : null,
+      theme: isDesktop
+          ? ThemeData(
+              primaryColor: Colors.blue,
+              primarySwatch: Colors.blue,
+              fontFamily: 'nssc')
+          : null,
       darkTheme: ThemeData.dark(),
       themeMode: Get.find<ThemeController>().getThemeMode(),
       home: const MainScreen(),

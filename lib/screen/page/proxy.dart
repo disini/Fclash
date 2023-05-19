@@ -1,6 +1,7 @@
 import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:kommon/kommon.dart';
 
 class Proxy extends StatefulWidget {
@@ -12,6 +13,12 @@ class Proxy extends StatefulWidget {
 
 class _ProxyState extends State<Proxy> {
   ClashService get service => Get.find<ClashService>();
+  final bannerAd = BannerAd(
+    adUnitId: 'ca-app-pub-4754225129255140/6323530222',
+    size: AdSize.banner,
+    request: const AdRequest(),
+    listener: const BannerAdListener(),
+  );
 
   @override
   void initState() {
@@ -33,7 +40,21 @@ class _ProxyState extends State<Proxy> {
                   ))),
           Column(
             mainAxisSize: MainAxisSize.min,
-            children: [Expanded(child: buildTiles())],
+            children: [
+              SizedBox(
+                height: 50.0,
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: AdWidget(
+                      ad: bannerAd,
+                      key: const ValueKey("ad-main"),
+                    ))
+                  ],
+                ),
+              ),
+              Expanded(child: buildTiles())
+            ],
           ),
         ],
       ),
