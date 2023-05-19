@@ -1,4 +1,4 @@
-package com.example.fclash
+package com.fclash.fclash
 
 import alihoseinpoor.com.open_settings.OpenSettingsPlugin
 import android.app.NotificationChannel
