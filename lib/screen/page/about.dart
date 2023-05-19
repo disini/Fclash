@@ -21,7 +21,7 @@ class AboutPage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              LaunchUtils.openUrl("https://github.com/Kingtous/Fclash");
+              LaunchUtils.openUrl("https://github.com/fclash/fclash");
             },
             child: Text(
               "Fclash - a clash proxy fronted by Flutter".tr,
@@ -32,21 +32,6 @@ class AboutPage extends StatelessWidget {
             "version:".trParams({"version": '1.4.0'}),
             style: const TextStyle(fontFamily: 'nssc'),
           ),
-          TextButton(
-              onPressed: () {
-                LaunchUtils.openUrl(
-                    "https://github.com/Kingtous/Fclash/actions");
-              },
-              child: Text("check for update".tr)),
-          const Divider(
-            thickness: 1.0,
-          ),
-          Text("Author:".trParams({"name": "Kingtous"})),
-          TextButton(
-              onPressed: () {
-                LaunchUtils.openUrl("https://github.com/Kingtous");
-              },
-              child: Text("View me at Github".tr))
         ],
       ),
     );

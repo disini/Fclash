@@ -1,3 +1,4 @@
+import 'package:fclash/main.dart';
 import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
@@ -13,16 +14,22 @@ class Proxy extends StatefulWidget {
 
 class _ProxyState extends State<Proxy> {
   ClashService get service => Get.find<ClashService>();
-  final bannerAd = BannerAd(
+  BannerAd? bannerAd = isDesktop ? null : BannerAd(
     adUnitId: 'ca-app-pub-4754225129255140/6323530222',
     size: AdSize.banner,
     request: const AdRequest(),
     listener: const BannerAdListener(),
   );
+  bool isAdLoaded = false;
 
   @override
   void initState() {
     super.initState();
+    bannerAd?.load().then((value)  {
+      setState(() {
+        isAdLoaded = true;
+      });
+    });
   }
 
   @override
@@ -41,13 +48,14 @@ class _ProxyState extends State<Proxy> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              if (!isDesktop && isAdLoaded)
               SizedBox(
                 height: 50.0,
                 child: Row(
                   children: [
                     Expanded(
                         child: AdWidget(
-                      ad: bannerAd,
+                      ad: bannerAd!,
                       key: const ValueKey("ad-main"),
                     ))
                   ],

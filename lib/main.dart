@@ -20,7 +20,6 @@ final isDesktop = Platform.isLinux || Platform.isWindows || Platform.isMacOS;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MobileAds.instance.initialize();
   if (isDesktop) {
     await Future.wait([
       Future.microtask(() async {
@@ -28,6 +27,8 @@ void main() async {
         await windowManager.setPreventClose(true);
       })
     ]);
+  } else {
+    MobileAds.instance.initialize();
   }
   await initAppService();
   runApp(const MyApp());
