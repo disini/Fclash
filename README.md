@@ -49,7 +49,9 @@ Note that macOS will treat the `FClash` as an untrusted app, so please go to set
 
 ### Android
 
-Please download .apk directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+<a href='https://play.google.com/store/apps/details?id=com.fclash.fclash&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="width:250px"/></a>
+
+or download .apk directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
 
 Note: the Android version is looking for contributors.
 
