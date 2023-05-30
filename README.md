@@ -37,6 +37,8 @@
 - For other distro users, please to use the snap app.
   - [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/fclash)
 
+Note: If you are using in `Wayland`, please use `export WAYLAND_DISPLAY=wayland-x11` or `WAYLAND_DISPLAY=wayland-x11 ./fclash`. Check https://github.com/Fclash/Fclash/issues/52 for details.
+
 ### Windows
 
 Please download .exe setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
