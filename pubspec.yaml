@@ -15,11 +15,17 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-aversion: 1.4.0
+aversion: 1.4.1
 
 environment:
   sdk: ">=2.16.2 <3.0.0"
 
+
+dependency_overrides: 
+  intl: ^0.18.0
+  bruno:
+    git:
+      url: https://github.com/zhoujia456888/bruno
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
 # consider running `flutter pub upgrade --major-versions`. Alternatively,
@@ -36,14 +42,17 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  kommon: ^0.4.0
+  kommon: 
+    git:
+      url: https://github.com/Kingtous/kommon-flutter.git
+      ref: d41ba1d
   path: ^1.8.0
   path_provider: ^2.0.9
   tray_manager: ^0.2.0
   window_manager: ^0.3.0
   settings_ui: ^2.0.2
   launch_at_startup: ^0.1.7
-  package_info_plus: ^1.4.2
+  package_info_plus: ^4.0.2
   flutter_local_notifications: ^9.4.0
   ffigen: ^6.0.0
   proxy_manager: ^0.0.3
