@@ -16,11 +16,11 @@ jobs:
   build-clash-lib:
     strategy:
       matrix:
-        os: ["macos-10.15", "ubuntu-18.04", "windows-latest"]
+        os: ["macos-11", "ubuntu-20.04", "windows-latest"]
         include:
-          - os: "macos-10.15"
+          - os: "macos-11"
             lib_name: "libclash.dylib"
-          - os: "ubuntu-18.04"
+          - os: "ubuntu-20.04"
             lib_name: "libclash.so"
           - os: "windows-latest"
             lib_name: "libclash.dll"
