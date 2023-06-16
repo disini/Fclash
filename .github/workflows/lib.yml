@@ -27,13 +27,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: actions/setup-go@v3
         with:
           go-version: '>=1.19.0'
       - name: build clash lib
         run: pushd clash && go build -buildmode=c-shared -o ./${{ matrix.lib_name }} && popd
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.lib_name }}
           path: ./clash/${{ matrix.lib_name }}
