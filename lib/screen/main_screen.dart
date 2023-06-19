@@ -39,11 +39,7 @@ class _MainScreenState extends State<MainScreen>
   @override
   void onWindowClose() {
     super.onWindowClose();
-    if (Platform.isMacOS) {
-      windowManager.minimize();
-    } else {
-      windowManager.hide();
-    }
+    windowManager.hide();
   }
 
   @override
@@ -297,7 +293,7 @@ class _MainScreenState extends State<MainScreen>
                           const BoxDecoration(color: Colors.transparent),
                       child: const SpeedWidget()),
                 ),
-                const WindowPanel()
+                if (!Platform.isMacOS) const WindowPanel()
               ],
             ),
           ),
