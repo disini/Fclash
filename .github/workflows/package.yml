@@ -288,8 +288,8 @@ jobs:
             git config --global --add safe.directory "*"
             pushd /opt
             # download go and compile go lib
-            wget https://go.dev/dl/go1.19.3.linux-arm64.tar.gz
-            tar zxf go1.19.3.linux-arm64.tar.gz
+            wget https://go.dev/dl/go1.20.5.linux-arm64.tar.gz
+            tar zxf go1.20.5.linux-arm64.tar.gz
             export PATH=$PATH:/opt/go/bin:/opt/flutter-elinux/bin
             # Patch arm64
             flutter-elinux doctor -v
