@@ -15,6 +15,7 @@ import (
 
 	"github.com/Dreamacro/clash/adapter"
 	"github.com/Dreamacro/clash/adapter/outboundgroup"
+	"github.com/Dreamacro/clash/common/observable"
 	"github.com/Dreamacro/clash/component/profile/cachefile"
 	"github.com/Dreamacro/clash/component/resolver"
 	"github.com/Dreamacro/clash/config"
@@ -30,7 +31,7 @@ import (
 
 var (
 	options        []hub.Option
-	log_subscriber <-chan log.Event
+	log_subscriber observable.Subscription
 )
 
 //export clash_init
@@ -256,12 +257,12 @@ func change_config_field(s *C.char) C.long {
 
 	tcpIn := tunnel.TCPIn()
 	udpIn := tunnel.UDPIn()
-	natTable := tunnel.NatTable()
+	// natTable := tunnel.NatTable()
 
 	P.ReCreateHTTP(pointerOrDefault(general.Port, ports.Port), tcpIn)
 	P.ReCreateSocks(pointerOrDefault(general.SocksPort, ports.SocksPort), tcpIn, udpIn)
-	P.ReCreateRedir(pointerOrDefault(general.RedirPort, ports.RedirPort), tcpIn, udpIn, natTable)
-	P.ReCreateTProxy(pointerOrDefault(general.TProxyPort, ports.TProxyPort), tcpIn, udpIn, natTable)
+	P.ReCreateRedir(pointerOrDefault(general.RedirPort, ports.RedirPort), tcpIn, udpIn)
+	P.ReCreateTProxy(pointerOrDefault(general.TProxyPort, ports.TProxyPort), tcpIn, udpIn)
 	P.ReCreateMixed(pointerOrDefault(general.MixedPort, ports.MixedPort), tcpIn, udpIn)
 
 	if general.Mode != nil {
@@ -295,7 +296,7 @@ func async_test_delay(proxy_name *C.char, url *C.char, timeout C.long, port C.lo
 			fclashgobridge.SendToPort(int64(port), string(data))
 			return
 		}
-		delay, err := proxy.URLTest(ctx, C.GoString(url))
+		delay, _, err := proxy.URLTest(ctx, C.GoString(url))
 		if err != nil || delay == 0 {
 			data, err := json.Marshal(map[string]int64{
 				"delay": -1,
