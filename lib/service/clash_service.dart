@@ -152,7 +152,7 @@ class ClashService extends GetxService with TrayListener {
   Map<String, dynamic> getConnections() {
     final connsPtr = clashFFI.get_all_connections().cast<Utf8>();
     String connections = connsPtr.toDartString();
-    malloc.free(connsPtr);
+    // malloc.free(connsPtr);
     return json.decode(connections);
   }
 
@@ -169,7 +169,7 @@ class ClashService extends GetxService with TrayListener {
     final configPtr = clashFFI.get_configs().cast<Utf8>();
     configEntity.value =
         ClashConfigEntity.fromJson(json.decode(configPtr.toDartString()));
-    malloc.free(configPtr);
+    // malloc.free(configPtr);
   }
 
   Future<void> reload() async {
@@ -218,7 +218,7 @@ class ClashService extends GetxService with TrayListener {
       } catch (e) {
         Get.printError(info: '$e');
       }
-      malloc.free(trafficPtr);
+      // malloc.free(trafficPtr);
     });
     // system proxy
     // listen port
@@ -249,7 +249,7 @@ class ClashService extends GetxService with TrayListener {
   void getProxies() {
     final proxiesPtr = clashFFI.get_proxies().cast<Utf8>();
     proxies.value = json.decode(proxiesPtr.toDartString());
-    malloc.free(proxiesPtr);
+    // malloc.free(proxiesPtr);
   }
 
   /// @Deprecated
