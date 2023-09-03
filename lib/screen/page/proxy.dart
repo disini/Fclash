@@ -1,4 +1,3 @@
-import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
@@ -43,13 +42,13 @@ class _ProxyState extends State<Proxy> {
   Widget buildTiles() {
     final c = Get.find<ClashService>().proxies;
 
-    if (c.value == null) {
+    if (c.isEmpty) {
       return BrnAbnormalStateWidget(
         title: 'No Proxies'.tr,
         content: 'Select a profile to show proxies.',
       );
     }
-    Map<String, dynamic> maps = c.value['proxies'] ?? {};
+    Map<String, dynamic> maps = c['proxies'] ?? {};
     printInfo(info: 'proxies: ${maps.toString()}');
 
     return Obx(
@@ -138,12 +137,22 @@ class _ProxyState extends State<Proxy> {
                           children: [
                             Row(
                               children: [
-                                Expanded(
-                                  child: Text(
-                                    proxyName ?? "",
-                                    style: headStyle,
-                                  ).marginOnly(bottom: 4.0),
-                                ),
+                                Text(
+                                  proxyName ?? "",
+                                  style: headStyle,
+                                ).marginOnly(bottom: 4.0),
+                                TextButton(
+                                    onPressed: () async {
+                                      List<dynamic> allItem = selector['all'];
+                                      Future.delayed(Duration.zero, () {
+                                        BrnToast.show('Start test, please wait.'.tr, context);
+                                      });
+                                      await Get.find<ClashService>().testAllProxies(allItem);
+                                      Future.delayed(Duration.zero, () {
+                                        BrnToast.show('Test complete.'.tr, context);
+                                      });
+                                    },
+                                    child: const Icon(Icons.speed_rounded)) 
                               ],
                             ),
                             Text(selector['now'])
@@ -161,28 +170,7 @@ class _ProxyState extends State<Proxy> {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.topRight,
-          child: TextButton(
-              onPressed: () async {
-                List<dynamic> allItem = selector['all'];
-                Future.delayed(Duration.zero, () {
-                  BrnToast.show('Start test, please wait.'.tr, context);
-                });
-                await Get.find<ClashService>().testAllProxies(allItem);
-                Future.delayed(Duration.zero, () {
-                  BrnToast.show('Test complete.'.tr, context);
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "Test Delay".tr,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              )),
-        ).paddingAll(4.0)
+
       ],
     );
   }

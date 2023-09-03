@@ -47,7 +47,7 @@ class _ProfileState extends State<Profile> {
                     },
                     child: Row(
                       children: [
-                        Icon(Icons.folder_open_outlined),
+                        const Icon(Icons.folder_open_outlined),
                         Text("Open config folder".tr)
                       ],
                     ),

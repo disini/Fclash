@@ -10,7 +10,7 @@ import 'package:fclash/screen/page/profile.dart';
 import 'package:fclash/screen/page/proxy.dart';
 import 'package:fclash/screen/page/setting.dart';
 import 'package:fclash/service/clash_service.dart';
-import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kommon/kommon.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -95,7 +95,6 @@ class _MainScreenState extends State<MainScreen>
       child: Scaffold(
           appBar: BrnAppBar(
             title: "FClash",
-            brightness: Brightness.dark,
             actions: InkWell(
               onTap: () {
                 launchUrlString("https://github.com/FClash/FClash", mode: LaunchMode.externalApplication);
@@ -114,11 +113,13 @@ class _MainScreenState extends State<MainScreen>
       child: Scaffold(
           body: Column(
         children: [
-          buildDesktopOptions(),
-          Obx(() => BrnNoticeBar(
-            backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.black : null,
-              content:
-                  'Current using'.trParams({"name": cs.currentYaml.value}))),
+          Row(children: [
+            Expanded(child: buildDesktopOptions())
+          ],),
+          // Obx(() => BrnNoticeBar(
+          //   backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.black : null,
+          //     content:
+          //         'Current using'.trParams({"name": cs.currentYaml.value}))),
           Obx(() => BrnNoticeBar(
             backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.black : null,
                 noticeStyle: cs.isSystemProxyObs.value
@@ -306,10 +307,11 @@ class _MainScreenState extends State<MainScreen>
     final cs = Get.find<ClashService>();
     return Column(
       children: [
-        Obx(() => BrnNoticeBar(
-              content:
-                  'Current using'.trParams({"name": cs.currentYaml.value}))),
+        // Obx(() => BrnNoticeBar(
+        //       content:
+        //           'Current using'.trParams({"name": cs.currentYaml.value}))),
           Obx(() => BrnNoticeBar(
+            // backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.grey : null,
                 noticeStyle: cs.isSystemProxyObs.value
                     ? NoticeStyles.succeedWithArrow
                     : NoticeStyles.warningWithArrow,
@@ -358,31 +360,18 @@ class _MainScreenState extends State<MainScreen>
         final selected = index == this.index.value;
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          width: 128.0,
+          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+          width: 64.0,
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12.0),
+              borderRadius: BorderRadius.circular(20.0),
               color: selected
                   ? Colors.blueAccent
-                  : Color.fromARGB(255, 171, 170, 170)),
+                  : const Color.fromARGB(255, 171, 170, 170)),
           child: InkWell(
             onTap: () {
               this.index.value = index;
             },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: icon,
-                ),
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
-                )
-              ],
-            ),
+            child: icon,
           ),
         );
       },
@@ -391,7 +380,10 @@ class _MainScreenState extends State<MainScreen>
 
   Widget buildFrame() {
     return Obx(
-      () => pages[index.value],
+      () => IndexedStack(
+        index: index.value,
+        children: pages,
+      ),
     );
   }
 

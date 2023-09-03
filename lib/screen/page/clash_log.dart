@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ClashLog extends StatefulWidget {
   const ClashLog({Key? key}) : super(key: key);
@@ -23,10 +24,11 @@ class _ClashLogState extends State<ClashLog> {
   @override
   void initState() {
     super.initState();
-    tryConnect();
+    startService();
   }
 
   void tryConnect() {
+    print('try connect');
     Get.find<ClashService>().startLogging();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (buffer.isNotEmpty) {
@@ -61,44 +63,62 @@ class _ClashLogState extends State<ClashLog> {
     });
   }
 
-  @override
-  void dispose() {
-    Get.printInfo(info: 'log dispose');
+  void startService() {
+    tryConnect();
+  }
+
+  void stopService() {
     Get.find<ClashService>().stopLog();
     streamSubscription?.cancel();
     _timer?.cancel();
+  }
+
+  @override
+  void dispose() {
+    Get.printInfo(info: 'log dispose');
+    stopService();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Obx(
-        //   () => BrnNoticeBar(
-        //     content: connected.value
-        //         ? 'Log is running. Any logs will show below.'.tr
-        //         : "No Logs currently / Connecting to clash log daemon...".tr,
-        //     showLeftIcon: true,
-        //     showRightIcon: true,
-        //     noticeStyle: connected.value
-        //         ? NoticeStyles.succeedWithArrow
-        //         : NoticeStyles.runningWithArrow,
-        //   ),
-        // ),
-        Expanded(
-          child: Obx(() => ListView.builder(
-                itemBuilder: (cxt, index) {
-                  return Padding(
-                    key: ValueKey(logs[index]),
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: buildLogItem(logs[index]),
-                  );
-                },
-                itemCount: logs.length,
-              )),
-        ),
-      ],
+    return VisibilityDetector(
+      key: const ValueKey('log'),
+      onVisibilityChanged: (info) {
+        if (info.visibleFraction != 0.0) {
+          tryConnect();
+        } else {
+          stopService();
+        }
+      },
+      child: Column(
+        children: [
+          // Obx(
+          //   () => BrnNoticeBar(
+          //     content: connected.value
+          //         ? 'Log is running. Any logs will show below.'.tr
+          //         : "No Logs currently / Connecting to clash log daemon...".tr,
+          //     showLeftIcon: true,
+          //     showRightIcon: true,
+          //     noticeStyle: connected.value
+          //         ? NoticeStyles.succeedWithArrow
+          //         : NoticeStyles.runningWithArrow,
+          //   ),
+          // ),
+          Expanded(
+            child: Obx(() => ListView.builder(
+                  itemBuilder: (cxt, index) {
+                    return Padding(
+                      key: ValueKey(logs[index]),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: buildLogItem(logs[index]),
+                    );
+                  },
+                  itemCount: logs.length,
+                )),
+          ),
+        ],
+      ),
     );
   }
 
