@@ -7,39 +7,38 @@ class SpeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.end,
+    return Column(
       children: [
-        Obx(() => BrnEnhanceNumberCard(
-              backgroundColor: Colors.transparent,
-              itemChildren: [
-                BrnNumberInfoItemModel(
-                    preDesc: "Download".tr,
-                    number: Get.find<ClashService>()
-                        .downRate
-                        .value
-                        .toStringAsFixed(1),
-                    lastDesc: "KB/s"),
-              ],
-              rowCount: 4,
-              itemTextAlign: TextAlign.center,
-            )),
-        Obx(() => BrnEnhanceNumberCard(
-              backgroundColor: Colors.transparent,
-              itemChildren: [
-                BrnNumberInfoItemModel(
-                    preDesc: "Upload".tr,
-                    number: Get.find<ClashService>()
-                        .uploadRate
-                        .value
-                        .toStringAsFixed(1),
-                    lastDesc: "KB/s"),
-              ],
-              rowCount: 4,
-              itemTextAlign: TextAlign.center,
-            )),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Icon(Icons.upload),
+            const SizedBox(
+              width: 2.0,
+            ),
+            Obx(
+              () => Text(
+                  '${Get.find<ClashService>().uploadRate.value.toStringAsFixed(1)}KB/s'),
+            ),
+          ],
+        ),
+        const SizedBox(
+          height: 4.0,
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Icon(Icons.download),
+            const SizedBox(
+              width: 2.0,
+            ),
+            Obx(() => Text(
+                '${Get.find<ClashService>().downRate.value.toStringAsFixed(1)}KB/s')),
+          ],
+        ),
       ],
-    );
+    ).paddingOnly(top: 12.0, right: 16.0);
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ffi' as ffi;
 import 'dart:io';
 import 'dart:isolate';
+// ignore: unused_import
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -12,14 +13,13 @@ import 'package:fclash/main.dart';
 import 'package:fclash/service/notification_service.dart';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' hide MenuItem;
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kommon/kommon.dart' hide ProxyTypes;
 import 'package:path/path.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:proxy_manager/proxy_manager.dart';
-import 'package:system_proxy/system_proxy.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
@@ -89,7 +89,9 @@ class ClashService extends GetxService with TrayListener {
     // kill all other clash clients
     final clashConfigPath = p.join(_clashDirectory.path, "clash");
     _clashDirectory = Directory(clashConfigPath);
-    print("fclash work directory: ${_clashDirectory.path}");
+    if (kDebugMode) {
+      print("fclash work directory: ${_clashDirectory.path}");
+    }
     final clashConf = p.join(_clashDirectory.path, currentYaml.value);
     final countryMMdb = p.join(_clashDirectory.path, 'Country.mmdb');
     if (!await _clashDirectory.exists()) {
@@ -148,8 +150,9 @@ class ClashService extends GetxService with TrayListener {
   }
 
   Map<String, dynamic> getConnections() {
-    String connections =
-        clashFFI.get_all_connections().cast<Utf8>().toDartString();
+    final connsPtr = clashFFI.get_all_connections().cast<Utf8>();
+    String connections = connsPtr.toDartString();
+    malloc.free(connsPtr);
     return json.decode(connections);
   }
 
@@ -163,8 +166,10 @@ class ClashService extends GetxService with TrayListener {
   }
 
   void getCurrentClashConfig() {
-    configEntity.value = ClashConfigEntity.fromJson(
-        json.decode(clashFFI.get_configs().cast<Utf8>().toDartString()));
+    final configPtr = clashFFI.get_configs().cast<Utf8>();
+    configEntity.value =
+        ClashConfigEntity.fromJson(json.decode(configPtr.toDartString()));
+    malloc.free(configPtr);
   }
 
   Future<void> reload() async {
@@ -198,9 +203,10 @@ class ClashService extends GetxService with TrayListener {
     // }
     // get traffic
     Timer.periodic(const Duration(seconds: 1), (t) {
-      final traffic = clashFFI.get_traffic().cast<Utf8>().toDartString();
+      final trafficPtr = clashFFI.get_traffic().cast<Utf8>();
+      final traffic = trafficPtr.toDartString();
       if (kDebugMode) {
-        debugPrint("$traffic");
+        debugPrint(traffic);
       }
       try {
         final trafficJson = jsonDecode(traffic);
@@ -212,6 +218,7 @@ class ClashService extends GetxService with TrayListener {
       } catch (e) {
         Get.printError(info: '$e');
       }
+      malloc.free(trafficPtr);
     });
     // system proxy
     // listen port
@@ -240,8 +247,9 @@ class ClashService extends GetxService with TrayListener {
   }
 
   void getProxies() {
-    proxies.value =
-        json.decode(clashFFI.get_proxies().cast<Utf8>().toDartString());
+    final proxiesPtr = clashFFI.get_proxies().cast<Utf8>();
+    proxies.value = json.decode(proxiesPtr.toDartString());
+    malloc.free(proxiesPtr);
   }
 
   /// @Deprecated
@@ -369,14 +377,13 @@ class ClashService extends GetxService with TrayListener {
       if (configEntity.value != null) {
         final entity = configEntity.value!;
         if (entity.port != 0) {
-          await mobileChannel.invokeMethod("SetHttpPort", {
-            "port": entity.port
-          });
+          await mobileChannel
+              .invokeMethod("SetHttpPort", {"port": entity.port});
         }
         mobileChannel.invokeMethod("StartProxy");
         await setIsSystemProxy(true);
       }
-      
+
       // await Clipboard.setData(
       //     ClipboardData(text: "${configEntity.value?.port}"));
       // final dialog = BrnDialog(

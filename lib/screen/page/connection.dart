@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:fclash/main.dart';
-import 'package:fclash/screen/controller/theme_controller.dart';
 import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
@@ -35,7 +33,6 @@ class _ConnectionsState extends State<Connections> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<ThemeController>();
     return Scaffold(
       body: Stack(
         children: [
@@ -94,29 +91,24 @@ class _ConnectionsState extends State<Connections> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Obx(
-                    () => BrnEnhanceNumberCard(
-                      backgroundColor: Colors.transparent,
-                      itemChildren: [
-                        BrnNumberInfoItemModel(
-                            number:
-                                getTrafficString(connections["uploadTotal"]),
-                            title: "Upload".tr,
-                            lastDesc: "MB"),
+                    () => Row(
+                      children: [
+                        const Icon(Icons.download),
+                        const SizedBox(width: 4.0,),
+                        Text("${getTrafficString(connections["downloadTotal"])} MB") 
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
+                    width: 16,
                   ),
                   Obx(
-                    () => BrnEnhanceNumberCard(
-                      backgroundColor: Colors.transparent,
-                      itemChildren: [
-                        BrnNumberInfoItemModel(
-                            number:
-                                getTrafficString(connections["downloadTotal"]),
-                            title: "Download".tr,
-                            lastDesc: "MB"),
+                    () => Row(
+                      children: [
+                        const Icon(Icons.upload),
+                        const SizedBox(width: 4.0,),
+                        Text("${getTrafficString(connections["uploadTotal"])} MB") 
                       ],
                     ),
                   ),

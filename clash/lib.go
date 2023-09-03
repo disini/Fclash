@@ -254,16 +254,16 @@ func change_config_field(s *C.char) C.long {
 	}
 
 	ports := P.GetPorts()
+	ports.MixedPort = pointerOrDefault(general.MixedPort, ports.MixedPort)
+	ports.SocksPort = pointerOrDefault(general.SocksPort, ports.SocksPort)
+	ports.RedirPort = pointerOrDefault(general.RedirPort, ports.RedirPort)
+	ports.TProxyPort = pointerOrDefault(general.TProxyPort, ports.TProxyPort)
+	ports.MixedPort = pointerOrDefault(general.MixedPort, ports.MixedPort)
 
 	tcpIn := tunnel.TCPIn()
 	udpIn := tunnel.UDPIn()
 	// natTable := tunnel.NatTable()
-
-	P.ReCreateHTTP(pointerOrDefault(general.Port, ports.Port), tcpIn)
-	P.ReCreateSocks(pointerOrDefault(general.SocksPort, ports.SocksPort), tcpIn, udpIn)
-	P.ReCreateRedir(pointerOrDefault(general.RedirPort, ports.RedirPort), tcpIn, udpIn)
-	P.ReCreateTProxy(pointerOrDefault(general.TProxyPort, ports.TProxyPort), tcpIn, udpIn)
-	P.ReCreateMixed(pointerOrDefault(general.MixedPort, ports.MixedPort), tcpIn, udpIn)
+	P.ReCreatePortsListeners(*ports, tcpIn, udpIn)
 
 	if general.Mode != nil {
 		tunnel.SetMode(*general.Mode)
@@ -345,5 +345,5 @@ func get_configs() *C.char {
 }
 
 func main() {
-	fmt.Println("hello clash")
+	fmt.Println("hello fclash")
 }
