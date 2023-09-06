@@ -9,7 +9,7 @@ class Proxy extends StatefulWidget {
   State<Proxy> createState() => _ProxyState();
 }
 
-class _ProxyState extends State<Proxy> {
+class _ProxyState extends State<Proxy> with AutomaticKeepAliveClientMixin {
   ClashService get service => Get.find<ClashService>();
 
   @override
@@ -19,6 +19,7 @@ class _ProxyState extends State<Proxy> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -145,14 +146,18 @@ class _ProxyState extends State<Proxy> {
                                     onPressed: () async {
                                       List<dynamic> allItem = selector['all'];
                                       Future.delayed(Duration.zero, () {
-                                        BrnToast.show('Start test, please wait.'.tr, context);
+                                        BrnToast.show(
+                                            'Start test, please wait.'.tr,
+                                            context);
                                       });
-                                      await Get.find<ClashService>().testAllProxies(allItem);
+                                      await Get.find<ClashService>()
+                                          .testAllProxies(allItem);
                                       Future.delayed(Duration.zero, () {
-                                        BrnToast.show('Test complete.'.tr, context);
+                                        BrnToast.show(
+                                            'Test complete.'.tr, context);
                                       });
                                     },
-                                    child: const Icon(Icons.speed_rounded)) 
+                                    child: const Icon(Icons.speed_rounded))
                               ],
                             ),
                             Text(selector['now'])
@@ -170,7 +175,6 @@ class _ProxyState extends State<Proxy> {
             ),
           ),
         ),
-
       ],
     );
   }
@@ -275,4 +279,8 @@ class _ProxyState extends State<Proxy> {
       },
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

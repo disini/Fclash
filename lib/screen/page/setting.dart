@@ -13,9 +13,10 @@ class Setting extends StatefulWidget {
   State<Setting> createState() => _SettingState();
 }
 
-class _SettingState extends State<Setting> {
+class _SettingState extends State<Setting> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final config = Get.find<ClashService>().configEntity;
     const textStyle = TextStyle(fontFamily: 'nssc');
     return Obx(
@@ -196,25 +197,25 @@ class _SettingState extends State<Setting> {
                           setState(() {});
                         },
                         title: Text('Dark Theme'.tr)),
-                      SettingsTile.switchTile(
-                          title: Text(
-                            "Set as system proxy".tr,
-                            style: textStyle,
-                          ),
-                          initialValue:
-                              SpUtil.getData("system_proxy", defValue: false),
-                          onToggle: (e) async {
-                            if (e) {
-                              await Get.find<ClashService>().setSystemProxy();
-                              await SpUtil.setData("system_proxy", true);
-                            } else {
-                              await Get.find<ClashService>().clearSystemProxy();
-                              await SpUtil.setData("system_proxy", false);
-                            }
-                            setState(() {
-                              Tips.info("success");
-                            });
-                          }),
+                    SettingsTile.switchTile(
+                        title: Text(
+                          "Set as system proxy".tr,
+                          style: textStyle,
+                        ),
+                        initialValue:
+                            SpUtil.getData("system_proxy", defValue: false),
+                        onToggle: (e) async {
+                          if (e) {
+                            await Get.find<ClashService>().setSystemProxy();
+                            await SpUtil.setData("system_proxy", true);
+                          } else {
+                            await Get.find<ClashService>().clearSystemProxy();
+                            await SpUtil.setData("system_proxy", false);
+                          }
+                          setState(() {
+                            Tips.info("success");
+                          });
+                        }),
                     if (isDesktop)
                       SettingsTile.switchTile(
                           title: Text(
@@ -272,4 +273,8 @@ class _SettingState extends State<Setting> {
       },
     ));
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

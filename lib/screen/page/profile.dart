@@ -17,9 +17,10 @@ class Profile extends StatefulWidget {
   State<Profile> createState() => _ProfileState();
 }
 
-class _ProfileState extends State<Profile> {
+class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Column(
         children: [
@@ -100,10 +101,10 @@ class _ProfileState extends State<Profile> {
                             basename(
                               configsList[index].path,
                             ),
-                            style: TextStyle(fontSize: 24),
+                            style: const TextStyle(fontSize: 24),
                           ),
                           link.isEmpty
-                              ? Offstage()
+                              ? const Offstage()
                               : Row(
                                   children: [
                                     TextButton(
@@ -259,4 +260,8 @@ class _ProfileState extends State<Profile> {
       },
     ));
   }
+  
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

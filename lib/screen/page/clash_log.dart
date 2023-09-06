@@ -13,7 +13,8 @@ class ClashLog extends StatefulWidget {
   State<ClashLog> createState() => _ClashLogState();
 }
 
-class _ClashLogState extends State<ClashLog> {
+class _ClashLogState extends State<ClashLog>
+    with AutomaticKeepAliveClientMixin {
   final logs = RxList<String>();
   final buffer = List<String>.empty(growable: true);
   late Timer? _timer;
@@ -28,14 +29,13 @@ class _ClashLogState extends State<ClashLog> {
   }
 
   void tryConnect() {
-    print('try connect');
+    debugPrint('try connect');
     Get.find<ClashService>().startLogging();
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (buffer.isNotEmpty) {
-        logs.insertAll(0, buffer.reversed);
-        buffer.clear();
+        logs.addAll(buffer);
         if (logs.length > logMaxLen) {
-          logs.value = logs.sublist(0, logMaxLen);
+          logs.value = logs.sublist(logs.length - logMaxLen, logs.length);
         }
       }
     });
@@ -82,16 +82,9 @@ class _ClashLogState extends State<ClashLog> {
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: const ValueKey('log'),
-      onVisibilityChanged: (info) {
-        if (info.visibleFraction != 0.0) {
-          tryConnect();
-        } else {
-          stopService();
-        }
-      },
-      child: Column(
+    super.build(context);
+    return Scaffold(
+      body: Column(
         children: [
           // Obx(
           //   () => BrnNoticeBar(
@@ -105,19 +98,28 @@ class _ClashLogState extends State<ClashLog> {
           //         : NoticeStyles.runningWithArrow,
           //   ),
           // ),
+          // Text(logs.length.toString()),
           Expanded(
             child: Obx(() => ListView.builder(
                   itemBuilder: (cxt, index) {
                     return Padding(
-                      key: ValueKey(logs[index]),
+                      key: ValueKey(logs[logs.length - index - 1]),
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: buildLogItem(logs[index]),
+                      child: buildLogItem(logs[logs.length - index - 1]),
                     );
                   },
                   itemCount: logs.length,
+                  itemExtent: 35.0,
                 )),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Clear all logs'.tr,
+        onPressed: () {
+          logs.clear();
+        },
+        child: const Icon(Icons.cleaning_services_rounded),
       ),
     );
   }
@@ -125,8 +127,9 @@ class _ClashLogState extends State<ClashLog> {
   Widget buildLogItem(String log) {
     final json = jsonDecode(log) ?? {};
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
-      margin: EdgeInsets.symmetric(vertical: 2.0),
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
+      margin: const EdgeInsets.symmetric(vertical: 2.0),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
           color: Colors.grey.shade200),
@@ -144,4 +147,8 @@ class _ClashLogState extends State<ClashLog> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

@@ -25,9 +25,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen>
-    with WindowListener, TrayListener {
+    with
+        WindowListener,
+        TrayListener,
+        SingleTickerProviderStateMixin,
+        AutomaticKeepAliveClientMixin {
   var index = 0.obs;
-  final pages = const [
+  final pages = const <StatefulWidget>[
     Proxy(),
     Profile(),
     Setting(),
@@ -35,6 +39,7 @@ class _MainScreenState extends State<MainScreen>
     ClashLog(),
     AboutPage()
   ];
+  late TabController _tabController;
 
   @override
   void onWindowClose() {
@@ -76,6 +81,7 @@ class _MainScreenState extends State<MainScreen>
     trayManager.addListener(this);
     changeTheme();
     // ignore
+    _tabController = TabController(length: pages.length, vsync: this);
   }
 
   @override
@@ -87,6 +93,7 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return isDesktop ? _buildDesktop() : _buildMobile();
   }
 
@@ -96,13 +103,21 @@ class _MainScreenState extends State<MainScreen>
           appBar: BrnAppBar(
             title: "FClash",
             actions: InkWell(
-              onTap: () {
-                launchUrlString("https://github.com/FClash/FClash", mode: LaunchMode.externalApplication);
-              },
-              child: Icon(Icons.question_mark_sharp)),
+                onTap: () {
+                  launchUrlString("https://github.com/FClash/FClash",
+                      mode: LaunchMode.externalApplication);
+                },
+                child: Icon(Icons.question_mark_sharp)),
           ),
           body: Column(
-            children: [buildMobileOptions(), Expanded(child: buildFrame())],
+            children: [
+              buildMobileOptions(),
+              Expanded(
+                  child: TabBarView(
+                controller: _tabController,
+                children: pages,
+              ))
+            ],
           )),
     );
   }
@@ -113,15 +128,17 @@ class _MainScreenState extends State<MainScreen>
       child: Scaffold(
           body: Column(
         children: [
-          Row(children: [
-            Expanded(child: buildDesktopOptions())
-          ],),
+          Row(
+            children: [Expanded(child: buildDesktopOptions())],
+          ),
           // Obx(() => BrnNoticeBar(
           //   backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.black : null,
           //     content:
           //         'Current using'.trParams({"name": cs.currentYaml.value}))),
           Obx(() => BrnNoticeBar(
-            backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.black : null,
+                backgroundColor: Get.find<ThemeController>().isDark == true
+                    ? Colors.black
+                    : null,
                 noticeStyle: cs.isSystemProxyObs.value
                     ? NoticeStyles.succeedWithArrow
                     : NoticeStyles.warningWithArrow,
@@ -144,61 +161,11 @@ class _MainScreenState extends State<MainScreen>
           Expanded(
               child: Row(
             children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildOptions(0, 'Proxy'.tr,
-                              icon: SvgPicture.asset(
-                                "assets/images/代理管理工具.svg",
-                                width: 30.0,
-                                fit: BoxFit.contain,
-                                color: Colors.white,
-                              )),
-                          _buildOptions(1, 'Profile'.tr,
-                              icon: SvgPicture.asset(
-                                "assets/images/文件.svg",
-                                width: 30.0,
-                                fit: BoxFit.contain,
-                                color: Colors.white,
-                              )),
-                          _buildOptions(2, 'Setting'.tr,
-                              icon: SvgPicture.asset(
-                                "assets/images/设置.svg",
-                                width: 30.0,
-                                fit: BoxFit.contain,
-                                color: Colors.white,
-                              )),
-                          _buildOptions(3, 'Connections'.tr,
-                              icon: SvgPicture.asset(
-                                "assets/images/连接.svg",
-                                width: 30.0,
-                                fit: BoxFit.contain,
-                                color: Colors.white,
-                              )),
-                          _buildOptions(4, 'Log'.tr,
-                              icon: SvgPicture.asset(
-                                "assets/images/日志.svg",
-                                width: 30.0,
-                                fit: BoxFit.contain,
-                                color: Colors.white,
-                              )),
-                          _buildOptions(5, 'About'.tr,
-                              icon: SvgPicture.asset(
-                                "assets/images/关于.svg",
-                                width: 30.0,
-                                fit: BoxFit.contain,
-                                color: Colors.white,
-                              )),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Expanded(child: buildFrame()),
+              Expanded(
+                  child: TabBarView(
+                controller: _tabController,
+                children: pages,
+              )),
             ],
           ))
         ],
@@ -219,7 +186,8 @@ class _MainScreenState extends State<MainScreen>
           onPanStart: (_) {
             windowManager.startDragging();
           },
-          child: SizedBox(
+          child: Container(
+            decoration: const BoxDecoration(),
             height: 75,
             child: Row(
               mainAxisSize: MainAxisSize.max,
@@ -227,6 +195,55 @@ class _MainScreenState extends State<MainScreen>
               textBaseline: TextBaseline.alphabetic,
               children: [
                 const AppIcon().marginOnly(top: Platform.isMacOS ? 12.0 : 0.0),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      _buildOptions(0, 'Proxy'.tr,
+                          icon: SvgPicture.asset(
+                            "assets/images/代理管理工具.svg",
+                            width: 30.0,
+                            fit: BoxFit.contain,
+                            color: Colors.white,
+                          )),
+                      _buildOptions(1, 'Profile'.tr,
+                          icon: SvgPicture.asset(
+                            "assets/images/文件.svg",
+                            width: 30.0,
+                            fit: BoxFit.contain,
+                            color: Colors.white,
+                          )),
+                      _buildOptions(2, 'Setting'.tr,
+                          icon: SvgPicture.asset(
+                            "assets/images/设置.svg",
+                            width: 30.0,
+                            fit: BoxFit.contain,
+                            color: Colors.white,
+                          )),
+                      _buildOptions(3, 'Connections'.tr,
+                          icon: SvgPicture.asset(
+                            "assets/images/连接.svg",
+                            width: 30.0,
+                            fit: BoxFit.contain,
+                            color: Colors.white,
+                          )),
+                      _buildOptions(4, 'Log'.tr,
+                          icon: SvgPicture.asset(
+                            "assets/images/日志.svg",
+                            width: 30.0,
+                            fit: BoxFit.contain,
+                            color: Colors.white,
+                          )),
+                      _buildOptions(5, 'About'.tr,
+                          icon: SvgPicture.asset(
+                            "assets/images/关于.svg",
+                            width: 30.0,
+                            fit: BoxFit.contain,
+                            color: Colors.white,
+                          )),
+                    ],
+                  ),
+                ),
                 // Switch
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
@@ -287,13 +304,13 @@ class _MainScreenState extends State<MainScreen>
                     ],
                   ),
                 ),
-                Expanded(
-                  child: Container(
-                      alignment: Alignment.center,
-                      decoration:
-                          const BoxDecoration(color: Colors.transparent),
-                      child: const SpeedWidget()),
+                const SizedBox(
+                  width: 12.0,
                 ),
+                Container(
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(color: Colors.transparent),
+                    child: const SpeedWidget()),
                 if (!Platform.isMacOS) const WindowPanel()
               ],
             ),
@@ -310,27 +327,27 @@ class _MainScreenState extends State<MainScreen>
         // Obx(() => BrnNoticeBar(
         //       content:
         //           'Current using'.trParams({"name": cs.currentYaml.value}))),
-          Obx(() => BrnNoticeBar(
-            // backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.grey : null,
-                noticeStyle: cs.isSystemProxyObs.value
-                    ? NoticeStyles.succeedWithArrow
-                    : NoticeStyles.warningWithArrow,
-                content: cs.isSystemProxyObs.value
-                    ? "Fclash is running as system proxy now. Enjoy.".tr
-                    : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
-                        .tr,
-                rightWidget: cs.isSystemProxyObs.value
-                    ? TextButton(
-                        onPressed: () {
-                          cs.clearSystemProxy();
-                        },
-                        child: Text("Cancel".tr))
-                    : TextButton(
-                        onPressed: () {
-                          cs.setSystemProxy();
-                        },
-                        child: Text("set Fclash as system proxy".tr)),
-              )),
+        Obx(() => BrnNoticeBar(
+              // backgroundColor: Get.find<ThemeController>().isDark == true ? Colors.grey : null,
+              noticeStyle: cs.isSystemProxyObs.value
+                  ? NoticeStyles.succeedWithArrow
+                  : NoticeStyles.warningWithArrow,
+              content: cs.isSystemProxyObs.value
+                  ? "Fclash is running as system proxy now. Enjoy.".tr
+                  : 'Fclash is not set as system proxy. Software may not automatically use Fclash proxy.'
+                      .tr,
+              rightWidget: cs.isSystemProxyObs.value
+                  ? TextButton(
+                      onPressed: () {
+                        cs.clearSystemProxy();
+                      },
+                      child: Text("Cancel".tr))
+                  : TextButton(
+                      onPressed: () {
+                        cs.setSystemProxy();
+                      },
+                      child: Text("set Fclash as system proxy".tr)),
+            )),
         SizedBox(
           height: 75,
           child: SingleChildScrollView(
@@ -370,20 +387,12 @@ class _MainScreenState extends State<MainScreen>
           child: InkWell(
             onTap: () {
               this.index.value = index;
+              _tabController.animateTo(this.index.value);
             },
             child: icon,
           ),
         );
       },
-    );
-  }
-
-  Widget buildFrame() {
-    return Obx(
-      () => IndexedStack(
-        index: index.value,
-        children: pages,
-      ),
     );
   }
 
@@ -394,6 +403,9 @@ class _MainScreenState extends State<MainScreen>
           .changeTheme(isDark ? ThemeType.dark : ThemeType.light);
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class WindowPanel extends StatelessWidget {

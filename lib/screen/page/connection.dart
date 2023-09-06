@@ -11,7 +11,8 @@ class Connections extends StatefulWidget {
   State<Connections> createState() => _ConnectionsState();
 }
 
-class _ConnectionsState extends State<Connections> {
+class _ConnectionsState extends State<Connections>
+    with AutomaticKeepAliveClientMixin {
   late Timer _timer;
   RxMap<String, dynamic> connections = RxMap();
   RxString searchField = "".obs;
@@ -33,6 +34,7 @@ class _ConnectionsState extends State<Connections> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -48,7 +50,7 @@ class _ConnectionsState extends State<Connections> {
                             onChanged: (s) {
                               searchField.value = s;
                             },
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               prefixIcon: Icon(Icons.search),
                               border: InputBorder.none,
                               isDense: true,
@@ -72,6 +74,7 @@ class _ConnectionsState extends State<Connections> {
                           itemCount: li.length,
                           itemBuilder: (context, index) =>
                               _buildConnection(li[index]),
+                          itemExtent: 100.0,
                         );
                       },
                     ))
@@ -94,8 +97,11 @@ class _ConnectionsState extends State<Connections> {
                     () => Row(
                       children: [
                         const Icon(Icons.download),
-                        const SizedBox(width: 4.0,),
-                        Text("${getTrafficString(connections["downloadTotal"])} MB") 
+                        const SizedBox(
+                          width: 4.0,
+                        ),
+                        Text(
+                            "${getTrafficString(connections["downloadTotal"])} MB")
                       ],
                     ),
                   ),
@@ -107,8 +113,11 @@ class _ConnectionsState extends State<Connections> {
                     () => Row(
                       children: [
                         const Icon(Icons.upload),
-                        const SizedBox(width: 4.0,),
-                        Text("${getTrafficString(connections["uploadTotal"])} MB") 
+                        const SizedBox(
+                          width: 4.0,
+                        ),
+                        Text(
+                            "${getTrafficString(connections["uploadTotal"])} MB")
                       ],
                     ),
                   ),
@@ -267,6 +276,10 @@ class _ConnectionsState extends State<Connections> {
       ),
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 // in MB

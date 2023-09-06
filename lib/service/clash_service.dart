@@ -267,15 +267,18 @@ class ClashService extends GetxService with TrayListener {
   //   return resp.data?.stream;
   // }
 
+  ReceivePort? _logReceivePort;
+
   void startLogging() {
-    final receiver = ReceivePort();
-    logStream = receiver.asBroadcastStream();
+    _logReceivePort?.close();
+    _logReceivePort = ReceivePort();
+    logStream = _logReceivePort!.asBroadcastStream();
     if (kDebugMode) {
       logStream?.listen((event) {
         debugPrint("LOG: ${event}");
       });
     }
-    final nativePort = receiver.sendPort.nativePort;
+    final nativePort = _logReceivePort!.sendPort.nativePort;
     debugPrint("port: $nativePort");
     clashFFI.start_log(nativePort);
   }
