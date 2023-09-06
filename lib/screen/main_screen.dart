@@ -82,12 +82,19 @@ class _MainScreenState extends State<MainScreen>
     changeTheme();
     // ignore
     _tabController = TabController(length: pages.length, vsync: this);
+    _tabController.addListener(_onTabChanged);
+  }
+
+  // sync
+  void _onTabChanged() {
+    index.value = _tabController.index;
   }
 
   @override
   void dispose() {
     windowManager.removeListener(this);
     trayManager.removeListener(this);
+    _tabController.removeListener(_onTabChanged);
     super.dispose();
   }
 

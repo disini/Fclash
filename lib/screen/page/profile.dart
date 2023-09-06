@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../main.dart';
@@ -44,7 +45,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                   InkWell(
                     onTap: () async {
                       final dir = await getApplicationSupportDirectory();
-                      launchUrlString("file://${join(dir.path, "clash")}");
+                      launchUrl(Uri.file(join(dir.path, "clash")));
                     },
                     child: Row(
                       children: [
@@ -260,7 +261,7 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
       },
     ));
   }
-  
+
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
