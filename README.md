@@ -77,29 +77,40 @@ Note: the Android version is looking for contributors.
 ## Preview
 
 - Proxy Page
-  ![image](https://user-images.githubusercontent.com/39793325/215257245-f712eb8d-3740-4e08-82ac-d14f357f6c48.png)
+ ![image](https://github.com/Fclash/Fclash/assets/39793325/b569cb61-e7f0-43c3-b4f7-6b35ab9abd51)
+
 
 - Profile Page
-  ![image](https://user-images.githubusercontent.com/39793325/215257268-3a3a2859-17be-44d8-8a52-e08d87b52b2a.png)
+ ![image](https://github.com/Fclash/Fclash/assets/39793325/abfe9f01-b3dc-4d1b-978f-ff2f5b92134a)
+
 
 - Setting Page
-  ![image](https://user-images.githubusercontent.com/39793325/215257279-d8b17f26-df46-4c59-80c0-c6e971d343d3.png)
+ ![image](https://github.com/Fclash/Fclash/assets/39793325/36a908e0-d5b4-428e-835d-abf4a7c9727a)
+
 
 - Logs Page
-  ![image](https://user-images.githubusercontent.com/39793325/215257305-b6d52b8e-e94e-4020-b847-1352b3faa029.png)
+
+ ![image](https://github.com/Fclash/Fclash/assets/39793325/4f7d646e-1420-4905-bbe1-20d83135f98a)
+
 
 - Add a subscription page
   ![](docs/images/深度截图_选择区域_20220414110622.png)
   
-  - support `RULE-SET` convert (a feature of Clash Premium).
+- support `RULE-SET` convert (a feature of Clash Premium).
+  
   ![image](https://user-images.githubusercontent.com/39793325/215257349-2e55d8ec-3d73-4244-8ea1-f652a0627086.png)
 
 
 - About Page
-  ![image](https://user-images.githubusercontent.com/39793325/215257313-eb1e3a5b-8c28-41c3-8c6d-038f452d7913.png)
+
+ ![image](https://github.com/Fclash/Fclash/assets/39793325/166f4b85-f95f-4e6f-bea1-6e4721b0e481)
+
 
 - App system menu bar
+
   ![](docs/images/Screenshot_20220414_112025.png)
+
+![截屏2023-09-07 09 20 29](https://github.com/Fclash/Fclash/assets/39793325/558755eb-f887-4910-a537-52c67445df8b)
 
 ## Install
 
