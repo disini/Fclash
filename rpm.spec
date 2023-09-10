@@ -3,7 +3,7 @@ Version:    1.4.3
 Release:    1
 Summary:    A Clash Proxy Fronted based on Clash
 License:    GPL-3
-Requires:   gtk3 libappindicator-gtk3
+Requires:   gtk3 libayatana-appindicator3
 Provides:   libproxy_manager_plugin.so()(64bit) libclash.so()(64bit) libflutter_linux_gtk.so()(64bit) libproxy_manager_plugin.so()(64bit) libscreen_retriever_plugin.so()(64bit) libtray_manager_plugin.so()(64bit) liburl_launcher_linux_plugin.so()(64bit) libwindow_manager_plugin.so()(64bit)
 
 %description
