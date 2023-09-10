@@ -5,10 +5,12 @@ go 1.21
 toolchain go1.21.0
 
 replace github.com/kingtous/fclash-go-bridge => ./fclash-go-bridge
+replace github.com/kingtous/fclash-cgtproxy => ./fclash-cgtproxy
 
 require (
 	github.com/Dreamacro/clash v1.18.0
 	github.com/kingtous/fclash-go-bridge v1.0.0
+	github.com/kingtous/fclash-cgtproxy v1.0.0
 )
 
 require (

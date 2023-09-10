@@ -1,0 +1,6 @@
+package fclashcgtproxy
+
+
+func InitCgtProxy() {
+	
+}
