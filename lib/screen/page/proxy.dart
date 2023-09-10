@@ -41,19 +41,18 @@ class _ProxyState extends State<Proxy> with AutomaticKeepAliveClientMixin {
   }
 
   Widget buildTiles() {
-    final c = Get.find<ClashService>().proxies;
-
-    if (c.isEmpty) {
-      return BrnAbnormalStateWidget(
-        title: 'No Proxies'.tr,
-        content: 'Select a profile to show proxies.',
-      );
-    }
-    Map<String, dynamic> maps = c['proxies'] ?? {};
-    printInfo(info: 'proxies: ${maps.toString()}');
-
     return Obx(
       () {
+        final c = Get.find<ClashService>().proxies;
+
+        if (c.isEmpty) {
+          return BrnAbnormalStateWidget(
+            title: 'No Proxies'.tr,
+            content: 'Select a profile to show proxies.',
+          );
+        }
+        Map<String, dynamic> maps = c['proxies'] ?? {};
+        printInfo(info: 'proxies: ${maps.toString()}');
         var selectors = maps.keys.where((proxy) {
           return maps[proxy]['type'] == 'Selector';
         }).toList(growable: false);
