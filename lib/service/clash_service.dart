@@ -749,6 +749,7 @@ class ClashService extends GetxService with TrayListener {
 }
 
 Future<String> convertConfig(String content) async {
+  return "";
   try {
     final yamlWriter = YAMLWriter();
     final payloadMap = <String, List>{};
