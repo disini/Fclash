@@ -9,7 +9,6 @@ on:
     paths-ignore:
       - README.md
       - snap/**
-      - .github/**
       - docs/**
       - PKGBUILD
       - .SRCINFO
@@ -101,7 +100,7 @@ jobs:
       - name: Package dmg
         run: |
           tree ./build/macos/Build
-          create-dmg  --app-drop-link 600 185 "fclash-${{ env.VERSION}}.dmg" ./build/macos/Build/Products/Release/fclash.app
+          create-dmg "fclash-${{ env.VERSION}}.dmg" ./build/macos/Build/Products/Release/fclash.app
 
       - uses: actions/upload-artifact@v3
         with:

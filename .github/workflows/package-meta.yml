@@ -9,7 +9,6 @@ on:
     paths-ignore:
       - README.md
       - snap/**
-      - .github/**
       - docs/**
       - PKGBUILD
       - .SRCINFO
@@ -101,7 +100,7 @@ jobs:
       - name: Package dmg
         run: |
           tree ./build/macos/Build
-          create-dmg  --app-drop-link 600 185 "fclash-meta-${{ env.VERSION}}.dmg" ./build/macos/Build/Products/Release/fclash.app
+          create-dmg "fclash-meta-${{ env.VERSION}}.dmg" ./build/macos/Build/Products/Release/fclash.app
 
       - uses: actions/upload-artifact@v3
         with:
@@ -188,7 +187,7 @@ jobs:
         run: | 
           ./build-deb.sh
           FCLASH_SRC=`pwd` rpmbuild -bb ./rpm.spec
-          mv "~/rpmbuild/RPMS/x86_64/FClash-${{ env.VERSION }}-1.x86_64.rpm" "~/rpmbuild/RPMS/x86_64/FClash-meta-${{ env.VERSION }}-1.x86_64.rpm"
+          mv /home/runner/rpmbuild/RPMS/x86_64/FClash-${{ env.VERSION }}-1.x86_64.rpm /home/runner/rpmbuild/RPMS/x86_64/FClash-meta-${{ env.VERSION }}-1.x86_64.rpm
       
       - uses: ncipollo/release-action@v1
         # if: startsWith(github.ref, 'refs/tags/v')
