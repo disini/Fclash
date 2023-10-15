@@ -16,6 +16,7 @@ import (
 	"github.com/Dreamacro/clash/adapter"
 	"github.com/Dreamacro/clash/adapter/outboundgroup"
 	"github.com/Dreamacro/clash/common/observable"
+	"github.com/Dreamacro/clash/common/utils"
 	"github.com/Dreamacro/clash/component/profile/cachefile"
 	"github.com/Dreamacro/clash/component/resolver"
 	"github.com/Dreamacro/clash/config"
@@ -31,7 +32,7 @@ import (
 
 var (
 	options        []hub.Option
-	log_subscriber observable.Subscription
+	log_subscriber observable.Subscription[log.Event]
 )
 
 //export clash_init
@@ -111,26 +112,22 @@ func get_all_connections() *C.char {
 
 //export close_all_connections
 func close_all_connections() {
-	for _, connection := range statistic.DefaultManager.Snapshot().Connections {
-		err := connection.Close()
-		if err != nil {
-			fmt.Println("warning:", err)
-		}
-	}
+	statistic.DefaultManager.Range(func(c statistic.Tracker) bool {
+		c.Close()
+		return true
+	})
 }
 
 //export close_connection
 func close_connection(id *C.char) bool {
 	connection_id := C.GoString(id)
-	for _, connection := range statistic.DefaultManager.Snapshot().Connections {
-		if connection.ID() == connection_id {
-			err := connection.Close()
-			if err != nil {
-				fmt.Println("warning:", err)
-			}
-			return true
+	statistic.DefaultManager.Range(func(c statistic.Tracker) bool {
+		if c.ID() == connection_id {
+			c.Close()
+			return false
 		}
-	}
+		return true
+	})
 	return false
 }
 
@@ -262,8 +259,14 @@ func change_config_field(s *C.char) C.long {
 
 	tcpIn := tunnel.TCPIn()
 	udpIn := tunnel.UDPIn()
-	// natTable := tunnel.NatTable()
-	P.ReCreatePortsListeners(*ports, tcpIn, udpIn)
+	natTable := tunnel.NatTable()
+	// P.ReCreate(*ports, tcpIn, udpIn)
+
+	P.ReCreateHTTP(ports.Port, tcpIn)
+	P.ReCreateMixed(ports.Port, tcpIn, udpIn)
+	P.ReCreateSocks(ports.SocksPort, tcpIn, udpIn)
+	P.ReCreateRedir(ports.RedirPort, tcpIn, udpIn, natTable)
+	P.ReCreateTProxy(ports.TProxyPort, tcpIn, udpIn, natTable)
 
 	if general.Mode != nil {
 		tunnel.SetMode(*general.Mode)
@@ -296,7 +299,9 @@ func async_test_delay(proxy_name *C.char, url *C.char, timeout C.long, port C.lo
 			fclashgobridge.SendToPort(int64(port), string(data))
 			return
 		}
-		delay, _, err := proxy.URLTest(ctx, C.GoString(url))
+		rg := make(utils.IntRanges[uint16], 1)
+		rg[0] = utils.NewRange[uint16](200, 400)
+		delay,  err := proxy.URLTest(ctx, C.GoString(url), rg, constant.ExtraHistory)
 		if err != nil || delay == 0 {
 			data, err := json.Marshal(map[string]int64{
 				"delay": -1,
