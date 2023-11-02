@@ -1,6 +1,6 @@
 name: fclash
 base: core22
-version: '1.4.2'
+version: '1.4.3'
 summary: A Linux Clash Proxy Fronted based on Clash # 79 char long summary
 description: |
   A Linux Clash Proxy Fronted based on Clash. Supports subscriptions, proxies switcher, logger,
@@ -23,7 +23,9 @@ parts:
     build-snaps: [go]
     override-build: |
       ./build-clash-lib.py
-      git clone --depth 1 -b stable https://github.com/flutter/flutter.git /root/flutter
+      git clone -b stable https://github.com/flutter/flutter.git /root/flutter
+      # reset to 3.10.6
+      pushd /root/flutter && git reset --hard f468f3366c26a5092eb964a230ce7892fda8f2f8 && popd
       export PATH="/root/flutter/bin:$PATH"
       flutter pub get
       flutter build linux --release -v

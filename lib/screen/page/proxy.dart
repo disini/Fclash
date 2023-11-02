@@ -9,7 +9,7 @@ class Proxy extends StatefulWidget {
   State<Proxy> createState() => _ProxyState();
 }
 
-class _ProxyState extends State<Proxy> {
+class _ProxyState extends State<Proxy> with AutomaticKeepAliveClientMixin {
   ClashService get service => Get.find<ClashService>();
 
   @override
@@ -19,6 +19,7 @@ class _ProxyState extends State<Proxy> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -40,19 +41,18 @@ class _ProxyState extends State<Proxy> {
   }
 
   Widget buildTiles() {
-    final c = Get.find<ClashService>().proxies;
-
-    if (c.isEmpty) {
-      return BrnAbnormalStateWidget(
-        title: 'No Proxies'.tr,
-        content: 'Select a profile to show proxies.',
-      );
-    }
-    Map<String, dynamic> maps = c['proxies'] ?? {};
-    printInfo(info: 'proxies: ${maps.toString()}');
-
     return Obx(
       () {
+        final c = Get.find<ClashService>().proxies;
+
+        if (c.isEmpty) {
+          return BrnAbnormalStateWidget(
+            title: 'No Proxies'.tr,
+            content: 'Select a profile to show proxies.',
+          );
+        }
+        Map<String, dynamic> maps = c['proxies'] ?? {};
+        printInfo(info: 'proxies: ${maps.toString()}');
         var selectors = maps.keys.where((proxy) {
           return maps[proxy]['type'] == 'Selector';
         }).toList(growable: false);
@@ -145,14 +145,18 @@ class _ProxyState extends State<Proxy> {
                                     onPressed: () async {
                                       List<dynamic> allItem = selector['all'];
                                       Future.delayed(Duration.zero, () {
-                                        BrnToast.show('Start test, please wait.'.tr, context);
+                                        BrnToast.show(
+                                            'Start test, please wait.'.tr,
+                                            context);
                                       });
-                                      await Get.find<ClashService>().testAllProxies(allItem);
+                                      await Get.find<ClashService>()
+                                          .testAllProxies(allItem);
                                       Future.delayed(Duration.zero, () {
-                                        BrnToast.show('Test complete.'.tr, context);
+                                        BrnToast.show(
+                                            'Test complete.'.tr, context);
                                       });
                                     },
-                                    child: const Icon(Icons.speed_rounded)) 
+                                    child: const Icon(Icons.speed_rounded))
                               ],
                             ),
                             Text(selector['now'])
@@ -170,7 +174,6 @@ class _ProxyState extends State<Proxy> {
             ),
           ),
         ),
-
       ],
     );
   }
@@ -275,4 +278,8 @@ class _ProxyState extends State<Proxy> {
       },
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }

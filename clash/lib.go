@@ -254,11 +254,11 @@ func change_config_field(s *C.char) C.long {
 	}
 
 	ports := P.GetPorts()
+	ports.Port = pointerOrDefault(general.Port, ports.Port)
 	ports.MixedPort = pointerOrDefault(general.MixedPort, ports.MixedPort)
 	ports.SocksPort = pointerOrDefault(general.SocksPort, ports.SocksPort)
 	ports.RedirPort = pointerOrDefault(general.RedirPort, ports.RedirPort)
 	ports.TProxyPort = pointerOrDefault(general.TProxyPort, ports.TProxyPort)
-	ports.MixedPort = pointerOrDefault(general.MixedPort, ports.MixedPort)
 
 	tcpIn := tunnel.TCPIn()
 	udpIn := tunnel.UDPIn()

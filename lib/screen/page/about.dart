@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends StatefulWidget {
   const AboutPage({Key? key}) : super(key: key);
 
   @override
+  State<AboutPage> createState() => _AboutPageState();
+}
+
+class _AboutPageState extends State<AboutPage> with AutomaticKeepAliveClientMixin {
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Container(
       alignment: Alignment.center,
       child: Column(
@@ -29,7 +35,7 @@ class AboutPage extends StatelessWidget {
             ),
           ),
           Text(
-            "version:".trParams({"version": '1.4.2'}),
+            "version:".trParams({"version": '1.4.3'}),
             style: const TextStyle(fontFamily: 'nssc'),
           ),
           TextButton(
@@ -51,4 +57,8 @@ class AboutPage extends StatelessWidget {
       ),
     );
   }
+  
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
