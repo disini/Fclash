@@ -13,6 +13,8 @@
 > 项目初衷很纯粹：为了学习Golang语言、FFI框架+Flutter进行跨平台开发，通过FFI而不是RestFul的形式提高跨语言开发效率。同时解决广大科研工作者在Linux环境搞科研的网络缓慢且工具链匮乏的问题。
 >
 > 目前个人有其他的安排，没有太多的精力投入到这个项目中，故停止维护。
+>
+> 相关代码保留，仅供跨平台开发的开发者/初学者学习，禁止一切非法使用！
 
 [![flutter awesome](https://img.shields.io/badge/Flutter-Awesome-orange)](https://flutterawesome.com/clash-fronted-client-by-flutter-linux-supported/)
 [![fclash](https://snapcraft.io/fclash/badge.svg)](https://snapcraft.io/fclash)
@@ -27,7 +29,7 @@
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=kingtous/fclash&type=Date)](https://star-history.com/#kingtous/fclash&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=Fclash/fclash&type=Date)](https://star-history.com/#kingtous/fclash&Date)
 
 ## Install
 
@@ -36,9 +38,9 @@
 - For Arch/Manjaro users, using AUR
   - `yay -S fclash`
 - For Ubuntu/Debian users, download deb files directly
-  - [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+  - [https://github.com/Fclash/Fclash/releases](https://github.com/Fclash/Fclash/releases)
 - For Redhat/Fedora/OpenSuse users, download rpm files directly.
-  - [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+  - [https://github.com/Fclash/Fclash/releases](https://github.com/Fclash/Fclash/releases)
 - For other distro users, please to use the snap app.
   - [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/fclash)
 
@@ -46,11 +48,11 @@ Note: If you are using in `Wayland`, please use `export WAYLAND_DISPLAY=wayland-
 
 ### Windows
 
-Please download .exe setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+Please download .exe setup directly. [https://github.com/Fclash/Fclash/releases](https://github.com/Fclash/Fclash/releases)
 
 ### MacOS
 
-Please download .dmg setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+Please download .dmg setup directly. [https://github.com/Fclash/Fclash/releases](https://github.com/Fclash/Fclash/releases)
 
 Note that macOS will treat the `FClash` as an untrusted app, so please go to settings and trust it manually.
 
@@ -58,7 +60,7 @@ Note that macOS will treat the `FClash` as an untrusted app, so please go to set
 
 <a href='https://play.google.com/store/apps/details?id=com.fclash.fclash&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="width:250px"/></a>
 
-or download .apk directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
+or download .apk directly. [https://github.com/Fclash/Fclash/releases](https://github.com/Fclash/Fclash/releases)
 
 Note: the Android version is looking for contributors.
 
@@ -122,12 +124,12 @@ Note: the Android version is looking for contributors.
 - Snap Store(comming soon)
   - `sudo snap install fclash --classic`
 
-- Download DEB files, go to [Github Action page](https://github.com/Kingtous/Fclash/actions).
+- Download DEB files, go to [Github Action page](https://github.com/Fclash/Fclash/actions).
 
 ## Build from source
 
 FClash depends `libappindicator3-dev` when compiling.
 
 ## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FKingtous%2FFclash.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FKingtous%2FFclash?ref=badge_large)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FFclash%2FFclash.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FFclash%2FFclash?ref=badge_large)
 
