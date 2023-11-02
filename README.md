@@ -9,6 +9,11 @@
 
 <p align="center" style="font-size: 8px;">The purpose of the app is to give a learning case how to build an app with Flutter and Golang for full-stack developers. It's STRICTLY Prohibited for any illegal usages, and it's only built for the learning purpose! </p>
 
+ 
+> 项目初衷很纯粹：为了学习Golang语言、FFI框架+Flutter进行跨平台开发，通过FFI而不是RestFul的形式提高跨语言开发效率。同时解决广大科研工作者在Linux环境搞科研的网络缓慢且工具链匮乏的问题。
+>
+> 目前个人有其他的安排，没有太多的精力投入到这个项目中，故停止维护。
+
 [![flutter awesome](https://img.shields.io/badge/Flutter-Awesome-orange)](https://flutterawesome.com/clash-fronted-client-by-flutter-linux-supported/)
 [![fclash](https://snapcraft.io/fclash/badge.svg)](https://snapcraft.io/fclash)
 [![release](https://img.shields.io/github/v/release/kingtous/fclash)](https://github.com/Kingtous/Fclash/releases)
