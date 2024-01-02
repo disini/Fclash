@@ -13,21 +13,21 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/Dreamacro/clash/adapter"
-	"github.com/Dreamacro/clash/adapter/outboundgroup"
-	"github.com/Dreamacro/clash/common/observable"
-	"github.com/Dreamacro/clash/common/utils"
-	"github.com/Dreamacro/clash/component/profile/cachefile"
-	"github.com/Dreamacro/clash/component/resolver"
-	"github.com/Dreamacro/clash/config"
-	"github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/hub"
-	"github.com/Dreamacro/clash/hub/executor"
-	P "github.com/Dreamacro/clash/listener"
-	"github.com/Dreamacro/clash/log"
-	"github.com/Dreamacro/clash/tunnel"
-	"github.com/Dreamacro/clash/tunnel/statistic"
 	fclashgobridge "github.com/kingtous/fclash-go-bridge"
+	"github.com/metacubex/mihomo/adapter"
+	"github.com/metacubex/mihomo/adapter/outboundgroup"
+	"github.com/metacubex/mihomo/common/observable"
+	"github.com/metacubex/mihomo/common/utils"
+	"github.com/metacubex/mihomo/component/profile/cachefile"
+	"github.com/metacubex/mihomo/component/resolver"
+	"github.com/metacubex/mihomo/config"
+	"github.com/metacubex/mihomo/constant"
+	"github.com/metacubex/mihomo/hub"
+	"github.com/metacubex/mihomo/hub/executor"
+	P "github.com/metacubex/mihomo/listener"
+	"github.com/metacubex/mihomo/log"
+	"github.com/metacubex/mihomo/tunnel"
+	"github.com/metacubex/mihomo/tunnel/statistic"
 )
 
 var (
@@ -256,17 +256,14 @@ func change_config_field(s *C.char) C.long {
 	ports.SocksPort = pointerOrDefault(general.SocksPort, ports.SocksPort)
 	ports.RedirPort = pointerOrDefault(general.RedirPort, ports.RedirPort)
 	ports.TProxyPort = pointerOrDefault(general.TProxyPort, ports.TProxyPort)
-
-	tcpIn := tunnel.TCPIn()
-	udpIn := tunnel.UDPIn()
-	natTable := tunnel.NatTable()
+	t := tunnel.Tunnel
 	// P.ReCreate(*ports, tcpIn, udpIn)
 
-	P.ReCreateHTTP(ports.Port, tcpIn)
-	P.ReCreateMixed(ports.Port, tcpIn, udpIn)
-	P.ReCreateSocks(ports.SocksPort, tcpIn, udpIn)
-	P.ReCreateRedir(ports.RedirPort, tcpIn, udpIn, natTable)
-	P.ReCreateTProxy(ports.TProxyPort, tcpIn, udpIn, natTable)
+	P.ReCreateHTTP(ports.Port, t)
+	P.ReCreateMixed(ports.Port, t)
+	P.ReCreateSocks(ports.SocksPort, t)
+	P.ReCreateRedir(ports.RedirPort, t)
+	P.ReCreateTProxy(ports.TProxyPort, t)
 
 	if general.Mode != nil {
 		tunnel.SetMode(*general.Mode)
@@ -301,7 +298,7 @@ func async_test_delay(proxy_name *C.char, url *C.char, timeout C.long, port C.lo
 		}
 		rg := make(utils.IntRanges[uint16], 1)
 		rg[0] = utils.NewRange[uint16](200, 400)
-		delay,  err := proxy.URLTest(ctx, C.GoString(url), rg, constant.ExtraHistory)
+		delay,  err := proxy.URLTest(ctx, C.GoString(url), rg)
 		if err != nil || delay == 0 {
 			data, err := json.Marshal(map[string]int64{
 				"delay": -1,

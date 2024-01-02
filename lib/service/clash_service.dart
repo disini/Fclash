@@ -844,7 +844,7 @@ Future<String> convertConfig(String content) async {
               if (int.tryParse(payloadArr.first.substring(0, 1)) != null) {
                 payloadArr.insert(0, 'IP-CIDR');
               }
-              // https://github.com/Dreamacro/clash/wiki/configuration#no-resolve
+              // https://github.com/metacubex/mihomo/wiki/configuration#no-resolve
               if (payload.endsWith('no-resolve')) {
                 payloadArr.insert(payloadArr.length - 1, proxyTo);
               } else {
