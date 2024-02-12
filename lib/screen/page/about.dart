@@ -37,7 +37,7 @@ class _AboutPageState extends State<AboutPage> with AutomaticKeepAliveClientMixi
           ),
           Text(
             "version:".trParams({
-              "version": '1.4.4 (${Get.find<ClashService>().getCoreVersion()})'
+              "version": '1.4.5 (${Get.find<ClashService>().getCoreVersion()})'
             }),
             style: const TextStyle(fontFamily: 'nssc'),
           ),
