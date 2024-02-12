@@ -45,7 +45,15 @@ class _ProfileState extends State<Profile> with AutomaticKeepAliveClientMixin {
                   InkWell(
                     onTap: () async {
                       final dir = await getApplicationSupportDirectory();
-                      launchUrl(Uri.file(join(dir.path, "clash")));
+                      if (Platform.isWindows) {
+                        Process.run('explorer.exe', [join(dir.path, "clash")]);
+                      } else {
+                        final uri = Uri.file(join(dir.path, "clash"));
+                        if (await canLaunchUrl(uri)) {
+                          print('launching $uri');
+                          launchUrl(uri);
+                        }
+                      }
                     },
                     child: Row(
                       children: [
