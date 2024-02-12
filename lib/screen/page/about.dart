@@ -1,3 +1,4 @@
+import 'package:fclash/service/clash_service.dart';
 import 'package:flutter/material.dart';
 import 'package:kommon/kommon.dart';
 
@@ -35,7 +36,9 @@ class _AboutPageState extends State<AboutPage> with AutomaticKeepAliveClientMixi
             ),
           ),
           Text(
-            "version:".trParams({"version": '1.4.4'}),
+            "version:".trParams({
+              "version": '1.4.4 (${Get.find<ClashService>().getCoreVersion()})'
+            }),
             style: const TextStyle(fontFamily: 'nssc'),
           ),
           TextButton(

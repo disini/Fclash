@@ -1046,6 +1046,16 @@ class NativeLibrary {
   late final _change_proxy = _change_proxyPtr
       .asFunction<int Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
 
+  ffi.Pointer<ffi.Char> get_core_version() {
+    return _get_core_version();
+  }
+
+  late final _get_core_versionPtr =
+      _lookup<ffi.NativeFunction<ffi.Pointer<ffi.Char> Function()>>(
+          'get_core_version');
+  late final _get_core_version =
+      _get_core_versionPtr.asFunction<ffi.Pointer<ffi.Char> Function()>();
+
   int change_config_field(
     ffi.Pointer<ffi.Char> s,
   ) {
@@ -1077,7 +1087,7 @@ class NativeLibrary {
   late final _async_test_delayPtr = _lookup<
       ffi.NativeFunction<
           ffi.Void Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>,
-              ffi.Long, ffi.Long)>>('async_test_delay');
+              ffi.Long, ffi.LongLong)>>('async_test_delay');
   late final _async_test_delay = _async_test_delayPtr.asFunction<
       void Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>, int, int)>();
 
@@ -1211,6 +1221,10 @@ const int _HAS_CXX23 = 0;
 
 const int _HAS_NODISCARD = 1;
 
+const int _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE = 1;
+
+const int _CRT_BUILD_DESKTOP_APP = 1;
+
 const int _UCRT_DISABLED_WARNINGS = 4324;
 
 const int _ARGMAX = 100;
@@ -1227,9 +1241,7 @@ const int _CRT_FUNCTIONS_REQUIRED = 1;
 
 const int _CRT_HAS_CXX17 = 0;
 
-const int _ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE = 1;
-
-const int _CRT_BUILD_DESKTOP_APP = 1;
+const int _CRT_HAS_C11 = 0;
 
 const int _CRT_INTERNAL_NONSTDC_NAMES = 1;
 

@@ -194,6 +194,13 @@ class ClashService extends GetxService with TrayListener {
   //   }
   // }
 
+  String getCoreVersion() {
+    final cv = clashFFI.get_core_version().cast<Utf8>();
+    final version = cv.toDartString();
+    // malloc.free(cv);
+    return version;
+  }
+
   void initDaemon() async {
     printInfo(info: 'init clash service');
     // wait for online

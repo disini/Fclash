@@ -33,6 +33,7 @@ import (
 var (
 	options        []hub.Option
 	log_subscriber observable.Subscription[log.Event]
+	version		= "mihomo-1.18.1"
 )
 
 //export clash_init
@@ -230,6 +231,11 @@ func pointerOrDefault(p *int, def int) int {
 	}
 
 	return def
+}
+
+//export get_core_version
+func get_core_version() *C.char {
+	return C.CString(version)
 }
 
 //export change_config_field
