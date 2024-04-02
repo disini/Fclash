@@ -4,10 +4,10 @@
 
 
 <p align="center" style="font-size: 20px">A Clash Proxy Fronted based on Clash</p>
-<p align="center" style="font-size: 16px">Windows / macOS / Linux(amd64/arm64) / Android(Beta) Supported!</p>
+<p align="center" style="font-size: 16px">Linux(amd64/arm64) Supported!</p>
 <p align="center" style="font-size: 16px">This app mainly focused on all Linux distros, which brings a better experience for linux users/developers.</p>
 
-<p align="center" style="font-size: 8px;">The purpose of the app is to give a learning case how to build an app with Flutter and Golang for full-stack developers. It's STRICTLY Prohibited for any illegal usages, and it's only built for the learning purpose! </p>
+<!-- <p align="center" style="font-size: 8px;">The purpose of the app is to give a learning case how to build an app with Flutter and Golang for full-stack developers. It's STRICTLY Prohibited for any illegal usages, and it's only built for the learning purpose! </p> -->
 
 [![flutter awesome](https://img.shields.io/badge/Flutter-Awesome-orange)](https://flutterawesome.com/clash-fronted-client-by-flutter-linux-supported/)
 [![fclash](https://snapcraft.io/fclash/badge.svg)](https://snapcraft.io/fclash)
@@ -39,7 +39,7 @@
 
 Note: If you are using in `Wayland`, please use `export WAYLAND_DISPLAY=wayland-x11` or `WAYLAND_DISPLAY=wayland-x11 ./fclash`. Check https://github.com/Fclash/Fclash/issues/52 for details.
 
-### Windows
+<!-- ### Windows
 
 Please download .exe setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
 
@@ -47,15 +47,15 @@ Please download .exe setup directly. [https://github.com/Kingtous/Fclash/release
 
 Please download .dmg setup directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
 
-Note that macOS will treat the `FClash` as an untrusted app, so please go to settings and trust it manually.
-
+Note that macOS will treat the `FClash` as an untrusted app, so please go to settings and trust it manually. -->
+<!-- 
 ### Android
 
 <a href='https://play.google.com/store/apps/details?id=com.fclash.fclash&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="width:250px"/></a>
 
 or download .apk directly. [https://github.com/Kingtous/Fclash/releases](https://github.com/Kingtous/Fclash/releases)
 
-Note: the Android version is looking for contributors.
+Note: the Android version is looking for contributors. -->
 
 ## Feature
 

@@ -22,97 +22,97 @@ env:
 
 jobs:
 
-  build-windows-package:
-    runs-on: windows-2019
+  # build-windows-package:
+  #   runs-on: windows-2019
 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version: '>=${{ env.GOLANG_VERSION }}'
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
-          channel: 'stable'
-          cache: true
-      - name: Build clash lib
-        shell: bash
-        env:
-          CGO_ENABLED: 1
-        run: |
-          pushd clash
-          go build -buildmode=c-shared -o ./libclash.dll
-      - name: Build Flutter
-        run: |
-          flutter build windows --release
-      - name: Package Fclash
-        run: |
-          iscc .\setup.iss
-      - name: Rename Fclash
-        shell: bash
-        run: |
-          pushd ./Output
-          mv fclash-x86_64.exe fclash-meta-${{ env.VERSION }}-x86_64.exe
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v3
+  #     - uses: actions/setup-go@v3
+  #       with:
+  #         go-version: '>=${{ env.GOLANG_VERSION }}'
+  #     - uses: subosito/flutter-action@v2
+  #       with:
+  #         flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
+  #         channel: 'stable'
+  #         cache: true
+  #     - name: Build clash lib
+  #       shell: bash
+  #       env:
+  #         CGO_ENABLED: 1
+  #       run: |
+  #         pushd clash
+  #         go build -buildmode=c-shared -o ./libclash.dll
+  #     - name: Build Flutter
+  #       run: |
+  #         flutter build windows --release
+  #     - name: Package Fclash
+  #       run: |
+  #         iscc .\setup.iss
+  #     - name: Rename Fclash
+  #       shell: bash
+  #       run: |
+  #         pushd ./Output
+  #         mv fclash-x86_64.exe fclash-meta-${{ env.VERSION }}-x86_64.exe
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: fclash-${{ env.VERSION }}-x86_64.exe
-          path: ./Output/fclash-meta-${{ env.VERSION }}-x86_64.exe
-      - uses: ncipollo/release-action@v1
-        # if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          tag: v${{ env.VERSION }}
-          allowUpdates: true
-          artifacts: Output/fclash-meta-${{ env.VERSION }}-x86_64.exe
-          token: ${{ secrets.GITHUB_TOKEN }}
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         name: fclash-${{ env.VERSION }}-x86_64.exe
+  #         path: ./Output/fclash-meta-${{ env.VERSION }}-x86_64.exe
+  #     - uses: ncipollo/release-action@v1
+  #       # if: startsWith(github.ref, 'refs/tags/v')
+  #       with:
+  #         tag: v${{ env.VERSION }}
+  #         allowUpdates: true
+  #         artifacts: Output/fclash-meta-${{ env.VERSION }}-x86_64.exe
+  #         token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-macos-package:
-    runs-on: macos-11
+  # build-macos-package:
+  #   runs-on: macos-11
 
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version: '>=${{ env.GOLANG_VERSION }}'
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
-          channel: 'stable'
-          cache: true
-      - name: Build macos dmg
-        run: |
-          brew install create-dmg tree
-      - name: Build clash lib
-        shell: bash
-        env:
-          # backport to macos 10.11
-          CGO_CFLAGS: "-mmacosx-version-min=10.11"
-          CGO_LDFLAGS: "-mmacosx-version-min=10.11"
-        run: |
-          pushd clash
-          go build -buildmode=c-shared -o ./libclash.dylib
-      - name: Build Flutter
-        run: |
-          flutter build macos --release
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v3
+  #     - uses: actions/setup-go@v3
+  #       with:
+  #         go-version: '>=${{ env.GOLANG_VERSION }}'
+  #     - uses: subosito/flutter-action@v2
+  #       with:
+  #         flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
+  #         channel: 'stable'
+  #         cache: true
+  #     - name: Build macos dmg
+  #       run: |
+  #         brew install create-dmg tree
+  #     - name: Build clash lib
+  #       shell: bash
+  #       env:
+  #         # backport to macos 10.11
+  #         CGO_CFLAGS: "-mmacosx-version-min=10.11"
+  #         CGO_LDFLAGS: "-mmacosx-version-min=10.11"
+  #       run: |
+  #         pushd clash
+  #         go build -buildmode=c-shared -o ./libclash.dylib
+  #     - name: Build Flutter
+  #       run: |
+  #         flutter build macos --release
 
-      - name: Package dmg
-        run: |
-          tree ./build/macos/Build
-          create-dmg "fclash-meta-${{ env.VERSION}}.dmg" ./build/macos/Build/Products/Release/fclash.app
+  #     - name: Package dmg
+  #       run: |
+  #         tree ./build/macos/Build
+  #         create-dmg "fclash-meta-${{ env.VERSION}}.dmg" ./build/macos/Build/Products/Release/fclash.app
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: fclash-meta-${{ env.VERSION}}.dmg
-          path: fclash-meta-${{ env.VERSION}}.dmg
-      - uses: ncipollo/release-action@v1
-        # if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          tag: v${{ env.VERSION }}
-          allowUpdates: true
-          artifacts: "fclash-meta-${{ env.VERSION}}.dmg"
-          token: ${{ secrets.GITHUB_TOKEN }}
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         name: fclash-meta-${{ env.VERSION}}.dmg
+  #         path: fclash-meta-${{ env.VERSION}}.dmg
+  #     - uses: ncipollo/release-action@v1
+  #       # if: startsWith(github.ref, 'refs/tags/v')
+  #       with:
+  #         tag: v${{ env.VERSION }}
+  #         allowUpdates: true
+  #         artifacts: "fclash-meta-${{ env.VERSION}}.dmg"
+  #         token: ${{ secrets.GITHUB_TOKEN }}
 
 
   build-linux-amd64-deb-package:
@@ -197,51 +197,51 @@ jobs:
           artifacts: "~/rpmbuild/RPMS/x86_64/FClash-meta-${{ env.VERSION }}-*.rpm"
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-android-arm64v8a-package:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-      - uses: actions/setup-go@v3
-        with:
-          go-version: '>=${{ env.GOLANG_VERSION }}'
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
-          channel: 'stable'
-          cache: true
-      - uses: nttld/setup-ndk@v1
-        id: setup-ndk
-        with:
-          ndk-version: r25b
-          add-to-path: true
-      - name: Build Golang lib
-        shell: bash
-        env:
-          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
-        run: |
-          pushd clash
-          env GOOS=android GOARCH=arm64 CC=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang GOARM=7 CGO_ENABLED=1 go build -buildmode=c-shared -o ./libclash.so
-          popd
-          mkdir -p ./android/app/src/main/jniLibs/arm64-v8a
-          ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip clash/libclash.so
-          mv clash/libclash.so ./android/app/src/main/jniLibs/arm64-v8a/libclash.so
-      - name: Build APK
-        run: |
-          flutter clean && flutter pub get
-          flutter build apk --release --target-platform android-arm64 --split-per-abi
-          mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk fclash-meta-${{ env.VERSION}}-arm64-v8a.apk
-      - uses: actions/upload-artifact@v3
-        with:
-          name: fclash-${{ env.VERSION}}-arm64-v8a.apk
-          path: fclash-${{ env.VERSION}}-arm64-v8a.apk
-      - uses: ncipollo/release-action@v1
-        # if: startsWith(github.ref, 'refs/tags/v')
-        with:
-          tag: v${{ env.VERSION }}
-          allowUpdates: true
-          artifacts: fclash-${{ env.VERSION}}-arm64-v8a.apk
-          token: ${{ secrets.GITHUB_TOKEN }}
+  # build-android-arm64v8a-package:
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v3
+  #     - uses: actions/setup-go@v3
+  #       with:
+  #         go-version: '>=${{ env.GOLANG_VERSION }}'
+  #     - uses: subosito/flutter-action@v2
+  #       with:
+  #         flutter-version: '${{ env.FLUTTER_BASE_VERSION }}'
+  #         channel: 'stable'
+  #         cache: true
+  #     - uses: nttld/setup-ndk@v1
+  #       id: setup-ndk
+  #       with:
+  #         ndk-version: r25b
+  #         add-to-path: true
+  #     - name: Build Golang lib
+  #       shell: bash
+  #       env:
+  #         ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+  #       run: |
+  #         pushd clash
+  #         env GOOS=android GOARCH=arm64 CC=${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android29-clang GOARM=7 CGO_ENABLED=1 go build -buildmode=c-shared -o ./libclash.so
+  #         popd
+  #         mkdir -p ./android/app/src/main/jniLibs/arm64-v8a
+  #         ${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip clash/libclash.so
+  #         mv clash/libclash.so ./android/app/src/main/jniLibs/arm64-v8a/libclash.so
+  #     - name: Build APK
+  #       run: |
+  #         flutter clean && flutter pub get
+  #         flutter build apk --release --target-platform android-arm64 --split-per-abi
+  #         mv build/app/outputs/flutter-apk/app-arm64-v8a-release.apk fclash-meta-${{ env.VERSION}}-arm64-v8a.apk
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         name: fclash-${{ env.VERSION}}-arm64-v8a.apk
+  #         path: fclash-${{ env.VERSION}}-arm64-v8a.apk
+  #     - uses: ncipollo/release-action@v1
+  #       # if: startsWith(github.ref, 'refs/tags/v')
+  #       with:
+  #         tag: v${{ env.VERSION }}
+  #         allowUpdates: true
+  #         artifacts: fclash-${{ env.VERSION}}-arm64-v8a.apk
+  #         token: ${{ secrets.GITHUB_TOKEN }}
 
   build-linux-aarch64-deb-package:
     runs-on: ubuntu-20.04
